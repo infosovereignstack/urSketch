@@ -22,18 +22,19 @@
       0
       ~
       ~
+      !=(%waiting phase.r)
   ==
 ++  migrate-v3
   |=  r=room-v3
   ^-  room
-  [title.r owner.r players.r phase.r turn.r token.r deadline.r answer.r choices.r lines.r (upgrade-chat chat.r) 0 ~ 0 ~ ~]
+  [title.r owner.r players.r phase.r turn.r token.r deadline.r answer.r choices.r lines.r (upgrade-chat chat.r) 0 ~ 0 ~ ~ !=(%waiting phase.r)]
 ++  migrate-v5
   |=  [r=room-v5 now=@da]
   ^-  room
   =/  solves=@ud  (lent (skim players.r |=(p=player solved.p)))
   =/  finishing=?  ?&(?=(%drawing phase.r) (gth solves 0))
   =/  deadline=@da  ?:(finishing (min deadline.r (add now ~s20)) deadline.r)
-  [title.r owner.r players.r phase.r turn.r token.r deadline answer.r choices.r lines.r (upgrade-chat chat.r) hints.r revealed.r solves ~ ~]
+  [title.r owner.r players.r phase.r turn.r token.r deadline answer.r choices.r lines.r (upgrade-chat chat.r) hints.r revealed.r solves ~ ~ !=(%waiting phase.r)]
 ++  upgrade-chat
   |=  old=(list message-v6)
   ^-  (list message)
@@ -43,11 +44,27 @@
   ^-  room
   =/  records=(list solve)
     (turn (skim players.r |=(p=player solved.p)) |=(p=player [who.p (scot %p who.p) 0]))
-  [title.r owner.r players.r phase.r turn.r token.r deadline.r answer.r choices.r lines.r (upgrade-chat chat.r) hints.r revealed.r solves.r records ~]
+  [title.r owner.r players.r phase.r turn.r token.r deadline.r answer.r choices.r lines.r (upgrade-chat chat.r) hints.r revealed.r solves.r records ~ !=(%waiting phase.r)]
 ++  migrate-v7
   |=  r=room-v7
   ^-  room
-  [title.r owner.r players.r phase.r turn.r token.r deadline.r answer.r choices.r lines.r chat.r hints.r revealed.r solves.r solvers.r ~]
+  [title.r owner.r players.r phase.r turn.r token.r deadline.r answer.r choices.r lines.r chat.r hints.r revealed.r solves.r solvers.r ~ ?|(!=(%waiting phase.r) (gth turn.r 0) (lien chat.r |=(m=message =(kind.m 'round'))))]
+++  migrate-v8
+  |=  r=room-v8
+  ^-  room
+  [title.r owner.r players.r phase.r turn.r token.r deadline.r answer.r choices.r lines.r chat.r hints.r revealed.r solves.r solvers.r outcome.r ?|(!=(%waiting phase.r) (gth turn.r 0) ?=(^ outcome.r) (lien chat.r |=(m=message =(kind.m 'round'))))]
+++  new-game
+  |=  [r=room now=@da]
+  ^-  room
+  ?:  (lth (lent players.r) 2)
+    r(phase %waiting, deadline ~2000.1.1, token +(token.r), lines ~, started %.y)
+  (choose r(turn 0, players (turn players.r |=(p=player p(score 0, solved %.n)))) now)
+++  resume
+  |=  [r=room now=@da]
+  ^-  room
+  ?.  ?&(?=(%waiting phase.r) started.r (gte (lent players.r) 2))  r
+  ?^  outcome.r  (new-game r now)
+  (choose r now)
 ++  winners
   |=  ps=(list player)
   ^-  (list player)
@@ -93,13 +110,13 @@
     r(phase %waiting, deadline ~2000.1.1, token +(token.r), answer '', choices ~, hints 0, revealed ~, solves 0)
   ?:  ?&(artist ?|(?=(%choosing phase.r) ?=(%drawing phase.r) ?=(%reveal phase.r)))
     ?:  (gte +(turn.r) 10)
-      r(phase %finished, deadline (add now ~s40), token +(token.r))
+      r(phase %finished, deadline (add now ~s40), token +(token.r), lines ~)
     (choose r(turn +(turn.r)) now)
   r
 ++  fresh
   |=  [title=@t owner=@p]
   ^-  room
-  [title owner ~[[owner 0 %.n]] %waiting 0 0 ~2000.1.1 '' ~ ~ ~ 0 ~ 0 ~ ~]
+  [title owner ~[[owner 0 %.n]] %waiting 0 0 ~2000.1.1 '' ~ ~ ~ 0 ~ 0 ~ ~ %.n]
 ++  log
   |=  [r=room who=@t text=@t kind=@t audience=(unit @p) actor=(unit @p)]
   ^-  room
@@ -230,7 +247,7 @@
 ++  begin
   |=  [r=room word=@t now=@da]
   ^-  room
-  r(phase %drawing, answer word, choices ~, lines ~, token +(token.r), deadline (add now ~s120), hints 0, revealed ~, solves 0, solvers ~, outcome ~)
+  r(phase %drawing, answer word, choices ~, lines ~, token +(token.r), deadline (add now ~s120), hints 0, revealed ~, solves 0, solvers ~, outcome ~, started %.y)
 ++  reveal
   |=  [r=room now=@da]
   ^-  room
@@ -240,6 +257,6 @@
   ^-  room
   ?:  ?=(%choosing phase.r)  (choose r now)
   ?:  (gte +(turn.r) 10)
-    r(phase %finished, deadline (add now ~s40), token +(token.r))
+    r(phase %finished, deadline (add now ~s40), token +(token.r), lines ~)
   (choose r(turn +(turn.r), players (welp (slag 1 players.r) (scag 1 players.r))) now)
 --

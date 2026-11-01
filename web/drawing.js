@@ -35,12 +35,14 @@ function createDrawing({canvas, colors, canDraw, send, error, storageKey,onDraw}
     if(next==='clear')return;
     if(toggle&&next===selected&&['rectangle','circle'].includes(next))filled=!filled;
     if(next==='eraser'&&selected!=='eraser')setColor('#ffffff');
+    gesture=null;space=false;
     selected=next;
     document.querySelectorAll('#tool-grid button').forEach(b=>{const active=b.dataset.tool===selected;b.classList.toggle('selected',active);b.setAttribute('aria-pressed',String(active));});
     const name=definitions.find(d=>d[0]===next)?.[1]||next;
     $('tool-status').textContent=name+(['rectangle','circle'].includes(next)?(filled?' — filled':' — outline'):'');
     for(const name of ['rectangle','circle']){const svg=$(name)?.querySelector('svg');if(svg)svg.classList.toggle('outline',!filled);}
-    canvas.dataset.tool=selected;preview();
+    canvas.dataset.tool=selected;preview();repaint();
+    if(document.activeElement?.closest('#tool-grid'))$(next)?.focus({preventScroll:true});
   }
   for(const [id,name,key] of definitions){
     const b=document.createElement('button');b.id=id;b.type='button';b.className='tool';b.dataset.tool=id;b.title=id==='zoom'?'Zoom (Z, +/-)':name+(key?` (${key})`:'');b.setAttribute('aria-label',name);b.innerHTML=`<svg viewBox="0 0 24 24" aria-hidden="true">${paths[id]}</svg>`;
@@ -105,8 +107,9 @@ function createDrawing({canvas, colors, canDraw, send, error, storageKey,onDraw}
     else queue(command(selected==='pen'?'stroke':selected,p,{x:Math.min(1000,p.x+1),y:p.y}));
   };
   canvas.onpointermove=event=>{if(!gesture||!canDraw())return;if(gesture.pan){panX=gesture.panX+event.clientX-gesture.startX;panY=gesture.panY+event.clientY-gesture.startY;transform();return;}const p=point(event);if(gesture.shape){const end=clampedEnd(gesture.start,p,event);gesture.shape={...gesture.shape,x2:end.x,y2:end.y};repaint();}else {queue(command(gesture.tool==='pen'?'stroke':gesture.tool,gesture.last,p));gesture.last=p;}};
-  function finish(event){if(!gesture)return;const ended=gesture;gesture=null;if(event.type!=='pointercancel'&&ended.shape&&canDraw()&&ended.token===serverToken)queue(ended.shape);repaint();}
+  function finish(event){if(!gesture)return;const ended=gesture;gesture=null;if(event.type==='pointerup'&&ended.shape&&canDraw()&&ended.token===serverToken)queue(ended.shape);repaint();}
   for(const name of ['pointerup','pointercancel','lostpointercapture'])canvas.addEventListener(name,finish);
+  window.addEventListener('blur',()=>{gesture=null;space=false;repaint();});
   canvas.ondblclick=()=>{if(selected==='zoom')setZoom(1);};
   setInterval(()=>{if(gesture?.tool==='spray'&&canDraw())queue(command('spray',gesture.last,gesture.last));},80);
   function flush(){if(sending)return sending;if(!pending.length)return Promise.resolve();if(!canDraw()){pending=[];optimistic.clear();repaint();return Promise.resolve();}const batch=pending.splice(0,80);sending=send('draw',{lines:batch}).catch(e=>{pending=[];optimistic.clear();repaint();error(e);}).finally(()=>{sending=null;});return sending;}

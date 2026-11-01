@@ -23,7 +23,7 @@ function toast(message) { $('toast').textContent = message; $('toast').hidden = 
 function connection(text, good) { $('status').textContent = text; $('status-dot').classList.toggle('connected', good); connectionReady = good; renderPlayerTotal(); chatControls(); }
 function element(tag, className, text) { const el = document.createElement(tag); if (className) el.className = className; if (text != null) el.textContent = text; return el; }
 function rejectedAction(action){
-  const detail={join:'The room may be full or no longer available.',guess:'The drawing turn may have changed, or you have already guessed correctly.',hint:'Only the artist can give hints, before the first correct guess and up to three times.',draw:'The drawing turn may have changed or its command limit was reached.',start:'The room owner needs at least two players and must wait for the celebration to finish.',skip:'Only the current artist can end this drawing turn.',chat:'The message may contain the secret word.',heartbeat:'Your membership may have expired. Use Rejoin to return.',warn:'Both players must still be in the room.', 'global-chat':'Messages must be at most 240 bytes and at least one second apart.'};
+  const detail={join:'The room may be full or no longer available.',guess:'The drawing turn may have changed, or you have already guessed correctly.',hint:'Only the artist can give hints, before the first correct guess and up to three times.',draw:'The drawing turn may have changed or its command limit was reached.',start:'The room owner can start the first game when at least two players are present. Later games start automatically.',skip:'Only the current artist can end this drawing turn.',chat:'The message may contain the secret word.',heartbeat:'Your membership may have expired. Use Rejoin to return.',warn:'Both players must still be in the room.',kick:'Only the room owner can remove another player who is still in the room.', 'global-chat':'Messages must be at most 240 bytes and at least one second apart.'};
   return new Error('The host could not accept this action. '+(detail[action]||'Check your room connection and try again.'));
 }
 class Eyre {
@@ -258,7 +258,7 @@ async function joinRoom(id,title=''){
     const receive=data=>{
       if(epoch!==roomEpoch)return false;
       data=roomEvent(data);if(!data)return false;
-      if(data.kind==='removed'||(data.kind==='room'&&!data.players.some(p=>p.ship===SELF))){saveRecovery(null);if(firstView)throw new Error('That room is no longer available.');localLeave();operation('join-status','Your place in that room has ended.');return false;}
+      if(data.kind==='removed'||(data.kind==='room'&&!data.players.some(p=>p.ship===SELF))){const kicked=data.messages?.some(m=>m.kind==='kick'&&m.ship===SELF);saveRecovery(null);if(kicked)toast('The room owner removed you. You can join again when you choose.');if(firstView)throw new Error('That room is no longer available.');localLeave();operation('join-status','Your place in that room has ended.');return false;}
       if(data.kind!=='room')throw new Error('The host did not return a room.');
       firstView=false;renderRoom(data);return true;
     };
@@ -312,8 +312,8 @@ function appendRoomMessages(messages){
   return fresh;
 }
 function renderRoomMessages(){
-  renderMessages('messages',roomTimeline.filter(m=>!['chat','warning'].includes(m.kind)));
-  renderMessages('chat-messages',roomTimeline.filter(m=>['chat','warning'].includes(m.kind)||(m.kind==='system'&&m.text==='joined the room')));
+  renderMessages('messages',roomTimeline.filter(m=>!['chat','warning','kick'].includes(m.kind)));
+  renderMessages('chat-messages',roomTimeline.filter(m=>['chat','warning','kick'].includes(m.kind)||(m.kind==='system'&&m.text==='joined the room')));
 }
 function selectChat(which,focus=false){
   selectedChat=which;document.body.dataset.activeChat=which;
@@ -373,8 +373,8 @@ function renderRoom(data) {
   drawing.render(data.lines,data.token);rememberRoom(data.title);
   const waiting=['waiting','finished'].includes(data.phase)&&!data.celebrating;
   $('room-notice').hidden=!waiting;
-  $('room-notice-text').textContent=data.phase==='finished'?'Game over — 10 rounds completed.':'Waiting for players. At least two players are needed.';
-  $('start').hidden=!(data.owner===SELF&&waiting);$('start').disabled=data.players.length<2;
+  $('room-notice-text').textContent=data.started?'Waiting for another player. The next round starts automatically.':'Waiting for players. At least two players are needed.';
+  $('start').hidden=!(data.owner===SELF&&waiting&&!data.started);$('start').disabled=data.players.length<2;
   $('banner-word').textContent=isArtist()?data.answer:'';
   $('artist-banner').hidden=!(isArtist()&&data.phase==='drawing'&&bannerDismissed!==data.token&&!data.lines.some(l=>l.kind!=='clear'));
   $('tools').hidden=!(isArtist()&&data.phase==='drawing');
@@ -475,6 +475,8 @@ function inspectPlayer(player){
   $('player-profile-name').textContent=player.name||player.ship;$('player-profile-ship').textContent=player.ship;
   const button=$('warn-player');button.hidden=!state||player.ship===SELF||!state.players.some(p=>p.ship===player.ship);button.disabled=false;
   button.onclick=()=>run(async()=>{button.disabled=true;try{await api.poke('warn',{player:player.ship});$('player-profile-dialog').close();}finally{button.disabled=false;}});
+  const remove=$('remove-player');remove.hidden=!state||state.owner!==SELF||player.ship===SELF||!state.players.some(p=>p.ship===player.ship);remove.disabled=false;
+  remove.onclick=()=>run(async()=>{remove.disabled=true;try{await api.poke('kick',{player:player.ship});$('player-profile-dialog').close();}finally{remove.disabled=false;}});
   $('player-profile-dialog').showModal();
 }
 function installClassicScrollbars(){
@@ -518,4 +520,4 @@ const preferences=createSettings({notify:toast,onChange:prefs=>{if(lastTheme!==p
 if(!connectPage)gameAudio=createGameAudio({urls:URSKETCH_CUE_URLS,getPrefs:()=>preferences.values,notify:toast});
 if(!connectPage)finale=createFinale({surface:$('canvas').parentElement,layer:$('game-finale'),getAudio:()=>gameAudio,getPrefs:()=>preferences.values,onEnd:()=>{if(state?.phase==='finished'){state={...state,celebrating:false,remainingMs:0,seconds:0};renderRoom(state);}}});
 renderProfiles();drawing=createDrawing({canvas:$('canvas'),colors,canDraw,send:(action,data)=>api.poke(action,action==='draw'&&roomStream?{encoding:1,lines:data.lines.map(l=>UrSketchWire.pack(l))}:data),error:e=>toast(e.message||String(e)),onDraw:dismissBanner,storageKey:`ursketch.palettes.${SELF}`});restoreRecovery();
-if(!connectPage)run(async()=>{if(!SELF)throw new Error('Open urSketch through your Urbit ship at /apps/ursketch.');const query=new URLSearchParams(location.search);restoreKnownHosts();void connectGlobalChat();await browse(query.get('host')||GLOBAL_CHAT_HOST);void watchOtherHosts();const id=query.get('room');if(id){if(!savedRoom)saveRecovery({host,id,title:id,expiresAt:Date.now()+GRACE_MS});await joinRoom(id);}});
+if(!connectPage)run(async()=>{if(!SELF)throw new Error('Open urSketch through your Urbit ship at /apps/ursketch.');const query=new URLSearchParams(location.search);restoreKnownHosts();void connectGlobalChat();await browse(query.get('host')||GLOBAL_CHAT_HOST);void watchOtherHosts();const id=query.get('room');if(id){if(!savedRoom)saveRecovery({host,id,title:id,expiresAt:Date.now()+GRACE_MS});const restored=['reload','back_forward'].includes(performance.getEntriesByType('navigation')[0]?.type);if(restored){history.replaceState(null,'',location.pathname);operation('join-status','Your room tab was restored. Select Rejoin to return.');}else await joinRoom(id);}});

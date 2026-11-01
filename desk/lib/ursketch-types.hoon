@@ -23,6 +23,25 @@
       solves=@ud
       solvers=(list solve)
       outcome=(unit [label=@t score=@ud])
+      started=?
+  ==
++$  room-v8
+  $:  title=@t
+      owner=@p
+      players=(list player)
+      phase=?(%waiting %choosing %drawing %reveal %finished)
+      turn=@ud
+      token=@ud
+      deadline=@da
+      answer=@t
+      choices=(list @t)
+      lines=(list line)
+      chat=(list message)
+      hints=@ud
+      revealed=(set @ud)
+      solves=@ud
+      solvers=(list solve)
+      outcome=(unit [label=@t score=@ud])
   ==
 +$  room-v7
   $:  title=@t

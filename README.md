@@ -361,3 +361,25 @@ to state 8 with existing drawings, scores and private messages intact.
 Fireworks use the existing volume, mute and output-device preferences. Reduce
 motion keeps the winner art on black without moving particles. Animation is
 local; particles and audio data are never broadcast between ships.
+
+## Continuous games and player removal (0.16.0)
+
+Only the first game requires Start game. After the 40-second celebration the
+host resets scores and immediately assigns the next game's first word. If
+there are fewer than two players, the room waits and resumes automatically
+when someone joins. The final drawing is cleared before the fireworks begin.
+State-8 rooms migrate to state 9 with a persistent started flag.
+
+Click a player's name and choose **Remove player** to remove them when you
+are the room owner. The host enforces the permission, removes their presence
+lease, and returns their active clients to the lobby. Removal is not a ban;
+they can deliberately join again. Refresh/history restoration of a room URL
+now offers **Rejoin** instead of automatically joining from a stale tab.
+Normal newly opened invite links still join directly. Heartbeats never add
+missing room members. This closes one reproducible ghost-rejoin path without
+claiming it proves the cause of a past network incident.
+
+Tool buttons use state-neutral icons with one pressed selection and contained
+rectangular hit areas. Selecting a tool cancels unfinished gestures, and tool
+keyboard focus follows the selected tool. Returning from Fill to Pen restores
+the pen cursor and stroke commands without keeping a second highlighted tool.

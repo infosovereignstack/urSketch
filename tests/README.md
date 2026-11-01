@@ -302,3 +302,25 @@ Installed-comet verification passed after the atomic 0.15.0 import and Treaty
 publication: native rules/migration, tied-winner art, animated particles,
 reduced motion, laptop canvas edges and the existing name/browser/room flows.
 The historical countdown baseline is pinned to tag ursketch-v0.13.0.
+
+### 0.16.0 continuous games, tools and removal
+
+The two-ship finale suite now tests owner-only removal (including native
+rejection for a non-owner), remaining out until an explicit join, contained
+21×22 tool buttons, single selection with mouse/hotkeys, bucket-fill then pen
+stroke commands, explicit Rejoin after refresh, empty canvas before fireworks,
+and automatic score/canvas reset after the complete 40-second celebration.
+Removing a player during an already-started game hides Start and the room
+resumes automatically after a deliberate rejoin. Native rules check cleared
+final drawings and both automatic restart and one-player waiting/resumption.
+
+0.16.0 passed the complete two-ship suite: single selected/contained tool
+buttons, fill-to-pen stroke behavior, owner-only removal and native permission
+rejection, explicit refresh rejoin, cleared canvas before fireworks, the full
+40-second deadline, automatic new game and paused-room resumption. Preview
+checks passed the existing name/lobby/settings/canvas flows. Native rules,
+hints and vector codecs passed, including migration of state-8 private logs.
+
+Installed-comet verification passed after atomic 0.16.0 import and Treaty
+publication. State-6/7/8 migrations, native round rules, full canvas, Name page,
+settings, profile/room lifecycle, tile and published version all passed.
