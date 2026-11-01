@@ -293,7 +293,7 @@ kept in `assets/audio-originals/`; the reproducible report is
 
 Classic is selected for fresh browsers and replaces any saved former Default
 selection. Both Classic and Blingee share the full 1000×700 drawing surface,
-fit without cropping; visible chrome marks any letterbox space. Changing themes
+fit without cropping. The display fills the entire drawing panel, mapping pointer coordinates to the shared vector surface. Changing themes
 resets zoom while retaining drawing commands. Every new drawing turn resets
 the artist to a black pen. Create-room and word-choice menus use Classic
 controls, and the room header uses the current urSketch wordmark. The browser
@@ -334,3 +334,11 @@ Countdown ticks have fixed, unique slots per turn, preventing an exhausted
 audio queue from re-arming after clock divergence. The intro circle repair
 uses its measured blue palette instead of sampling a pixel obscured by the
 animated exclamation mark and lightbulb.
+
+## Canvas and name-page update (0.14.1)
+
+The canvas fills the drawing panel in both themes, including its top and
+bottom edges, instead of leaving letterbox bands. Shared 1000×700 vector
+coordinates and zoom/pan remain compatible with existing drawings. The Name
+page now explains permanent Urbit IDs and editable display names; its text
+panel expands to contain the longer copy.

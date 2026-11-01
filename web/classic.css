@@ -207,10 +207,10 @@ body.playing[data-layout=classic] .panel-label button:focus-visible{outline:1px 
 
 body.playing[data-layout=classic] :is(#guess,#chat-input){background:#fff}
 body.playing[data-layout=classic][data-active-chat=game] #guess,body.playing[data-layout=classic][data-active-chat=chat] #chat-input{background:#ffffdc}
-/* Letterboxing is chrome, not an apparently drawable white extension. */
-body.playing[data-layout=classic] .canvas-wrap{background:#bfbfbf}
+/* The canvas fills the drawing panel; every visible edge accepts strokes. */
+body.playing[data-layout=classic] .canvas-wrap{background:#fff}
 body.playing[data-layout=classic] #canvas{background:#fff;outline:1px solid #999}
-body.playing[data-theme=blingee] .canvas-wrap{background:linear-gradient(135deg,#29091f,#6a1d50)}
+
 
 body[data-layout=classic] #create-form #create-error{color:#b00020}
 body.playing[data-layout=classic] .room-notice{display:flex;align-items:center;justify-content:space-between;gap:10px;flex:none;padding:3px 6px;min-height:25px;font:11px/16px Verdana,Arial,sans-serif;color:#000}

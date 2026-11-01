@@ -507,7 +507,7 @@ function syncThemeLayout(){
     if($(id).parentElement!==target){if(classic)target.append($(id));else $(anchor).after($(id));}
   }
 }
-function fitCanvas(){const wrap=$('canvas').parentElement;if(!wrap.clientWidth||!wrap.clientHeight)return;const width=Math.min(wrap.clientWidth,wrap.clientHeight*1000/700),height=width*700/1000;$('canvas').style.width=`${width}px`;$('canvas').style.height=`${height}px`;wrap.style.setProperty('--board-left',`${(wrap.clientWidth-width)/2}px`);wrap.style.setProperty('--board-top',`${(wrap.clientHeight-height)/2}px`);wrap.style.setProperty('--board-width',`${width}px`);drawing?.fit();}
+function fitCanvas(){const wrap=$('canvas').parentElement;if(!wrap.clientWidth||!wrap.clientHeight)return;const width=wrap.clientWidth,height=wrap.clientHeight;$('canvas').style.width=`${width}px`;$('canvas').style.height=`${height}px`;wrap.style.setProperty('--board-left','0px');wrap.style.setProperty('--board-top','0px');wrap.style.setProperty('--board-width',`${width}px`);drawing?.fit();}
 new ResizeObserver(fitCanvas).observe($('canvas').parentElement);
 try{const saved=JSON.parse(localStorage.getItem(profileKey)||'null');if(saved){profiles=(saved.names||[]).filter(n=>typeof n==='string'&&validPlayerName(n));if(profiles.includes(saved.active))activeName=saved.active;}}catch{}
 installClassicScrollbars();

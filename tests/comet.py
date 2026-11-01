@@ -45,11 +45,13 @@ with sync_playwright() as p:
     assert not page.evaluate('connectionReady'), 'Connect page opened a channel before Connect'
     assert page.locator('#connect-page input').count()==1
     assert page.locator('input[type=password]').count()==0
+    expect(page.locator('label[for=player-name]')).to_have_text('Name:')
+    assert page.locator('#player-name').get_attribute('name')=='name'
     assert page.locator('#connect-submit').inner_text()=='Connect'
     assert page.locator('.connect-copy p').all_text_contents()==[
         "Welcome to urSketch, the net's premier sketching game!",
-        'Enter your display name in the box to the right and click the Connect button to connect to the game',
-        'Your Urbit ID will always be able to be seen when a player inspects your profile.']
+        'Enter your display name in the box to the right and click the Connect button to connect to the game.',
+        'Your Urbit ID is your permanent name. You can choose to change your in-game display name, or leave your display name as your Urbit ID.']
     page.wait_for_function("Array.from(document.querySelectorAll('#connect-logo image')).every(i=>i.href.baseVal.includes('/media/'))")
     page.wait_for_timeout(350)
     copy=page.locator('.connect-copy').bounding_box();form=page.locator('#profile-form').bounding_box()
@@ -197,6 +199,28 @@ with sync_playwright() as p:
     expect(page.locator('#player-profile-ship')).to_have_text(page.evaluate('SELF'))
     page.locator('#player-profile-dialog form button').click()
     page.screenshot(path=str(artifacts / 'comet-room.png'), full_page=True)
+    # Browser-only artist fixture: real pointer strokes must reach the panel's
+    # former letterbox areas. Draw commands stay in this browser and never poke
+    # the live room; the native waiting-room snapshot is restored afterwards.
+    page.evaluate("""()=>{window.waitingSnapshot=structuredClone(state);window.savedPoke=api.poke;window.edgeCommands=[];api.poke=(action,data,...args)=>action==='draw'?(edgeCommands.push(...data.lines.map(l=>UrSketchWire.unpack(l))),Promise.resolve()):savedPoke.call(api,action,data,...args);renderRoom({...state,phase:'drawing',token:state.token+1000,answer:'edge test',duration:120,remainingMs:120000,players:[{...state.players[0],ship:SELF,solved:false},{ship:'~zod',name:'Canvas fixture',score:0,solved:false}],lines:[]});}""")
+    for theme,width,height in [('classic',1280,720),('classic',1024,600),('blingee',1280,720),('classic',960,560)]:
+        page.locator('#settings-open').click();page.locator('#theme-select').select_option(theme);page.locator('#settings-close').click()
+        page.set_viewport_size({'width':width,'height':height});page.wait_for_timeout(100)
+        canvas=page.locator('#canvas').bounding_box();panel=page.locator('.canvas-wrap').bounding_box()
+        assert all(abs(canvas[key]-panel[key])<2 for key in ('x','y','width','height')),(theme,canvas,panel)
+        # Two strokes near opposite edges of the entire visible drawing panel.
+        before=page.evaluate('edgeCommands.length')
+        for y in (panel['y']+5,panel['y']+panel['height']-5):
+            page.mouse.move(panel['x']+panel['width']*.4,y);page.mouse.down();page.mouse.move(panel['x']+panel['width']*.6,y,steps=3);page.mouse.up()
+        page.wait_for_function('(before)=>edgeCommands.length>=before+8',arg=before)
+        commands=page.evaluate('(before)=>edgeCommands.slice(before)',before)
+        assert any(min(c['y1'],c['y2'])<15 for c in commands),commands
+        assert any(max(c['y1'],c['y2'])>685 for c in commands),commands
+        assert page.evaluate("""()=>{const x=canvas.getContext('2d'),d=x.getImageData(450,0,100,700).data;return [0,680].every(top=>{for(let y=top;y<top+20;y++)for(let a=0;a<100;a++){const i=(y*100+a)*4;if(d[i]<50&&d[i+1]<50&&d[i+2]<50)return true;}return false;});}"""),'Edge strokes did not paint the canvas'
+        assert page.evaluate('document.documentElement.scrollHeight<=innerHeight')
+    page.screenshot(path=str(artifacts/'canvas-full-panel.png'))
+    page.evaluate("()=>{api.poke=savedPoke;renderRoom(waitingSnapshot);}")
+    page.set_viewport_size({'width':1280,'height':720})
     ship = page.evaluate('SELF')
     page.locator('#leave').click()
     expect(page.locator('#lobby')).to_be_visible()
@@ -222,5 +246,5 @@ with sync_playwright() as p:
     assert treaty['href']['site'] == '/apps/ursketch'
     (artifacts / 'comet-publication.json').write_text(json.dumps(treaty, indent=2) + '\n')
     assert not errors, errors
-    print(f'PASS on {ship}: username screen, full-ship/custom profiles, profile inspection, reference room-browser layout, distinct known-host player counts, filters, hidden invite compatibility, search, tools, room lifecycle, room create/leave, Landscape tile, and Treaty publication')
+    print(f'PASS on {ship}: Name screen wording, full-ship/custom profiles, profile inspection, full-panel edge drawing across themes/laptop sizes, reference room-browser layout, distinct known-host player counts, filters, hidden invite compatibility, search, tools, room lifecycle, room create/leave, Landscape tile, and Treaty publication')
     browser.close()

@@ -266,3 +266,17 @@ updated browser/room lifecycle suite.
 Installed intro/media verification also passed, including the repaired blue
 circle at exclamation/lightbulb frames and three audible loop passes. Native
 hints, vector codec and bandwidth generators passed on the comet.
+
+### 0.14.1 full drawing panel
+
+The comet browser suite checks exact Name-page text, Name label and laptop/phone
+fit. A browser-only artist fixture intercepts draw writes and sends no fixture
+commands to the live room. Real pointer strokes at the top and bottom must
+produce vector coordinates and painted pixels near both edges at 1280×720,
+1024×600 and 960×560, across Classic/Blingee switches. The native waiting-room
+state is restored afterwards. Evidence: `artifacts/canvas-full-panel.png`.
+
+0.14.1 preview and installed-comet suites passed, including real top/bottom
+pointer strokes, edge pixels, theme switching, laptop sizes, exact Name copy,
+phone fit and published Treaty version. JavaScript/Python syntax and whitespace
+checks passed.
