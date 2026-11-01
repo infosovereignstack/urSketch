@@ -342,3 +342,22 @@ bottom edges, instead of leaving letterbox bands. Shared 1000×700 vector
 coordinates and zoom/pan remain compatible with existing drawings. The Name
 page now explains permanent Urbit IDs and editable display names; its text
 panel expands to contain the longer copy.
+
+## End-of-game celebration (0.15.0)
+
+The tenth round starts a host-timed 40-second celebration. The drawing panel
+turns black with local fireworks, synthesized boom/crackle audio, and white/red
+captions around a larger gold winner name. Tied leaders appear together. The
+Game log announces the final winner and score in bold red text; the dial is
+blank. There is no social-sharing button.
+
+The host saves the winning names/score after final-round points are awarded,
+so leaving, changing names or refreshing cannot change that outcome. Rejoining
+uses the remaining celebration time. Restart is blocked until the 40 seconds
+expire, then the owner can start a new ten-round game. The last drawing remains
+stored beneath the celebration and returns afterwards. State-7 rooms migrate
+to state 8 with existing drawings, scores and private messages intact.
+
+Fireworks use the existing volume, mute and output-device preferences. Reduce
+motion keeps the winner art on black without moving particles. Animation is
+local; particles and audio data are never broadcast between ships.

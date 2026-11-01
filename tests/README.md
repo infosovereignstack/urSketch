@@ -280,3 +280,25 @@ state is restored afterwards. Evidence: `artifacts/canvas-full-panel.png`.
 pointer strokes, edge pixels, theme switching, laptop sizes, exact Name copy,
 phone fit and published Treaty version. JavaScript/Python syntax and whitespace
 checks passed.
+
+### 0.15.0 finale
+
+`tests/finale.py` plays ten native rounds on isolated ~zod/~nec, checks final
+scoring, exact bold red Game text, blank timer, black particle canvas, audible
+fireworks PCM and mute. It waits the full 40 seconds, rejects early restart,
+refreshes the winner during the celebration to verify the saved outcome and
+remaining deadline, retains the final drawing and starts a fresh game.
+Artifacts: `game-finale.png` and `finale-verification.json`. Native rules also
+check tied winners, the 40-second deadline and state-7 private-log migration.
+
+0.15.0 passed ten native rounds on two ships; the measured celebration lasted
+40.029 seconds. Final scoring, fireworks PCM/mute, saved winners and
+deadlines through refresh, exact bold red Game text, restart lockout, restored
+final drawing and fresh-game reset passed. Preview checks also passed tied
+winner art, moving particles, laptop resizing and reduced motion. Countdown
+audio and native hints/vector/state migration regressions passed.
+
+Installed-comet verification passed after the atomic 0.15.0 import and Treaty
+publication: native rules/migration, tied-winner art, animated particles,
+reduced motion, laptop canvas edges and the existing name/browser/room flows.
+The historical countdown baseline is pinned to tag ursketch-v0.13.0.

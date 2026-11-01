@@ -10,7 +10,7 @@ let activeName = SELF, profiles = [];
 const profileKey = `ursketch.players.${SELF}`;
 let host = SELF, roomId = '', state = null, lobbySub = null, roomSub = null;
 let drawing;
-let gameAudio=null,roomTimeline=[],serverMessages=[],feedbackSeen=new Set(),selectedChat='game',lastTheme='',bannerDismissed=null;
+let finale=null,gameAudio=null,roomTimeline=[],serverMessages=[],feedbackSeen=new Set(),selectedChat='game',lastTheme='',bannerDismissed=null;
 let clockAt = 0, clockSeconds = 0, connectionReady = false;
 const ctx = $('canvas').getContext('2d');
 // Swatch centers sampled from the supplied palette reference; black/white are exact.
@@ -23,7 +23,7 @@ function toast(message) { $('toast').textContent = message; $('toast').hidden = 
 function connection(text, good) { $('status').textContent = text; $('status-dot').classList.toggle('connected', good); connectionReady = good; renderPlayerTotal(); chatControls(); }
 function element(tag, className, text) { const el = document.createElement(tag); if (className) el.className = className; if (text != null) el.textContent = text; return el; }
 function rejectedAction(action){
-  const detail={join:'The room may be full or no longer available.',guess:'The drawing turn may have changed, or you have already guessed correctly.',hint:'Only the artist can give hints, before the first correct guess and up to three times.',draw:'The drawing turn may have changed or its command limit was reached.',start:'The room owner needs at least two players to start.',skip:'Only the current artist can end this drawing turn.',chat:'The message may contain the secret word.',heartbeat:'Your membership may have expired. Use Rejoin to return.',warn:'Both players must still be in the room.', 'global-chat':'Messages must be at most 240 bytes and at least one second apart.'};
+  const detail={join:'The room may be full or no longer available.',guess:'The drawing turn may have changed, or you have already guessed correctly.',hint:'Only the artist can give hints, before the first correct guess and up to three times.',draw:'The drawing turn may have changed or its command limit was reached.',start:'The room owner needs at least two players and must wait for the celebration to finish.',skip:'Only the current artist can end this drawing turn.',chat:'The message may contain the secret word.',heartbeat:'Your membership may have expired. Use Rejoin to return.',warn:'Both players must still be in the room.', 'global-chat':'Messages must be at most 240 bytes and at least one second apart.'};
   return new Error('The host could not accept this action. '+(detail[action]||'Check your room connection and try again.'));
 }
 class Eyre {
@@ -110,7 +110,7 @@ function saveRecovery(record){savedRoom=record;try{record?localStorage.setItem(r
 function rememberRoom(title){if(!roomId)return;saveRecovery({host,id:roomId,title:title||state?.title||savedRoom?.title||roomId,expiresAt:Date.now()+GRACE_MS});}
 function renderRecovery(){const visible=!!savedRoom&&!state;$('room-recovery').hidden=!visible;if(!visible)return;const seconds=Math.max(0,Math.ceil((savedRoom.expiresAt-Date.now())/1000));$('recovery-title').textContent=savedRoom.title;$('recovery-detail').textContent=`On ${savedRoom.host} · Rejoin available for ${Math.floor(seconds/60)}:${String(seconds%60).padStart(2,'0')}`;}
 function restoreRecovery(){savedRoom=null;try{const r=JSON.parse(localStorage.getItem(recoveryKey)||'null');if(r&&/^~[a-z-]+$/.test(r.host)&&/^[a-z0-9-]{1,40}$/.test(r.id)&&Number.isFinite(r.expiresAt))savedRoom=r;}catch{}renderRecovery();}
-function showLobby({keepRoom=true}={}){const old=roomSub;roomEpoch++;if(snapshotRequest){clearTimeout(snapshotRequest.timer);snapshotRequest=null;}roomId='';state=null;roomSub=null;gameAudio?.stop();roomTimeline=[];serverMessages=[];feedbackSeen.clear();if(old!=null)api.unsubscribe(old).catch(()=>{});drawing?.cancel();$('game').hidden=true;$('lobby').hidden=false;document.body.classList.remove('playing','is-artist','is-guesser');history.replaceState(null,'',location.pathname);if(!keepRoom)saveRecovery(null);renderRecovery();}
+function showLobby({keepRoom=true}={}){const old=roomSub;roomEpoch++;if(snapshotRequest){clearTimeout(snapshotRequest.timer);snapshotRequest=null;}roomId='';state=null;roomSub=null;finale?.stop();gameAudio?.stop();roomTimeline=[];serverMessages=[];feedbackSeen.clear();if(old!=null)api.unsubscribe(old).catch(()=>{});drawing?.cancel();$('game').hidden=true;$('lobby').hidden=false;document.body.classList.remove('playing','is-artist','is-guesser');history.replaceState(null,'',location.pathname);if(!keepRoom)saveRecovery(null);renderRecovery();}
 const knownHostsKey=`ursketch.hosts.${SELF}`,knownHosts=new Map();
 let hideFull=false,hideEmpty=false;
 try{const saved=JSON.parse(localStorage.getItem('ursketch.roomFilters')||'{}');hideFull=saved.full===true;hideEmpty=saved.empty===true;}catch{}
@@ -249,7 +249,7 @@ async function joinRoom(id,title=''){
   if(joining)throw new Error('A room is already opening.');
   const recovering=savedRoom?.id===id&&savedRoom?.host===host;
   const epoch=++roomEpoch;let firstView=true;
-  gameAudio?.stop();roomTimeline=[];serverMessages=[];feedbackSeen.clear();
+  finale?.stop();gameAudio?.stop();roomTimeline=[];serverMessages=[];feedbackSeen.clear();
   joining=true;roomId=id;state=null;operation('join-status',`Joining ${title||id}`,true);busyControls();
   let accepted=false;
   try{
@@ -371,7 +371,7 @@ function renderRoom(data) {
   $('player-count').textContent=`${data.players.length}/10`;
   $('players').replaceChildren(...data.players.map((p,i)=>{const li=element('li',[(p.ship===SELF?'me':''),(p.solved?'solved':'')].filter(Boolean).join(' '));const label=element('div','player-name',p.name||p.ship);label.title=p.ship;label.tabIndex=0;label.setAttribute('role','button');label.setAttribute('aria-label',`Inspect ${p.name||p.ship}`);label.onclick=()=>inspectPlayer(p);label.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();inspectPlayer(p);}};label.append(element('span','player-role',p.solved?'✓ Correct':i===0&&['choosing','drawing'].includes(data.phase)?'✎ Drawing':p.ship===SELF?'You':'Guessing'));li.append(label,element('span','player-score',p.score));return li;}));
   drawing.render(data.lines,data.token);rememberRoom(data.title);
-  const waiting=['waiting','finished'].includes(data.phase);
+  const waiting=['waiting','finished'].includes(data.phase)&&!data.celebrating;
   $('room-notice').hidden=!waiting;
   $('room-notice-text').textContent=data.phase==='finished'?'Game over — 10 rounds completed.':'Waiting for players. At least two players are needed.';
   $('start').hidden=!(data.owner===SELF&&waiting);$('start').disabled=data.players.length<2;
@@ -393,6 +393,7 @@ function renderRoom(data) {
   const me=data.players.find(p=>p.ship===SELF),locked=data.phase==='drawing'&&(isArtist()||me?.solved);
   $('guess').disabled=locked;$('guess-form').querySelector('button').disabled=locked||data.phase!=='drawing';
   $('guess').placeholder=data.phase!=='drawing'?'Guesses open when a round starts':isArtist()?'You’re drawing this turn':me?.solved?'You guessed it!':'Type your guess…';
+  finale?.update(data,`${host}/${roomId}/${data.token}`);
   renderRoomMessages();
   $('skip').textContent=solved?'Done':'Skip';
   $('round-controls').dataset.done=String(solved);
@@ -404,7 +405,8 @@ function renderMessages(id,messages){
   const list=$(id),atBottom=list.scrollHeight-list.scrollTop-list.clientHeight<50;
   list.replaceChildren(...messages.map(m=>{
     const row=element('div',`message ${m.kind}`);if(m.who)row.append(element('b','',m.who+':'));
-    if(m.kind==='found-word'){
+    if(m.kind==='game-result'){row.append(element('strong','',m.text));
+    }else if(m.kind==='found-word'){
       const prefix='You found the word: ';row.append(document.createTextNode(prefix),element('strong','',m.text.slice(prefix.length)));
     }else if(m.kind==='round-result'){
       const match=m.text.match(/"([^"]+)"$/);
@@ -421,7 +423,8 @@ function updateDial() {
   dial.style.setProperty('--sweep',`${Math.min(1,remaining/duration)*360}deg`);
   dial.classList.toggle('inactive',inactive);dial.classList.toggle('urgent',remaining<=20&&state?.phase==='drawing');
   dial.setAttribute('aria-valuemax',duration);dial.setAttribute('aria-valuenow',Math.ceil(remaining));
-  const label=inactive?'Waiting for players':`${Math.ceil(remaining)} seconds remaining`;
+  const label=state?.phase==='finished'?'':inactive?'Waiting for players':`${Math.ceil(remaining)} seconds remaining`;
+  dial.classList.toggle('blank',state?.phase==='finished');
   dial.setAttribute('aria-valuetext',label);$('timer-label').textContent=label;
 }
 setInterval(updateDial,100);
@@ -513,5 +516,6 @@ try{const saved=JSON.parse(localStorage.getItem(profileKey)||'null');if(saved){p
 installClassicScrollbars();
 const preferences=createSettings({notify:toast,onChange:prefs=>{if(lastTheme!==prefs.theme){drawing?.resetView();lastTheme=prefs.theme;}gameAudio?.settings();syncThemeLayout();requestAnimationFrame(fitCanvas);}});
 if(!connectPage)gameAudio=createGameAudio({urls:URSKETCH_CUE_URLS,getPrefs:()=>preferences.values,notify:toast});
+if(!connectPage)finale=createFinale({surface:$('canvas').parentElement,layer:$('game-finale'),getAudio:()=>gameAudio,getPrefs:()=>preferences.values,onEnd:()=>{if(state?.phase==='finished'){state={...state,celebrating:false,remainingMs:0,seconds:0};renderRoom(state);}}});
 renderProfiles();drawing=createDrawing({canvas:$('canvas'),colors,canDraw,send:(action,data)=>api.poke(action,action==='draw'&&roomStream?{encoding:1,lines:data.lines.map(l=>UrSketchWire.pack(l))}:data),error:e=>toast(e.message||String(e)),onDraw:dismissBanner,storageKey:`ursketch.palettes.${SELF}`});restoreRecovery();
 if(!connectPage)run(async()=>{if(!SELF)throw new Error('Open urSketch through your Urbit ship at /apps/ursketch.');const query=new URLSearchParams(location.search);restoreKnownHosts();void connectGlobalChat();await browse(query.get('host')||GLOBAL_CHAT_HOST);void watchOtherHosts();const id=query.get('room');if(id){if(!savedRoom)saveRecovery({host,id,title:id,expiresAt:Date.now()+GRACE_MS});await joinRoom(id);}});

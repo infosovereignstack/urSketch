@@ -21,18 +21,19 @@
       ~
       0
       ~
+      ~
   ==
 ++  migrate-v3
   |=  r=room-v3
   ^-  room
-  [title.r owner.r players.r phase.r turn.r token.r deadline.r answer.r choices.r lines.r (upgrade-chat chat.r) 0 ~ 0 ~]
+  [title.r owner.r players.r phase.r turn.r token.r deadline.r answer.r choices.r lines.r (upgrade-chat chat.r) 0 ~ 0 ~ ~]
 ++  migrate-v5
   |=  [r=room-v5 now=@da]
   ^-  room
   =/  solves=@ud  (lent (skim players.r |=(p=player solved.p)))
   =/  finishing=?  ?&(?=(%drawing phase.r) (gth solves 0))
   =/  deadline=@da  ?:(finishing (min deadline.r (add now ~s20)) deadline.r)
-  [title.r owner.r players.r phase.r turn.r token.r deadline answer.r choices.r lines.r (upgrade-chat chat.r) hints.r revealed.r solves ~]
+  [title.r owner.r players.r phase.r turn.r token.r deadline answer.r choices.r lines.r (upgrade-chat chat.r) hints.r revealed.r solves ~ ~]
 ++  upgrade-chat
   |=  old=(list message-v6)
   ^-  (list message)
@@ -42,7 +43,16 @@
   ^-  room
   =/  records=(list solve)
     (turn (skim players.r |=(p=player solved.p)) |=(p=player [who.p (scot %p who.p) 0]))
-  [title.r owner.r players.r phase.r turn.r token.r deadline.r answer.r choices.r lines.r (upgrade-chat chat.r) hints.r revealed.r solves.r records]
+  [title.r owner.r players.r phase.r turn.r token.r deadline.r answer.r choices.r lines.r (upgrade-chat chat.r) hints.r revealed.r solves.r records ~]
+++  migrate-v7
+  |=  r=room-v7
+  ^-  room
+  [title.r owner.r players.r phase.r turn.r token.r deadline.r answer.r choices.r lines.r chat.r hints.r revealed.r solves.r solvers.r ~]
+++  winners
+  |=  ps=(list player)
+  ^-  (list player)
+  =/  score=@ud  (roll ps |=([p=player n=@ud] (max score.p n)))
+  (skim ps |=(p=player =(score.p score)))
 ++  hint
   |=  [r=room now=@da]
   ^-  room
@@ -78,17 +88,18 @@
   ?~  remaining
     r(players ~, phase %waiting, deadline ~2000.1.1, token +(token.r), lines ~, answer '', choices ~, hints 0, revealed ~, solves 0)
   =.  r  r(players remaining, owner ?:(=(who owner.r) who.i.remaining owner.r))
+  ?:  ?=(%finished phase.r)  r
   ?:  (lth (lent remaining) 2)
     r(phase %waiting, deadline ~2000.1.1, token +(token.r), answer '', choices ~, hints 0, revealed ~, solves 0)
   ?:  ?&(artist ?|(?=(%choosing phase.r) ?=(%drawing phase.r) ?=(%reveal phase.r)))
     ?:  (gte +(turn.r) 10)
-      r(phase %finished, deadline ~2000.1.1, token +(token.r))
+      r(phase %finished, deadline (add now ~s40), token +(token.r))
     (choose r(turn +(turn.r)) now)
   r
 ++  fresh
   |=  [title=@t owner=@p]
   ^-  room
-  [title owner ~[[owner 0 %.n]] %waiting 0 0 ~2000.1.1 '' ~ ~ ~ 0 ~ 0 ~]
+  [title owner ~[[owner 0 %.n]] %waiting 0 0 ~2000.1.1 '' ~ ~ ~ 0 ~ 0 ~ ~]
 ++  log
   |=  [r=room who=@t text=@t kind=@t audience=(unit @p) actor=(unit @p)]
   ^-  room
@@ -219,7 +230,7 @@
 ++  begin
   |=  [r=room word=@t now=@da]
   ^-  room
-  r(phase %drawing, answer word, choices ~, lines ~, token +(token.r), deadline (add now ~s120), hints 0, revealed ~, solves 0, solvers ~)
+  r(phase %drawing, answer word, choices ~, lines ~, token +(token.r), deadline (add now ~s120), hints 0, revealed ~, solves 0, solvers ~, outcome ~)
 ++  reveal
   |=  [r=room now=@da]
   ^-  room
@@ -229,6 +240,6 @@
   ^-  room
   ?:  ?=(%choosing phase.r)  (choose r now)
   ?:  (gte +(turn.r) 10)
-    r(phase %finished, deadline ~2000.1.1, token +(token.r))
+    r(phase %finished, deadline (add now ~s40), token +(token.r))
   (choose r(turn +(turn.r), players (welp (slag 1 players.r) (scag 1 players.r))) now)
 --

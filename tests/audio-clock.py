@@ -4,7 +4,7 @@ from pathlib import Path
 from playwright.sync_api import sync_playwright
 ROOT=Path(__file__).resolve().parents[1]
 urls={p.stem:'https://audio-test.invalid/'+p.name for p in (ROOT/'desk/media/audio/cues').glob('*.mp3')}
-audio_source=subprocess.check_output(['git','show','HEAD:web/audio.js'],cwd=ROOT,text=True) if os.environ.get('URSKETCH_AUDIO_BASELINE')=='1' else (ROOT/'web/audio.js').read_text()
+audio_source=subprocess.check_output(['git','show','ursketch-v0.13.0:web/audio.js'],cwd=ROOT,text=True) if os.environ.get('URSKETCH_AUDIO_BASELINE')=='1' else (ROOT/'web/audio.js').read_text()
 html='<button>Enable audio</button><script>'+audio_source+'''
 const prefs={volume:70,muted:false,output:''};window.scheduled=[];window.stopped=[];window.nodes=[];
 const start=AudioBufferSourceNode.prototype.start,stop=AudioBufferSourceNode.prototype.stop;

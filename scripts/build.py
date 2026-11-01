@@ -33,6 +33,7 @@ html = html.replace('<script>/* URSKETCH_DRAWING */', '<script>window.URSKETCH_S
 html = html.replace('/* URSKETCH_DRAWING */', (ROOT / 'web/drawing.js').read_text())
 html = html.replace('/* URSKETCH_SETTINGS */', (ROOT / 'web/settings.js').read_text())
 cue_urls = {Path(name).stem:asset['url'] for name,asset in assets.items() if name.startswith('audio/cues/')}
+html = html.replace('/* URSKETCH_FINALE */', (ROOT/'web/finale.js').read_text())
 html = html.replace('/* URSKETCH_AUDIO */', (ROOT/'web/audio.js').read_text())
 chat_host=json.loads((ROOT/'web/chat-config.json').read_text())['host']
 if not re.fullmatch(r'~[a-z-]+',chat_host): raise ValueError('Invalid Global Chat host')

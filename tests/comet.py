@@ -219,6 +219,17 @@ with sync_playwright() as p:
         assert page.evaluate("""()=>{const x=canvas.getContext('2d'),d=x.getImageData(450,0,100,700).data;return [0,680].every(top=>{for(let y=top;y<top+20;y++)for(let a=0;a<100;a++){const i=(y*100+a)*4;if(d[i]<50&&d[i+1]<50&&d[i+2]<50)return true;}return false;});}"""),'Edge strokes did not paint the canvas'
         assert page.evaluate('document.documentElement.scrollHeight<=innerHeight')
     page.screenshot(path=str(artifacts/'canvas-full-panel.png'))
+    page.evaluate("()=>renderRoom({...state,phase:'finished',token:state.token+1,celebrating:true,remainingMs:40000,seconds:40,winner:{name:'Alice & Zoe',score:65}})")
+    expect(page.locator('#game-finale')).to_be_visible();expect(page.locator('.finale-winner')).to_have_text('Alice & Zoe')
+    assert page.locator('#timer-dial').get_attribute('aria-valuetext')==''
+    page.wait_for_timeout(700);pixels=page.locator('#game-finale>canvas').evaluate('c=>c.toDataURL()');page.wait_for_timeout(400)
+    assert pixels!=page.locator('#game-finale>canvas').evaluate('c=>c.toDataURL()'), 'Fireworks did not animate'
+    page.set_viewport_size({'width':1024,'height':600});page.wait_for_timeout(100)
+    page.screenshot(path=str(artifacts/'finale-laptop.png'))
+    page.locator('#settings-open').click();page.locator('#reduce-motion').check();page.locator('#settings-close').click();page.wait_for_timeout(100)
+    assert page.locator('#game-finale>canvas').evaluate("c=>{const d=c.getContext('2d').getImageData(0,0,c.width,c.height).data;for(let i=0;i<d.length;i+=4)if(d[i]+d[i+1]+d[i+2]!==0)return false;return true;}"),'Reduced motion still animates fireworks'
+    expect(page.locator('.finale-winner')).to_have_text('Alice & Zoe')
+    page.locator('#settings-open').click();page.locator('#reduce-motion').uncheck();page.locator('#settings-close').click()
     page.evaluate("()=>{api.poke=savedPoke;renderRoom(waitingSnapshot);}")
     page.set_viewport_size({'width':1280,'height':720})
     ship = page.evaluate('SELF')

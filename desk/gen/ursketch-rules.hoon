@@ -30,9 +30,17 @@
         =(1 (lent solvers.upgraded))
         ?=(~ audience.old-message)
     ==
+=/  v7=room-v7
+  [title.private owner.private players.private phase.private turn.private token.private deadline.private answer.private choices.private lines.private chat.private hints.private revealed.private solves.private solvers.private]
+=/  restored=room  (migrate-v7:ursketch-game v7)
+?>  ?&(?=(~ outcome.restored) =(chat.private chat.restored) =(answer.private answer.restored))
 =/  final=room  r(turn 9, lines ~[['#883e31' 4 1 2 3 4 %stroke 100 %.n 0 'last']])
 =.  final  (advance:ursketch-game final now)
-?>  ?&(?=(%finished phase.final) =('last' id:(head lines.final)))
+?>  ?&(?=(%finished phase.final) =('last' id:(head lines.final)) =(deadline.final (add now ~s40)))
+?>  =((winners:ursketch-game ~[[~zod 3 %.n] [~nec 10 %.n] [~bud 10 %.n]]) ~[[~nec 10 %.n] [~bud 10 %.n]])
+=/  departure=room
+  (depart:ursketch-game final(players ~[[~zod 15 %.n] [~nec 20 %.n]], outcome `['Zoe' 20]) ~nec now)
+?>  ?&(?=(%finished phase.departure) =(deadline.departure (add now ~s40)) =(outcome.departure `['Zoe' 20]))
 =/  next=room  (advance:ursketch-game r now)
 ?>  ?&(?=(%drawing phase.next) =(1 turn.next) =(~nec who:(head players.next)) ?=(~ lines.next) =(deadline.next (add now ~s120)))
 =/  rounds=@ud  1
@@ -44,4 +52,4 @@
 ?>  =(10 rounds)
 ?>  (close-guess:ursketch-game 'elehpant' 'elephant')
 ?>  !(close-guess:ursketch-game 'cat' 'cat')
-[%noun 'PASS: immediate assigned words, 120/20 timers, all-solved detection, exact result text/order, private logs, preserved final canvas, ten rounds and state-6 migration']
+[%noun 'PASS: immediate assigned words, 120/20 timers, all-solved detection, exact result text/order, private logs, preserved final canvas, ten rounds, tied winners, 40-second finale and state-6/7 migration']
