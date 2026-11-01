@@ -1,0 +1,32 @@
+/* Black velvet, hot-pink hearts, silver chains and animated glitter from the supplied Blingee references. */
+body[data-theme=blingee]{--paper:#160617;--ink:#fff0fb;--muted:#ffc4ed;--green:#ba087d;--line:#ff58c6;--white:#fff7fd;--soft:#ffd2ee;--blingee-sparkles:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22132%22%20height%3D%22112%22%20viewBox%3D%220%200%20132%20112%22%3E%3Cg%20fill%3D%22white%22%3E%3Cpath%20d%3D%22M22%203l2%2013%2013%202-13%202-2%2013-2-13-13-2%2013-2z%22/%3E%3Cpath%20d%3D%22M96%2063l1.5%2010%2010%201.5-10%201.5-1.5%2010-1.5-10-10-1.5%2010-1.5z%22/%3E%3Ccircle%20cx%3D%2257%22%20cy%3D%2242%22%20r%3D%221.4%22/%3E%3Ccircle%20cx%3D%22119%22%20cy%3D%2225%22%20r%3D%221%22/%3E%3Ccircle%20cx%3D%2210%22%20cy%3D%2282%22%20r%3D%221.3%22/%3E%3Ccircle%20cx%3D%2277%22%20cy%3D%22104%22%20r%3D%221%22/%3E%3C/g%3E%3Cg%20fill%3D%22%23ff39bc%22%3E%3Cpath%20d%3D%22M69%209c-8-11-19%201%200%2014%2019-13%208-25%200-14z%22/%3E%3Cpath%20d%3D%22M46%2080c-6-8-14%201%200%2011%2014-10%206-19%200-11z%22/%3E%3C/g%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%23ff9de5%22%20stroke-width%3D%22.7%22%20opacity%3D%22.65%22%3E%3Cpath%20d%3D%22M0%2055Q30%2030%2045%2055t45%200%2042%200M110%200q-25%2024%200%2040t0%2040%200%2032%22/%3E%3Ccircle%20cx%3D%2222%22%20cy%3D%2218%22%20r%3D%229%22/%3E%3Ccircle%20cx%3D%2296%22%20cy%3D%2275%22%20r%3D%227%22/%3E%3C/g%3E%3C/svg%3E");background:radial-gradient(ellipse at 13% 0,#8e165d99,transparent 55%),radial-gradient(ellipse at 90% 90%,#de219955,transparent 50%),#120512;color:#fff0fb;position:relative;isolation:isolate}
+body[data-theme=blingee]::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;background-image:var(--blingee-sparkles);background-size:132px 112px;animation:blingee-shimmer 4s ease-in-out infinite alternate;opacity:.75}
+@keyframes blingee-shimmer{from{opacity:.45;filter:drop-shadow(0 0 1px #fff)}to{opacity:1;filter:drop-shadow(0 0 3px #ff53c6)}}
+body[data-theme=blingee].reduce-motion::before{animation:none;opacity:.7}
+@media(prefers-reduced-motion:reduce){body[data-theme=blingee]::before{animation:none}}
+body.playing[data-theme=blingee] header{border-bottom:2px ridge #f9b8e7;background:linear-gradient(90deg,#2c0924aa,#d2199377,#160812aa);box-shadow:0 3px 8px #ff4ec877}
+body.playing[data-theme=blingee] .game-logo{filter:drop-shadow(0 0 4px #ff65cb)}
+body.playing[data-theme=blingee] .panel-label,body.playing[data-theme=blingee] .round-meta,body.playing[data-theme=blingee] #hint-display{color:#fff3fb;text-shadow:1px 1px #3c062c}
+body.playing[data-theme=blingee] .studio{border:3px ridge #ffb2e1;box-shadow:0 0 0 1px #601244,0 0 8px #f534ac;background:white}
+body.playing[data-theme=blingee] .classic-scroll-shell{border:3px ridge #ffb2e1;box-shadow:0 0 5px #e920a0}
+body.playing[data-theme=blingee] .classic-scrollbar,body.playing[data-theme=blingee] .scroll-track{background:linear-gradient(90deg,#280b21,#a3317c,#280b21);border-color:#c84c9f}
+body.playing[data-theme=blingee] .classic-scrollbar button{background-color:#f3a3d5;border-color:#ffe4f6}
+body.playing[data-theme=blingee] .scroll-thumb{background:repeating-linear-gradient(#ffd9ef 0 1px,#d845a8 1px 3px);border-color:#ffe1f5}
+body[data-theme=blingee] :is(button,button.primary){border:2px outset #ffc7e9;background:linear-gradient(#ffe2f4,#f3a3d7 49%,#d847aa 51%,#fcbfe9);color:#330523;text-shadow:0 1px #fff8;box-shadow:0 0 2px #ff70d0}
+body[data-theme=blingee] button:active{border-style:inset}
+body[data-theme=blingee] dialog{background:linear-gradient(135deg,#ffe2f3,#efa3d5);border:3px ridge #ffc4e8;box-shadow:0 0 0 2px #780951,0 0 20px #e82fa6;color:#30091f}
+body[data-theme=blingee] dialog :is(p,label,legend,h2){color:#3b092b}
+body[data-theme=blingee] #create-form h2{background:linear-gradient(90deg,#710b51,#e242aa);color:white}
+body[data-theme=blingee] input,body[data-theme=blingee] select{border-color:#e8a4d2;background:#fff8fd;color:#28041b}
+body.playing[data-theme=blingee] .palette-panel{background:linear-gradient(#f0b6dc,#dc73bd);border-color:#ffd9ef;box-shadow:1px 2px 0 #5f1047,0 0 5px #f559bd}
+body.playing[data-theme=blingee] #overlay{background:linear-gradient(135deg,#ffe2f3,#f4b5df);box-shadow:inset 0 0 0 2px #ffc6ea}
+body.playing[data-theme=blingee] #overlay h3{color:#6f104c;text-shadow:0 1px #fff}
+body.playing[data-theme=blingee] #choices button{background:linear-gradient(#fff4fb,#f3b0dc);border-color:#fff3fc;color:#590d40;box-shadow:2px 2px #ab3681}
+body[data-theme=blingee] #lobby{background:var(--blingee-sparkles),linear-gradient(140deg,#381028,#b52b85 50%,#160b20);border:3px ridge #ffc8ed}
+body[data-theme=blingee] .browser-version,body[data-theme=blingee] .browser-panel-label{color:#fff4fb}
+body[data-theme=blingee] .browser-room-controls,body[data-theme=blingee] #room-browser{background:#ffe8f6cf}
+body[data-theme=blingee] #lobby .browser-actions button{border-color:#ffd4ef;background:linear-gradient(#ffe6f5,#f4a7db);color:#520b3a}
+body[data-theme=blingee] .browser-columns{background:linear-gradient(#f69ed6,#cb4a9e);color:#fff}
+/* Chat selection colors and the white drawing surface stay legible in both themes. */
+body.playing[data-theme=blingee] .panel-label button{background:none;border:0;box-shadow:none;color:inherit;text-shadow:inherit}
+body.playing[data-theme=blingee] .message-log,body.playing[data-theme=blingee] #canvas{color:#000}

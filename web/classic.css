@@ -1,181 +1,215 @@
 /* Game geometry follows the supplied 960×560 drawer and 600×350 guesser references. */
-body[data-theme=classic]{--paper:#bfbfbf;--ink:#000;--muted:#444;--green:#008000;--line:#808080;--white:#fff;--soft:#ccc;--classic-tools:url('CLASSIC_TOOLS_IMAGE');--classic-hint:url('CLASSIC_HINT_IMAGE');--classic-done:url('CLASSIC_DONE_IMAGE');color:#000;font-family:Verdana,Arial,sans-serif;background:url('CLASSIC_METAL_IMAGE') center/100% 100% no-repeat fixed}
-body[data-theme=classic] button{border:2px outset #eee;border-radius:0;background:#ccc;color:#000}
-body[data-theme=classic] button:active{border-style:inset}body[data-theme=classic] button.primary{background:#ccc;color:#000}
-body[data-theme=classic] input,body[data-theme=classic] select{border:2px inset #eee;border-radius:0;background:#fff;color:#000}
-body[data-theme=classic] dialog{background:#c0c0c0;border:3px outset #eee;border-radius:0}
-body[data-theme=classic] .host-bar,body[data-theme=classic] .player-picker,body[data-theme=classic] .room-recovery{background:#ccc;border:2px groove #eee;border-radius:0}
-body.playing[data-theme=classic]{height:100dvh;overflow:hidden;box-shadow:inset 0 0 0 1px #777;font-size:11px}
-body.playing[data-theme=classic] header{height:50px;padding:0 6px;border:0;background:transparent;position:relative;display:block}
-body.playing[data-theme=classic] .brand{position:absolute;left:8px;top:2px;font:900 26px/34px 'Comic Sans MS','Comic Sans',cursive;letter-spacing:-2px;color:white;-webkit-text-stroke:1.2px #111;paint-order:stroke fill;text-shadow:1px 2px #111;gap:0}
-body.playing[data-theme=classic] .brand-logo,body.playing[data-theme=classic] .brand-tag{display:none}
-body.playing[data-theme=classic] .connection{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
-body.playing[data-theme=classic] .header-actions{position:absolute;right:3px;top:1px;gap:3px;z-index:15}
-body.playing[data-theme=classic] .header-actions #help{font:10px/12px Verdana,Arial,sans-serif;padding:1px 4px;height:18px}
-body.playing[data-theme=classic] .header-actions #settings-open{width:22px;height:18px;padding:0;font-size:14px;line-height:13px}
-body.playing[data-theme=classic] main{padding:2px 6px 10px;max-width:none;min-height:0}
-body.playing[data-theme=classic] .room-heading{position:fixed;left:26%;right:76px;top:3px;height:46px;padding:0;display:block;z-index:8;pointer-events:none}
-body.playing[data-theme=classic].is-artist .room-heading{right:420px}
-body.playing[data-theme=classic] .room-identity,body.playing[data-theme=classic] #round,body.playing[data-theme=classic] #phase-label{display:none}
-body.playing[data-theme=classic] .round-meta{display:block;font:11px/15px Verdana,Arial,sans-serif;letter-spacing:.35px;pointer-events:auto}
-body.playing[data-theme=classic] #classic-round{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;height:17px}
-body.playing[data-theme=classic] #artist-secret{display:flex;flex-direction:column;gap:0;font-size:11px;line-height:17px;font-weight:bold}
-body.playing[data-theme=classic] #word,body.playing[data-theme=classic] #word-value{color:#f00}
-body.playing[data-theme=classic] .room-actions{position:fixed;left:118px;top:6px;display:flex;flex-direction:column;gap:3px;align-items:stretch;margin:0;pointer-events:auto}
-body.playing[data-theme=classic] .room-actions #invite,body.playing[data-theme=classic] .room-actions #leave{height:14px;width:43px;padding:0;font:8px/9px Verdana,Arial,sans-serif;background:#ccc;border:2px outset #eee}
-body.playing[data-theme=classic] #timer-dial{position:fixed;right:9px;top:22px;width:42px;height:42px;margin:0;border:1.5px solid #777;box-shadow:inset 0 0 0 1px #eee}
-body.playing[data-theme=classic] .game-grid{display:grid;grid-template-columns:48% minmax(0,1fr);grid-template-rows:56% 40px minmax(0,1fr);gap:4px 6px;min-height:0}
-body.playing[data-theme=classic] .left-top{grid-area:1/1;grid-template-columns:35% minmax(0,1fr);gap:8px;height:auto;min-height:0}
-body.playing[data-theme=classic] .panel{border:0;border-radius:0;background:transparent;overflow:visible}
-body.playing[data-theme=classic] .panel-label{height:14px;padding:0 2px;background:transparent;border:0;color:#000;font:600 12px/14px Verdana,Arial,sans-serif;flex:none;display:block}
-body.playing[data-theme=classic] .panel-label .classic-only{display:inline;font:inherit;color:inherit}
-body.playing[data-theme=classic] #classic-player-count{font:inherit;color:inherit}
-body.playing[data-theme=classic] #player-count,body.playing[data-theme=classic] #game-status,body.playing[data-theme=classic] .chat .panel-label span{display:none}
-body.playing[data-theme=classic] .players ol,body.playing[data-theme=classic] .message-log{border:2px inset #eee;overflow-y:scroll;scrollbar-gutter:stable;margin:0;min-height:0;flex:1}
-body.playing[data-theme=classic] .players ol{background:#fff;padding:2px 3px}
-body.playing[data-theme=classic] .players li{padding:0 2px;height:17px;border-radius:0;gap:3px;background:transparent}
-body.playing[data-theme=classic] .player-name{font:11px/16px Verdana,Arial,sans-serif;color:#000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;overflow-wrap:normal}
-body.playing[data-theme=classic] .players li:first-child .player-name{color:#008000;font-weight:bold}
-body.playing[data-theme=classic] .players li.solved .player-name{color:#c00}
-body.playing[data-theme=classic] .player-role{display:none}
-body.playing[data-theme=classic] .player-score{font:11px/16px Verdana,Arial,sans-serif}
-body.playing[data-theme=classic] .message-log{padding:3px 7px;background:#ffffdc;color:#000;font:11px/14px Verdana,Arial,sans-serif}
-body.playing[data-theme=classic] .message{margin:0;font:inherit}
-body.playing[data-theme=classic] .message b{font:700 11px/14px Verdana,Arial,sans-serif;color:inherit;margin-right:2px}
-body.playing[data-theme=classic] .message.system,body.playing[data-theme=classic] .message.correct,body.playing[data-theme=classic] .message.answer,body.playing[data-theme=classic] .message.close,body.playing[data-theme=classic] .message.warning{color:#f00;font-size:11px;font-weight:normal}
-body.playing[data-theme=classic] .message.chat,body.playing[data-theme=classic] .message.guess{color:#000}
-body.playing[data-theme=classic] .chat{grid-area:3/1;margin-top:-5px;min-height:0;height:auto}
-body.playing[data-theme=classic] .chat .panel-label{font-weight:normal}
-body.playing[data-theme=classic] .chat .message-log{background:#ffffdc;border-bottom:0}
-body.playing[data-theme=classic] .chat form{margin:0;height:19px;border:2px inset #eee;border-top:0;flex:none}
-body.playing[data-theme=classic] #chat-input{font:11px/15px Verdana,Arial,sans-serif;background:#ffffdc;border:0;border-radius:0;height:17px;padding:0 4px}
-body.playing[data-theme=classic] #chat-form button,body.playing[data-theme=classic] #guess-form button{display:none}
-body.playing[data-theme=classic] #chat-input::placeholder,body.playing[data-theme=classic] #guess::placeholder{color:transparent}
-body.playing[data-theme=classic] #classic-left-controls{grid-area:2/1;display:flex;justify-content:flex-end;align-items:flex-start;padding-top:5px;position:relative;min-width:0}
-body.playing[data-theme=classic] #guess-form{display:none;margin:0;width:100%;position:absolute;top:2px;left:0;height:20px}
-body.playing[data-theme=classic].is-guesser #guess-form{display:flex}
-body.playing[data-theme=classic] #guess{width:100%;height:20px;border:2px inset #eee;padding:0 4px;font:11px/16px Verdana,Arial,sans-serif;border-radius:0;background:#fff}
-body.playing[data-theme=classic] .studio{grid-area:1/2/4/3;margin-top:14px;border:2px inset #eee;background:#fff;display:flex;min-height:0;height:auto}
-body.playing[data-theme=classic] .studio-toolbar{display:contents}
-body.playing[data-theme=classic] .studio-toolbar #tools{display:contents}
-body.playing[data-theme=classic] #drawing-palettes{display:contents}
-body.playing[data-theme=classic] .canvas-wrap{flex:1;background:#fff;min-height:0;border:0}
-body.playing[data-theme=classic] #canvas{outline:0}
-body.playing[data-theme=classic] .canvas-footer{display:none}
-body.playing[data-theme=classic] #overlay{background:#fffffff2}
-body.playing[data-theme=classic] #hint-display{position:fixed;left:26%;right:76px;top:30px;display:flex;justify-content:flex-start;padding:0;gap:10px;height:17px;z-index:9}
-body.playing[data-theme=classic].is-artist #hint-display{display:none}
-body.playing[data-theme=classic] #hint-letters{font:700 12px/16px Verdana,Arial,sans-serif;white-space:pre}
-body.playing[data-theme=classic] #hint-length{font:10px/16px Verdana,Arial,sans-serif;color:#000}
+body[data-layout=classic]{--paper:#bfbfbf;--ink:#000;--muted:#444;--green:#008000;--line:#808080;--white:#fff;--soft:#ccc;--classic-tools:url('CLASSIC_TOOLS_IMAGE');--classic-hint:url('CLASSIC_HINT_IMAGE');--classic-done:url('CLASSIC_DONE_IMAGE');color:#000;font-family:Verdana,Arial,sans-serif;background:url('CLASSIC_METAL_IMAGE') center/100% 100% no-repeat fixed}
+body[data-layout=classic] button{border:2px outset #eee;border-radius:0;background:#ccc;color:#000}
+body[data-layout=classic] button:active{border-style:inset}body[data-layout=classic] button.primary{background:#ccc;color:#000}
+body[data-layout=classic] input,body[data-layout=classic] select{border:2px inset #eee;border-radius:0;background:#fff;color:#000}
+body[data-layout=classic] dialog{background:#c0c0c0;border:3px outset #eee;border-radius:0}
+body[data-layout=classic] .host-bar,body[data-layout=classic] .player-picker,body[data-layout=classic] .room-recovery{background:#ccc;border:2px groove #eee;border-radius:0}
+body.playing[data-layout=classic]{height:100dvh;overflow:hidden;box-shadow:inset 0 0 0 1px #777;font-size:11px}
+body.playing[data-layout=classic] header{height:50px;padding:0 6px;border:0;background:transparent;position:relative;display:block}
+body.playing[data-layout=classic] .brand{position:absolute;left:8px;top:2px;font:900 26px/34px 'Comic Sans MS','Comic Sans',cursive;letter-spacing:-2px;color:white;-webkit-text-stroke:1.2px #111;paint-order:stroke fill;text-shadow:1px 2px #111;gap:0}
+body.playing[data-layout=classic] .brand-logo,body.playing[data-layout=classic] .brand-tag{display:none}
+body.playing[data-layout=classic] .connection{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+body.playing[data-layout=classic] .header-actions{position:absolute;right:3px;top:1px;gap:3px;z-index:15}
+body.playing[data-layout=classic] .header-actions #help{font:10px/12px Verdana,Arial,sans-serif;padding:1px 4px;height:18px}
+body.playing[data-layout=classic] .header-actions #settings-open{width:22px;height:18px;padding:0;font-size:14px;line-height:13px}
+body.playing[data-layout=classic] main{padding:2px 6px 10px;max-width:none;min-height:0}
+body.playing[data-layout=classic] .room-heading{position:fixed;left:26%;right:76px;top:3px;height:46px;padding:0;display:block;z-index:8;pointer-events:none}
+body.playing[data-layout=classic].is-artist .room-heading{right:420px}
+body.playing[data-layout=classic] .room-identity,body.playing[data-layout=classic] #round,body.playing[data-layout=classic] #phase-label{display:none}
+body.playing[data-layout=classic] .round-meta{display:block;font:11px/15px Verdana,Arial,sans-serif;letter-spacing:.35px;pointer-events:auto}
+body.playing[data-layout=classic] #classic-round{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;height:17px}
+body.playing[data-layout=classic] #artist-secret{display:flex;flex-direction:column;gap:0;font-size:11px;line-height:17px;font-weight:bold}
+body.playing[data-layout=classic] #word,body.playing[data-layout=classic] #word-value{color:#f00}
+body.playing[data-layout=classic] .room-actions{position:fixed;left:118px;top:6px;display:flex;flex-direction:column;gap:3px;align-items:stretch;margin:0;pointer-events:auto}
+body.playing[data-layout=classic] .room-actions #invite,body.playing[data-layout=classic] .room-actions #leave{height:14px;width:43px;padding:0;font:8px/9px Verdana,Arial,sans-serif;background:#ccc;border:2px outset #eee}
+body.playing[data-layout=classic] #timer-dial{position:fixed;right:9px;top:22px;width:42px;height:42px;margin:0;border:1.5px solid #777;box-shadow:inset 0 0 0 1px #eee}
+body.playing[data-layout=classic] .game-grid{display:grid;grid-template-columns:48% minmax(0,1fr);grid-template-rows:56% 40px minmax(0,1fr);gap:4px 6px;min-height:0}
+body.playing[data-layout=classic] .left-top{grid-area:1/1;grid-template-columns:35% minmax(0,1fr);gap:8px;height:auto;min-height:0}
+body.playing[data-layout=classic] .panel{border:0;border-radius:0;background:transparent;overflow:visible}
+body.playing[data-layout=classic] .panel-label{height:14px;padding:0 2px;background:transparent;border:0;color:#000;font:600 12px/14px Verdana,Arial,sans-serif;flex:none;display:block}
+body.playing[data-layout=classic] .panel-label .classic-only{display:inline;font:inherit;color:inherit}
+body.playing[data-layout=classic] #classic-player-count{font:inherit;color:inherit}
+body.playing[data-layout=classic] #player-count,body.playing[data-layout=classic] #game-status,body.playing[data-layout=classic] .chat .panel-label span{display:none}
+body.playing[data-layout=classic] .players ol,body.playing[data-layout=classic] .message-log{border:2px inset #eee;overflow-y:scroll;scrollbar-gutter:stable;margin:0;min-height:0;flex:1}
+body.playing[data-layout=classic] .players ol{background:#fff;padding:2px 3px}
+body.playing[data-layout=classic] .players li{padding:0 2px;height:17px;border-radius:0;gap:3px;background:transparent}
+body.playing[data-layout=classic] .player-name{font:11px/16px Verdana,Arial,sans-serif;color:#000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;overflow-wrap:normal}
+body.playing[data-layout=classic] .players li:first-child .player-name{color:#008000;font-weight:bold}
+body.playing[data-layout=classic] .players li.solved .player-name{color:#c00}
+body.playing[data-layout=classic] .player-role{display:none}
+body.playing[data-layout=classic] .player-score{font:11px/16px Verdana,Arial,sans-serif}
+body.playing[data-layout=classic] .message-log{padding:3px 7px;background:#ffffdc;color:#000;font:11px/14px Verdana,Arial,sans-serif}
+body.playing[data-layout=classic] .message{margin:0;font:inherit}
+body.playing[data-layout=classic] .message b{font:700 11px/14px Verdana,Arial,sans-serif;color:inherit;margin-right:2px}
+body.playing[data-layout=classic] .message.system,body.playing[data-layout=classic] .message.correct,body.playing[data-layout=classic] .message.answer,body.playing[data-layout=classic] .message.close,body.playing[data-layout=classic] .message.warning{color:#f00;font-size:11px;font-weight:normal}
+body.playing[data-layout=classic] .message.chat,body.playing[data-layout=classic] .message.guess{color:#000}
+body.playing[data-layout=classic] .game-grid>.chat{grid-area:3/1;margin-top:-5px;min-height:0;height:auto}
+body.playing[data-layout=classic] .chat .panel-label{font-weight:normal}
+body.playing[data-layout=classic] .chat .message-log{background:#ffffdc;border-bottom:0}
+body.playing[data-layout=classic] .chat form{margin:0;height:19px;border:2px inset #eee;border-top:0;flex:none}
+body.playing[data-layout=classic] #chat-input{font:11px/15px Verdana,Arial,sans-serif;background:#ffffdc;border:0;border-radius:0;height:17px;padding:0 4px}
+body.playing[data-layout=classic] #chat-form button,body.playing[data-layout=classic] #guess-form button{display:none}
+body.playing[data-layout=classic] #chat-input::placeholder,body.playing[data-layout=classic] #guess::placeholder{color:transparent}
+body.playing[data-layout=classic] #classic-left-controls{grid-area:2/1;display:flex;justify-content:flex-end;align-items:flex-start;padding-top:5px;position:relative;min-width:0}
+body.playing[data-layout=classic] #guess-form{display:none;margin:0;width:100%;position:absolute;top:2px;left:0;height:20px}
+body.playing[data-layout=classic].is-guesser #guess-form{display:flex}
+body.playing[data-layout=classic] #guess{width:100%;height:20px;border:2px inset #eee;padding:0 4px;font:11px/16px Verdana,Arial,sans-serif;border-radius:0;background:#fff}
+body.playing[data-layout=classic] .studio{grid-area:1/2/4/3;margin-top:14px;border:2px inset #eee;background:#fff;display:flex;min-height:0;height:auto}
+body.playing[data-layout=classic] .studio-toolbar{display:contents}
+body.playing[data-layout=classic] .studio-toolbar #tools{display:contents}
+body.playing[data-layout=classic] #drawing-palettes{display:contents}
+body.playing[data-layout=classic] .canvas-wrap{flex:1;background:#fff;min-height:0;border:0}
+body.playing[data-layout=classic] #canvas{outline:0}
+body.playing[data-layout=classic] .canvas-footer{display:none}
+body.playing[data-layout=classic] #overlay{background:#fffffff2}
+body.playing[data-layout=classic] #hint-display{position:fixed;left:26%;right:76px;top:30px;display:flex;justify-content:flex-start;padding:0;gap:10px;height:17px;z-index:9}
+body.playing[data-layout=classic].is-artist #hint-display{display:none}
+body.playing[data-layout=classic] #hint-letters{font:700 12px/16px Verdana,Arial,sans-serif;white-space:pre}
+body.playing[data-layout=classic] #hint-length{font:10px/16px Verdana,Arial,sans-serif;color:#000}
 /* The floating palettes use the original tool ordering and source sprites. */
-body.playing[data-theme=classic] .palette-panel{background:#c0c0c0;border:2px outset #eee;border-radius:0;box-shadow:2px 3px 3px #0005;padding:2px;gap:2px;z-index:12}
-body.playing[data-theme=classic] .palette-grip{width:8px;border-radius:0;border:1px solid #82a0b8;background:repeating-linear-gradient(#bed6eb 0 1px,#edf6ff 1px 2px);color:transparent;font-size:0;cursor:grab;min-height:0}
-body.playing[data-theme=classic] .drawing-panel{position:fixed;left:calc(48vw - 66px);top:40px;width:49px;display:flex;flex-direction:column;padding:1px;gap:1px}
-body.playing[data-theme=classic] .drawing-panel .palette-grip{width:43px;height:10px;align-self:auto;flex:none;background:repeating-linear-gradient(90deg,#bad5ed 0 1px,#eaf5ff 1px 2px)}
-body.playing[data-theme=classic] .drawing-panel .tool-grid{display:grid;grid-template-columns:repeat(2,21px);grid-template-rows:repeat(5,22px);gap:1px}
-body.playing[data-theme=classic] .tool-grid button{width:21px;height:22px;padding:0;border:0;border-radius:0;box-shadow:none;background-image:var(--classic-tools);background-repeat:no-repeat;background-color:#c0c0c0}
-body.playing[data-theme=classic] .tool-grid svg{visibility:hidden}
-body.playing[data-theme=classic] .tool-grid .selected{outline:1px dotted #333;outline-offset:-3px;filter:brightness(.94)}
-body.playing[data-theme=classic] #clear{grid-area:1/1;background-position:-15px -37px}
-body.playing[data-theme=classic] #eraser{grid-area:1/2;background-position:-15px -14px}
-body.playing[data-theme=classic] #circle{grid-area:2/1;background-position:-38px -37px}
-body.playing[data-theme=classic] #rectangle{grid-area:2/2;background-position:-38px -14px}
-body.playing[data-theme=classic] #zoom{grid-area:3/1;background-position:-61px -37px}
-body.playing[data-theme=classic] #fill{grid-area:3/2;background-position:-61px -14px}
-body.playing[data-theme=classic] #line{grid-area:4/1;background-position:-84px -37px}
-body.playing[data-theme=classic] #spray{grid-area:4/2;background-position:-84px -14px}
-body.playing[data-theme=classic] #brush{grid-area:5/1;background-position:-107px -37px}
-body.playing[data-theme=classic] #pen{grid-area:5/2;background-position:-107px -14px}
-body.playing[data-theme=classic] .color-panel{position:fixed;top:17px;right:76px;display:flex;align-items:center}
-body.playing[data-theme=classic] .color-panel .palette{grid-template-columns:repeat(8,13px);grid-template-rows:repeat(3,11px);gap:2px;padding:1px;border:0;background:#c0c0c0}
-body.playing[data-theme=classic] .swatch{width:13px;height:11px;border:1px solid #fff;box-shadow:0 0 0 1px #777;border-radius:0;padding:0}
-body.playing[data-theme=classic] .swatch.selected{outline:1px solid #000;outline-offset:1px}
-body.playing[data-theme=classic] .color-extra{grid-template-columns:16px;grid-template-rows:18px 10px 10px;gap:1px;align-self:auto}
-body.playing[data-theme=classic] .color-extra button{padding:0;border:1px outset #eee;font:9px/9px Arial,sans-serif;background:#ccc}
-body.playing[data-theme=classic] .color-extra #color-preview{padding:1px}
-body.playing[data-theme=classic] .stroke-panel{position:fixed;top:20px;right:270px;width:130px;display:flex;align-items:center}
-body.playing[data-theme=classic] .stroke-panel .stroke-control{display:grid;grid-template-columns:33px 79px;grid-template-rows:12px 19px;gap:0 2px;position:relative}
-body.playing[data-theme=classic] #brush-preview{width:33px;height:31px;border:0;background:linear-gradient(100deg,#fff,#ccc)}
-body.playing[data-theme=classic] .stroke-control label{font-size:0;height:12px}
-body.playing[data-theme=classic] #width-value{position:absolute;right:0;bottom:-2px;font:9px/10px Verdana,Arial,sans-serif;color:#333}
-body.playing[data-theme=classic] .stroke-panel .stroke-control input{width:79px;height:17px;margin:0;padding:0;writing-mode:horizontal-tb;direction:ltr;appearance:none;border:0;border-radius:0;background:repeating-linear-gradient(90deg,#888 0 1px,transparent 1px 3px) top/100% 5px no-repeat}
-body.playing[data-theme=classic] #width::-webkit-slider-thumb{appearance:none;width:8px;height:14px;background:linear-gradient(90deg,#bfd7ee,#6794b7);border:1px outset #cce2f5;border-radius:4px;box-shadow:1px 1px 1px #666}
-body.playing[data-theme=classic] #width::-moz-range-thumb{width:7px;height:13px;background:#9abfdc;border:1px outset #cce2f5;border-radius:4px}
+body.playing[data-layout=classic] .palette-panel{background:#c0c0c0;border:2px outset #eee;border-radius:0;box-shadow:2px 3px 3px #0005;padding:2px;gap:2px;z-index:12}
+body.playing[data-layout=classic] .palette-grip{width:8px;border-radius:0;border:1px solid #82a0b8;background:repeating-linear-gradient(#bed6eb 0 1px,#edf6ff 1px 2px);color:transparent;font-size:0;cursor:grab;min-height:0}
+body.playing[data-layout=classic] .drawing-panel{position:fixed;left:calc(48vw - 66px);top:40px;width:49px;display:flex;flex-direction:column;padding:1px;gap:1px}
+body.playing[data-layout=classic] .drawing-panel .palette-grip{width:43px;height:10px;align-self:auto;flex:none;background:repeating-linear-gradient(90deg,#bad5ed 0 1px,#eaf5ff 1px 2px)}
+body.playing[data-layout=classic] .drawing-panel .tool-grid{display:grid;grid-template-columns:repeat(2,21px);grid-template-rows:repeat(5,22px);gap:1px}
+body.playing[data-layout=classic] .tool-grid button{width:21px;height:22px;padding:0;border:0;border-radius:0;box-shadow:none;background-image:var(--classic-tools);background-repeat:no-repeat;background-color:#c0c0c0}
+body.playing[data-layout=classic] .tool-grid svg{visibility:hidden}
+body.playing[data-layout=classic] .tool-grid .selected{outline:1px dotted #333;outline-offset:-3px;filter:brightness(.94)}
+body.playing[data-layout=classic] #clear{grid-area:1/1;background-position:-15px -37px}
+body.playing[data-layout=classic] #eraser{grid-area:1/2;background-position:-15px -14px}
+body.playing[data-layout=classic] #circle{grid-area:2/1;background-position:-38px -37px}
+body.playing[data-layout=classic] #rectangle{grid-area:2/2;background-position:-38px -14px}
+body.playing[data-layout=classic] #zoom{grid-area:3/1;background-position:-61px -37px}
+body.playing[data-layout=classic] #fill{grid-area:3/2;background-position:-61px -14px}
+body.playing[data-layout=classic] #line{grid-area:4/1;background-position:-84px -37px}
+body.playing[data-layout=classic] #spray{grid-area:4/2;background-position:-84px -14px}
+body.playing[data-layout=classic] #brush{grid-area:5/1;background-position:-107px -37px}
+body.playing[data-layout=classic] #pen{grid-area:5/2;background-position:-107px -14px}
+body.playing[data-layout=classic] .color-panel{position:fixed;top:17px;right:76px;display:flex;align-items:center}
+body.playing[data-layout=classic] .color-panel .palette{grid-template-columns:repeat(8,13px);grid-template-rows:repeat(3,11px);gap:2px;padding:1px;border:0;background:#c0c0c0}
+body.playing[data-layout=classic] .swatch{width:13px;height:11px;border:1px solid #fff;box-shadow:0 0 0 1px #777;border-radius:0;padding:0}
+body.playing[data-layout=classic] .swatch.selected{outline:1px solid #000;outline-offset:1px}
+body.playing[data-layout=classic] .color-extra{grid-template-columns:16px;grid-template-rows:18px 10px 10px;gap:1px;align-self:auto}
+body.playing[data-layout=classic] .color-extra button{padding:0;border:1px outset #eee;font:9px/9px Arial,sans-serif;background:#ccc}
+body.playing[data-layout=classic] .color-extra #color-preview{padding:1px}
+body.playing[data-layout=classic] .stroke-panel{position:fixed;top:20px;right:270px;width:130px;display:flex;align-items:center}
+body.playing[data-layout=classic] .stroke-panel .stroke-control{display:grid;grid-template-columns:33px 79px;grid-template-rows:12px 19px;gap:0 2px;position:relative}
+body.playing[data-layout=classic] #brush-preview{width:33px;height:31px;border:0;background:linear-gradient(100deg,#fff,#ccc)}
+body.playing[data-layout=classic] .stroke-control label{font-size:0;height:12px}
+body.playing[data-layout=classic] #width-value{position:absolute;right:0;bottom:-2px;font:9px/10px Verdana,Arial,sans-serif;color:#333}
+body.playing[data-layout=classic] .stroke-panel .stroke-control input{width:79px;height:17px;margin:0;padding:0;writing-mode:horizontal-tb;direction:ltr;appearance:none;border:0;border-radius:0;background:repeating-linear-gradient(90deg,#888 0 1px,transparent 1px 3px) top/100% 5px no-repeat}
+body.playing[data-layout=classic] #width::-webkit-slider-thumb{appearance:none;width:8px;height:14px;background:linear-gradient(90deg,#bfd7ee,#6794b7);border:1px outset #cce2f5;border-radius:4px;box-shadow:1px 1px 1px #666}
+body.playing[data-layout=classic] #width::-moz-range-thumb{width:7px;height:13px;background:#9abfdc;border:1px outset #cce2f5;border-radius:4px}
 /* Original 87×40 hint/skip panel, with real buttons over the two controls. */
-body.playing[data-theme=classic] #round-controls{position:relative;width:87px;height:40px;margin:0;padding:0;border:0;background:var(--classic-hint) no-repeat;flex:none;display:block}
-body.playing[data-theme=classic] #round-controls[data-done=true]{background-image:var(--classic-done)}
-body.playing[data-theme=classic] #round-controls button{position:absolute;top:4px;height:30px;margin:0;padding:0;border:0;border-radius:0;font-size:0;background-color:#c0c0c0;background-image:var(--classic-hint);background-repeat:no-repeat}
-body.playing[data-theme=classic] #round-controls #give-hint{left:16px;width:35px;background-position:-16px -4px}
-body.playing[data-theme=classic] #round-controls #skip{left:54px;width:29px;background-position:-54px -4px}
-body.playing[data-theme=classic] #round-controls[data-done=true] button{background-image:var(--classic-done)}
-body.playing[data-theme=classic] #round-controls #give-hint:disabled{filter:grayscale(1);opacity:.7}
-body.playing[data-theme=classic] #hints-used{display:none}
+body.playing[data-layout=classic] #round-controls{position:relative;width:87px;height:40px;margin:0;padding:0;border:0;background:var(--classic-hint) no-repeat;flex:none;display:block}
+body.playing[data-layout=classic] #round-controls[data-done=true]{background-image:var(--classic-done)}
+body.playing[data-layout=classic] #round-controls button{position:absolute;top:4px;height:30px;margin:0;padding:0;border:0;border-radius:0;font-size:0;background-color:#c0c0c0;background-image:var(--classic-hint);background-repeat:no-repeat}
+body.playing[data-layout=classic] #round-controls #give-hint{left:16px;width:35px;background-position:-16px -4px}
+body.playing[data-layout=classic] #round-controls #skip{left:54px;width:29px;background-position:-54px -4px}
+body.playing[data-layout=classic] #round-controls[data-done=true] button{background-image:var(--classic-done)}
+body.playing[data-layout=classic] #round-controls #give-hint:disabled{filter:grayscale(1);opacity:.7}
+body.playing[data-layout=classic] #hints-used{display:none}
 /* Blue ridged scroll thumbs and small arrow buttons from the old player/log panes. */
-body.playing[data-theme=classic] :is(.players ol,.message-log)::-webkit-scrollbar{width:15px;background:#d5d5d5}
-body.playing[data-theme=classic] :is(.players ol,.message-log)::-webkit-scrollbar-track{border:1px solid #aaa;background:#d7d7d7}
-body.playing[data-theme=classic] :is(.players ol,.message-log)::-webkit-scrollbar-thumb{border:2px outset #e7f2fd;background:repeating-linear-gradient(#bad2e9 0 1px,#789bb7 1px 2px);min-height:23px}
-body.playing[data-theme=classic] :is(.players ol,.message-log)::-webkit-scrollbar-button:single-button{display:block;height:14px;border:2px outset #eee;background:#ccc center/8px 6px no-repeat}
-body.playing[data-theme=classic] :is(.players ol,.message-log)::-webkit-scrollbar-button:single-button:decrement{background-image:url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="8" height="6"%3E%3Cpath d="M0 6L4 0L8 6Z" fill="%23888"/%3E%3C/svg%3E')}
-body.playing[data-theme=classic] :is(.players ol,.message-log)::-webkit-scrollbar-button:single-button:increment{background-image:url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="8" height="6"%3E%3Cpath d="M0 0L4 6L8 0Z" fill="%23888"/%3E%3C/svg%3E')}
-body.playing[data-theme=classic].large-chat .message-log,body.playing[data-theme=classic].large-chat .message{font-size:13px;line-height:16px}
-body.playing[data-theme=classic].large-chat .message b{font-size:12px;line-height:16px}
+body.playing[data-layout=classic] :is(.players ol,.message-log)::-webkit-scrollbar{width:15px;background:#d5d5d5}
+body.playing[data-layout=classic] :is(.players ol,.message-log)::-webkit-scrollbar-track{border:1px solid #aaa;background:#d7d7d7}
+body.playing[data-layout=classic] :is(.players ol,.message-log)::-webkit-scrollbar-thumb{border:2px outset #e7f2fd;background:repeating-linear-gradient(#bad2e9 0 1px,#789bb7 1px 2px);min-height:23px}
+body.playing[data-layout=classic] :is(.players ol,.message-log)::-webkit-scrollbar-button:single-button{display:block;height:14px;border:2px outset #eee;background:#ccc center/8px 6px no-repeat}
+body.playing[data-layout=classic] :is(.players ol,.message-log)::-webkit-scrollbar-button:single-button:decrement{background-image:url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="8" height="6"%3E%3Cpath d="M0 6L4 0L8 6Z" fill="%23888"/%3E%3C/svg%3E')}
+body.playing[data-layout=classic] :is(.players ol,.message-log)::-webkit-scrollbar-button:single-button:increment{background-image:url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="8" height="6"%3E%3Cpath d="M0 0L4 6L8 0Z" fill="%23888"/%3E%3C/svg%3E')}
+body.playing[data-layout=classic].large-chat .message-log,body.playing[data-layout=classic].large-chat .message{font-size:13px;line-height:16px}
+body.playing[data-layout=classic].large-chat .message b{font-size:12px;line-height:16px}
 @media(max-width:760px){
- body.playing[data-theme=classic]{height:100dvh;min-height:0;overflow:hidden}
- body.playing[data-theme=classic] header{height:40px;padding:0 6px}
- body.playing[data-theme=classic] main{padding:2px 6px 9px}
- body.playing[data-theme=classic] .game-grid{display:grid;grid-template-columns:50% minmax(0,1fr);grid-template-rows:54% 24px minmax(0,1fr);gap:4px 6px}
- body.playing[data-theme=classic] .left-top{display:grid;grid-template-columns:42% minmax(0,1fr);gap:6px;height:auto}
- body.playing[data-theme=classic] .panel-label{height:12px;font-size:10px;line-height:12px}
- body.playing[data-theme=classic] .studio{grid-area:1/2/4/3;margin-top:12px;height:auto;order:initial}
- body.playing[data-theme=classic] .chat{grid-area:3/1;margin-top:-6px;height:auto;order:initial}
- body.playing[data-theme=classic] .message-log,body.playing[data-theme=classic] .message b{font-size:9px;line-height:11px}
- body.playing[data-theme=classic] .player-name,body.playing[data-theme=classic] .player-score{font-size:9px;line-height:14px}
- body.playing[data-theme=classic] .players li{height:14px}
- body.playing[data-theme=classic] .room-heading{left:29%;right:73px;top:3px;height:34px;min-height:0;margin:0}
- body.playing[data-theme=classic] .round-meta{font-size:9px;line-height:12px}
- body.playing[data-theme=classic] #classic-round{height:14px}
- body.playing[data-theme=classic] #timer-dial{top:18px;right:8px;width:33px;height:33px}
- body.playing[data-theme=classic] #hint-display{top:22px;left:29%;right:72px}
- body.playing[data-theme=classic] #hint-letters{font-size:10px}
- body.playing[data-theme=classic] #guess-form,body.playing[data-theme=classic] #guess{height:19px;font-size:10px}
- body.playing[data-theme=classic] #classic-left-controls{padding-top:0}
- body.playing[data-theme=classic].is-artist header{height:100px}
- body.playing[data-theme=classic].is-artist .room-heading{top:36px;left:8px;right:60px}
- body.playing[data-theme=classic].is-artist #artist-secret{flex-direction:row;gap:10px;font-size:10px;line-height:12px}
- body.playing[data-theme=classic] .stroke-panel{left:8px;right:auto;top:57px}
- body.playing[data-theme=classic] .color-panel{left:148px;right:auto;top:53px}
- body.playing[data-theme=classic] .drawing-panel{left:calc(50vw - 65px);top:104px}
+ body.playing[data-layout=classic]{height:100dvh;min-height:0;overflow:hidden}
+ body.playing[data-layout=classic] header{height:40px;padding:0 6px}
+ body.playing[data-layout=classic] main{padding:2px 6px 9px}
+ body.playing[data-layout=classic] .game-grid{display:grid;grid-template-columns:50% minmax(0,1fr);grid-template-rows:54% 24px minmax(0,1fr);gap:4px 6px}
+ body.playing[data-layout=classic] .left-top{display:grid;grid-template-columns:42% minmax(0,1fr);gap:6px;height:auto}
+ body.playing[data-layout=classic] .panel-label{height:12px;font-size:10px;line-height:12px}
+ body.playing[data-layout=classic] .studio{grid-area:1/2/4/3;margin-top:12px;height:auto;order:initial}
+ body.playing[data-layout=classic] .game-grid>.chat{grid-area:3/1;margin-top:-6px;height:auto;order:initial}
+ body.playing[data-layout=classic] .message-log,body.playing[data-layout=classic] .message b{font-size:9px;line-height:11px}
+ body.playing[data-layout=classic] .player-name,body.playing[data-layout=classic] .player-score{font-size:9px;line-height:14px}
+ body.playing[data-layout=classic] .players li{height:14px}
+ body.playing[data-layout=classic] .room-heading{left:29%;right:73px;top:3px;height:34px;min-height:0;margin:0}
+ body.playing[data-layout=classic] .round-meta{font-size:9px;line-height:12px}
+ body.playing[data-layout=classic] #classic-round{height:14px}
+ body.playing[data-layout=classic] #timer-dial{top:18px;right:8px;width:33px;height:33px}
+ body.playing[data-layout=classic] #hint-display{top:22px;left:29%;right:72px}
+ body.playing[data-layout=classic] #hint-letters{font-size:10px}
+ body.playing[data-layout=classic] #guess-form,body.playing[data-layout=classic] #guess{height:19px;font-size:10px}
+ body.playing[data-layout=classic] #classic-left-controls{padding-top:0}
+ body.playing[data-layout=classic].is-artist header{height:100px}
+ body.playing[data-layout=classic].is-artist .room-heading{top:36px;left:8px;right:60px}
+ body.playing[data-layout=classic].is-artist #artist-secret{flex-direction:row;gap:10px;font-size:10px;line-height:12px}
+ body.playing[data-layout=classic] .stroke-panel{left:8px;right:auto;top:57px}
+ body.playing[data-layout=classic] .color-panel{left:148px;right:auto;top:53px}
+ body.playing[data-layout=classic] .drawing-panel{left:calc(50vw - 65px);top:104px}
 }
-@media(max-width:520px){body.playing[data-theme=classic]:not(.is-artist) header{height:64px}body.playing[data-theme=classic] .room-heading{left:8px;top:37px;right:50px}body.playing[data-theme=classic] #hint-display{top:52px;left:8px;right:8px}}
+@media(max-width:520px){body.playing[data-layout=classic]:not(.is-artist) header{height:64px}body.playing[data-layout=classic] .room-heading{left:8px;top:37px;right:50px}body.playing[data-layout=classic] #hint-display{top:52px;left:8px;right:8px}}
 /* Always-visible classic scrollbars retain their arrows, paging, and thumb dragging on every OS. */
-body.playing[data-theme=classic] .classic-scroll-shell{display:flex;position:relative;flex:1;min-width:0;min-height:0;border:2px inset #eee;background:#fff}
-body.playing[data-theme=classic] .classic-scroll-shell :is(.message-log,ol){border:0;scrollbar-width:none;scrollbar-gutter:auto;overflow-y:auto;min-width:0}
-body.playing[data-theme=classic] .classic-scroll-shell :is(.message-log,ol)::-webkit-scrollbar{display:none}
-body.playing[data-theme=classic] .classic-scrollbar{display:flex;flex-direction:column;width:15px;flex:none;background:#ccc}
-body.playing[data-theme=classic] .classic-scrollbar button{width:15px;height:14px;flex:none;margin:0;padding:0;border:2px outset #eee;border-radius:0;background:#ccc center/8px 6px no-repeat}
-body.playing[data-theme=classic] .classic-scrollbar .scroll-up{background-image:url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="8" height="6"%3E%3Cpath d="M0 6L4 0L8 6Z" fill="%23888"/%3E%3C/svg%3E')}
-body.playing[data-theme=classic] .classic-scrollbar .scroll-down{background-image:url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="8" height="6"%3E%3Cpath d="M0 0L4 6L8 0Z" fill="%23888"/%3E%3C/svg%3E')}
-body.playing[data-theme=classic] .scroll-track{position:relative;flex:1;min-height:0;border:1px solid #aaa;background:#d7d7d7}
-body.playing[data-theme=classic] .scroll-thumb{position:absolute;left:0;right:0;min-height:0;box-sizing:border-box;border:2px outset #e7f2fd;background:repeating-linear-gradient(#bad2e9 0 1px,#789bb7 1px 2px);cursor:default;touch-action:none}
-body.playing[data-theme=classic] .chat .classic-scroll-shell{border-bottom:0}
-body.playing[data-theme=classic] .chat .classic-scrollbar{margin-bottom:-19px;z-index:2}
-body.playing[data-theme=classic] #chat-input{padding-right:18px}
-body.playing[data-theme=classic] .tool-grid button:has(svg.outline){background-image:none;background-color:#ccc;border:2px outset #eee}
-body.playing[data-theme=classic] .tool-grid svg.outline{visibility:visible;width:17px;height:17px;stroke:#333}
-@media(max-width:760px){body.playing[data-theme=classic] .left-top{grid-template-columns:43% minmax(0,1fr);gap:10px}body.playing[data-theme=classic] .classic-scrollbar{width:12px}body.playing[data-theme=classic] .classic-scrollbar button{width:12px;height:12px}}
+body.playing[data-layout=classic] .classic-scroll-shell{display:flex;position:relative;flex:1;min-width:0;min-height:0;border:2px inset #eee;background:#fff}
+body.playing[data-layout=classic] .classic-scroll-shell :is(.message-log,ol){border:0;scrollbar-width:none;scrollbar-gutter:auto;overflow-y:auto;min-width:0}
+body.playing[data-layout=classic] .classic-scroll-shell :is(.message-log,ol)::-webkit-scrollbar{display:none}
+body.playing[data-layout=classic] .classic-scrollbar{display:flex;flex-direction:column;width:15px;flex:none;background:#ccc}
+body.playing[data-layout=classic] .classic-scrollbar button{width:15px;height:14px;flex:none;margin:0;padding:0;border:2px outset #eee;border-radius:0;background:#ccc center/8px 6px no-repeat}
+body.playing[data-layout=classic] .classic-scrollbar .scroll-up{background-image:url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="8" height="6"%3E%3Cpath d="M0 6L4 0L8 6Z" fill="%23888"/%3E%3C/svg%3E')}
+body.playing[data-layout=classic] .classic-scrollbar .scroll-down{background-image:url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="8" height="6"%3E%3Cpath d="M0 0L4 6L8 0Z" fill="%23888"/%3E%3C/svg%3E')}
+body.playing[data-layout=classic] .scroll-track{position:relative;flex:1;min-height:0;border:1px solid #aaa;background:#d7d7d7}
+body.playing[data-layout=classic] .scroll-thumb{position:absolute;left:0;right:0;min-height:0;box-sizing:border-box;border:2px outset #e7f2fd;background:repeating-linear-gradient(#bad2e9 0 1px,#789bb7 1px 2px);cursor:default;touch-action:none}
+body.playing[data-layout=classic] .chat .classic-scroll-shell{border-bottom:0}
+body.playing[data-layout=classic] .chat .classic-scrollbar{margin-bottom:-19px;z-index:2}
+body.playing[data-layout=classic] #chat-input{padding-right:18px}
+body.playing[data-layout=classic] .tool-grid button:has(svg.outline){background-image:none;background-color:#ccc;border:2px outset #eee}
+body.playing[data-layout=classic] .tool-grid svg.outline{visibility:visible;width:17px;height:17px;stroke:#333}
+@media(max-width:760px){body.playing[data-layout=classic] .left-top{grid-template-columns:43% minmax(0,1fr);gap:10px}body.playing[data-layout=classic] .classic-scrollbar{width:12px}body.playing[data-layout=classic] .classic-scrollbar button{width:12px;height:12px}}
 /* Classic docking is saved separately from the Default theme's palette arrangement. */
-body.playing[data-theme=classic] .palette-panel.classic-positioned{left:var(--classic-x);top:var(--classic-y);right:auto}
-body.playing[data-theme=classic] .drawing-panel.classic-rotated{flex-direction:row;width:130px}
-body.playing[data-theme=classic] .drawing-panel.classic-rotated .palette-grip{width:8px;height:45px}
-body.playing[data-theme=classic] .drawing-panel.classic-rotated .tool-grid{grid-template-columns:repeat(5,21px);grid-template-rows:repeat(2,22px)}
-body.playing[data-theme=classic] .classic-rotated #eraser{grid-area:1/1}body.playing[data-theme=classic] .classic-rotated #rectangle{grid-area:1/2}body.playing[data-theme=classic] .classic-rotated #fill{grid-area:1/3}body.playing[data-theme=classic] .classic-rotated #spray{grid-area:1/4}body.playing[data-theme=classic] .classic-rotated #pen{grid-area:1/5}
-body.playing[data-theme=classic] .classic-rotated #clear{grid-area:2/1}body.playing[data-theme=classic] .classic-rotated #circle{grid-area:2/2}body.playing[data-theme=classic] .classic-rotated #zoom{grid-area:2/3}body.playing[data-theme=classic] .classic-rotated #line{grid-area:2/4}body.playing[data-theme=classic] .classic-rotated #brush{grid-area:2/5}
-body.playing[data-theme=classic] .color-panel.classic-rotated .palette{grid-template-columns:repeat(3,13px);grid-template-rows:repeat(8,11px)}
-body.playing[data-theme=classic] .color-panel.classic-rotated .color-extra{align-self:flex-start}
-body.playing[data-theme=classic] .stroke-panel.classic-rotated{flex-direction:column;width:42px}
-body.playing[data-theme=classic] .stroke-panel.classic-rotated .palette-grip{width:32px;height:8px;flex:none}
-body.playing[data-theme=classic] .stroke-panel.classic-rotated .stroke-control{display:flex;flex-direction:column;width:33px;gap:2px;padding-bottom:10px}
-body.playing[data-theme=classic] .stroke-panel.classic-rotated .stroke-control label{height:0}
-body.playing[data-theme=classic] .stroke-panel.classic-rotated .stroke-control input{writing-mode:vertical-lr;direction:rtl;appearance:slider-vertical;height:75px;width:18px;background:#ddd}
+body.playing[data-layout=classic] .palette-panel.classic-positioned{left:var(--classic-x);top:var(--classic-y);right:auto}
+body.playing[data-layout=classic] .drawing-panel.classic-rotated{flex-direction:row;width:130px}
+body.playing[data-layout=classic] .drawing-panel.classic-rotated .palette-grip{width:8px;height:45px}
+body.playing[data-layout=classic] .drawing-panel.classic-rotated .tool-grid{grid-template-columns:repeat(5,21px);grid-template-rows:repeat(2,22px)}
+body.playing[data-layout=classic] .classic-rotated #eraser{grid-area:1/1}body.playing[data-layout=classic] .classic-rotated #rectangle{grid-area:1/2}body.playing[data-layout=classic] .classic-rotated #fill{grid-area:1/3}body.playing[data-layout=classic] .classic-rotated #spray{grid-area:1/4}body.playing[data-layout=classic] .classic-rotated #pen{grid-area:1/5}
+body.playing[data-layout=classic] .classic-rotated #clear{grid-area:2/1}body.playing[data-layout=classic] .classic-rotated #circle{grid-area:2/2}body.playing[data-layout=classic] .classic-rotated #zoom{grid-area:2/3}body.playing[data-layout=classic] .classic-rotated #line{grid-area:2/4}body.playing[data-layout=classic] .classic-rotated #brush{grid-area:2/5}
+body.playing[data-layout=classic] .color-panel.classic-rotated .palette{grid-template-columns:repeat(3,13px);grid-template-rows:repeat(8,11px)}
+body.playing[data-layout=classic] .color-panel.classic-rotated .color-extra{align-self:flex-start}
+body.playing[data-layout=classic] .stroke-panel.classic-rotated{flex-direction:column;width:42px}
+body.playing[data-layout=classic] .stroke-panel.classic-rotated .palette-grip{width:32px;height:8px;flex:none}
+body.playing[data-layout=classic] .stroke-panel.classic-rotated .stroke-control{display:flex;flex-direction:column;width:33px;gap:2px;padding-bottom:10px}
+body.playing[data-layout=classic] .stroke-panel.classic-rotated .stroke-control label{height:0}
+body.playing[data-layout=classic] .stroke-panel.classic-rotated .stroke-control input{writing-mode:vertical-lr;direction:rtl;appearance:slider-vertical;height:75px;width:18px;background:#ddd}
 
-@media(max-width:760px){body.playing[data-theme=classic]{background-image:url('CLASSIC_METAL_SMALL_IMAGE')}}
+@media(max-width:760px){body.playing[data-layout=classic]{background-image:url('CLASSIC_METAL_SMALL_IMAGE')}}
+
+/* Keep the complete 1000×700 drawing visible when layout or viewport changes. */
+body.playing[data-layout=classic] .canvas-wrap{flex:1 1 0%;padding:0;min-height:0;min-width:0;overflow:hidden}
+body.playing[data-layout=classic] #canvas{flex:0 0 auto;max-width:none;max-height:none;aspect-ratio:10/7;align-self:center}
+body.playing[data-layout=classic] .brand{width:106px;height:44px;display:block;font-size:0;letter-spacing:0;-webkit-text-stroke:0;text-shadow:none}
+.game-logo{display:block;width:100%;height:100%;object-fit:contain}
+body[data-layout=classic] #create-dialog{padding:0;box-shadow:4px 4px #0007;font:12px/18px Verdana,Arial,sans-serif;max-width:420px}
+body[data-layout=classic] #create-form{padding:15px}
+body[data-layout=classic] #create-form h2{margin:-15px -15px 18px;padding:5px 9px;background:linear-gradient(90deg,#4c7399,#c0d8ec);color:#fff;font:bold 13px/20px Verdana,Arial,sans-serif;letter-spacing:0}
+body[data-layout=classic] #create-form p{font:12px/18px Verdana,Arial,sans-serif;color:#222}
+body[data-layout=classic] #create-form input{height:27px;padding:2px 5px;font:12px Verdana,Arial,sans-serif}
+body[data-layout=classic] #create-form button{padding:3px 12px;min-height:26px;font:12px Verdana,Arial,sans-serif}
+body.playing[data-layout=classic] #overlay{background:#c0c0c0;padding:16px;box-shadow:inset 0 0 0 2px #eee}
+body.playing[data-layout=classic] #overlay h3{font:bold 17px/23px Verdana,Arial,sans-serif;margin:8px 0;letter-spacing:0;color:#000}
+body.playing[data-layout=classic] #overlay p{font:12px/18px Verdana,Arial,sans-serif;color:#222}
+body.playing[data-layout=classic] #overlay .overlay-icon{display:none}
+body.playing[data-layout=classic] #choices{width:min(280px,100%);display:grid;gap:8px;margin:10px 0}
+body.playing[data-layout=classic] #choices button{background:#ddd;border:2px outset #fff;border-radius:0;color:#000;min-height:30px;padding:5px 12px;font:bold 12px/16px Verdana,Arial,sans-serif}
+body.playing[data-layout=classic] #choices button:active{border-style:inset;background:#c5d9ea}
+body.playing[data-layout=classic] :is(.game-log,.game-grid>.chat) .message-log{background:#fff}
+body.playing[data-layout=classic] :is(.game-log,.game-grid>.chat).chat-selected .message-log{background:#ffffdc}
+body.playing[data-layout=classic] .message,body.playing[data-layout=classic] .message:is(.chat,.guess,.system,.warning,.answer,.correct,.close){display:block;min-height:0;height:auto;margin:0;padding:0;font-size:11px;line-height:14px;grid-area:auto}
+body.playing[data-layout=classic].large-chat .message{font-size:13px;line-height:16px}
+body.playing[data-layout=classic] .panel-label button{display:inline;border:0;background:none;padding:0;color:inherit;font:inherit;line-height:inherit;height:14px;box-shadow:none}
+body.playing[data-layout=classic] .panel-label button:focus-visible{outline:1px dotted #000}
+
+body.playing[data-layout=classic] :is(#guess,#chat-input){background:#fff}
+body.playing[data-layout=classic][data-active-chat=game] #guess,body.playing[data-layout=classic][data-active-chat=chat] #chat-input{background:#ffffdc}
+/* Letterboxing is chrome, not an apparently drawable white extension. */
+body.playing[data-layout=classic] .canvas-wrap{background:#bfbfbf}
+body.playing[data-layout=classic] #canvas{background:#fff;outline:1px solid #999}
+body.playing[data-theme=blingee] .canvas-wrap{background:linear-gradient(135deg,#29091f,#6a1d50)}
+
+body[data-layout=classic] #create-form #create-error{color:#b00020}

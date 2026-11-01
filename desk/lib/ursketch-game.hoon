@@ -81,6 +81,10 @@
   ^-  room
   =/  logs=(list message)  [[who text kind] chat.r]
   r(chat (scag 80 logs))
+++  full
+  |=  r=room
+  ^-  ?
+  (gte (lent players.r) 10)
 ++  member
   |=  [r=room who=@p]
   ^-  ?
@@ -203,7 +207,7 @@
   ?:  ?=(%drawing phase.r)
     (reveal r now)
   ?.  ?=(%reveal phase.r)  r
-  ?:  (gte +(turn.r) (mul 3 (lent players.r)))
+  ?:  (gte +(turn.r) 10)
     (say r(phase %finished, deadline ~2000.1.1, token +(token.r)) 'Room' 'Game over! Start another game to play again.' 'system')
   (choose r(turn +(turn.r), players (welp (slag 1 players.r) (scag 1 players.r))) now)
 --

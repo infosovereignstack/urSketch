@@ -217,3 +217,29 @@ browser, background turn alerts, scheduling the whole remaining tick window
 in advance, and cancellation of future source nodes on mute/leave. Its result
 is `artifacts/audio-clock-verification.json`. Live comet smoke checks and the
 full intro/media regression passed on 0.12.0 without posting to Global Chat.
+
+## Classic / Blingee and ten-round games (0.13.0)
+
+`themes-and-gameplay.py` exercises two native private ships with the built release
+client (`URSKETCH_PREVIEW=1` serves that client directly while retaining native
+room traffic). It verifies saved Default-to-Classic migration, hidden old-theme
+selection, publisher-first rooms on the guest ship, create-room availability,
+Classic menus, the current logo, PNG favicon, and Classic/Blingee canvas bounds
+at 1280×720, 1366×768, 1024×600 and 960×560. Actual pointer strokes at all four
+corners are replayed and sampled on the guest's canvas. It checks zoom reset
+across themes, selected yellow / unselected white chats, identical row spacing,
+black-pen reset on a later artist turn, saved Blingee after refresh, HTTP timeout
+translation and an actual native hint-rejection explanation.
+
+The sound suite checks NewRound before word choice and no second NewRound on
+choosing a word. Ordinary wrong guesses remain public; near guesses are absent
+from both ships' shared message arrays and only the guesser receives feedback.
+The native rules generator verifies the tenth turn is the last, capacity at
+9 versus 10 players, and existing timer/scoring/hint/departure rules.
+
+The cross-host creation check also injects a failed Create request, verifies an
+inline error is visible without switching the selected publisher, then retries
+successfully and checks ownership on the guest's own ship. Live 0.13.0 smoke
+checks and the full intro/media regression passed; no Global Chat test posts
+were sent to the publisher. The tile favicon is an exact, content-addressed
+local PNG rather than an inline copy in each HTML page.

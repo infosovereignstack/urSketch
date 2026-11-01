@@ -5,12 +5,13 @@ import base64
 import json
 import re
 from media_assets import media_assets, write_media
-from release import VERSION, LOGO_SVG, ICON_DATA_URL, FAVICON_DATA_URL
+from release import VERSION, LOGO_SVG, ICON_DATA_URL, FAVICON_URL
 
 ROOT = Path(__file__).resolve().parents[1]
+(ROOT/'desk/media/images/app-tile.png').write_bytes((ROOT/'web/tile.png').read_bytes())
 assets = media_assets()
 write_media(assets)
-html = (ROOT / 'web/index.html').read_text().replace('URSKETCH_APP_VERSION', VERSION).replace('<!-- URSKETCH_LOGO -->', LOGO_SVG).replace('URSKETCH_FAVICON_DATA_URL', FAVICON_DATA_URL)
+html = (ROOT / 'web/index.html').read_text().replace('URSKETCH_APP_VERSION', VERSION).replace('<!-- URSKETCH_LOGO -->', LOGO_SVG).replace('URSKETCH_FAVICON_URL', FAVICON_URL)
 docket = ROOT / 'desk/desk.docket-0'
 lines = [line for line in docket.read_text().splitlines() if not line.strip().startswith('image+')]
 lines.insert(next(i for i,line in enumerate(lines) if line.strip().startswith('version+')), "  image+'"+ICON_DATA_URL+"'")
@@ -24,7 +25,7 @@ for name in ('tools', 'hint', 'done'):
 for name in ('metal', 'metal-small'):
     uri = 'data:image/svg+xml;base64,' + base64.b64encode((ROOT / f'web/classic-assets/{name}.svg').read_bytes()).decode()
     classic = classic.replace('CLASSIC_'+name.upper().replace('-', '_')+'_IMAGE', uri)
-html = html.replace('/* URSKETCH_CSS */', (ROOT / 'web/style.css').read_text().replace('/* URSKETCH_CLASSIC */', classic).replace('/* URSKETCH_CONNECT */', (ROOT/'web/connect.css').read_text()).replace('/* URSKETCH_BROWSER */', (ROOT/'web/browser.css').read_text()))
+html = html.replace('/* URSKETCH_CSS */', (ROOT / 'web/style.css').read_text().replace('/* URSKETCH_CLASSIC */', classic).replace('/* URSKETCH_CONNECT */', (ROOT/'web/connect.css').read_text()).replace('/* URSKETCH_BROWSER */', (ROOT/'web/browser.css').read_text()).replace('/* URSKETCH_BLINGEE */', (ROOT/'web/blingee.css').read_text()))
 for name in ('skip', 'done'):
     uri = 'data:image/svg+xml;base64,' + base64.b64encode((ROOT / f'web/hint-{name}.svg').read_bytes()).decode()
     html = html.replace(f'DEFAULT_HINT_{name.upper()}_IMAGE', uri)
@@ -37,7 +38,7 @@ chat_host=json.loads((ROOT/'web/chat-config.json').read_text())['host']
 if not re.fullmatch(r'~[a-z-]+',chat_host): raise ValueError('Invalid Global Chat host')
 html = html.replace('/* URSKETCH_JS */', (ROOT / 'web/app.js').read_text().replace('URSKETCH_GLOBAL_CHAT_HOST', json.dumps(chat_host)).replace('URSKETCH_CUE_URLS', json.dumps(cue_urls)))
 before, after = html.split('URSKETCH_SHIP_VALUE', 1)
-intro = (ROOT/'web/intro.html').read_text().replace('URSKETCH_FAVICON_DATA_URL', FAVICON_DATA_URL)
+intro = (ROOT/'web/intro.html').read_text().replace('URSKETCH_FAVICON_URL', FAVICON_URL)
 settings_dialog = re.search(r'<dialog id="settings-dialog".*?</dialog>', html, re.DOTALL).group()
 intro = intro.replace('<!-- URSKETCH_SETTINGS_DIALOG -->', settings_dialog).replace('/* URSKETCH_SETTINGS */', (ROOT/'web/settings.js').read_text())
 intro = intro.replace('/* URSKETCH_INTRO_CSS */', (ROOT/'web/intro.css').read_text())

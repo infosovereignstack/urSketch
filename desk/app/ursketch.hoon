@@ -161,7 +161,7 @@
         ?:  (member:ursketch-game r src.bowl)
           =^  presence  state  (touch rid src.bowl)
           [(welp presence (publish rid)) state]
-        ?>  (lth (lent players.r) 12)
+        ?>  !(full:ursketch-game r)
         =.  r  r(players (snoc players.r [src.bowl 0 %.n]))
         =.  r  (say:ursketch-game r (player-name src.bowl) 'joined the room' 'system')
         =.  rooms  (~(put by rooms) rid r)
@@ -224,6 +224,7 @@
               =.  r  (finish-window:ursketch-game r src.bowl now.bowl)
               =.  r  (say:ursketch-game r (player-name src.bowl) 'guessed the word!' 'correct')
               r
+            ?:  close  r
             (say:ursketch-game r (player-name src.bowl) guess 'guess')
           %warn
             =/  target=@p  (slav %p (text j 'player'))

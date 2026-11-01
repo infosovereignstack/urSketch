@@ -1,8 +1,12 @@
 """Authoritative game events and real decoded audio on isolated ~zod / ~nec."""
-import json,re,time,urllib.request,sys,traceback
+import json,re,time,urllib.request,sys,traceback,os,runpy
 from pathlib import Path
 from playwright.sync_api import sync_playwright,expect
 ROOT=Path(__file__).resolve().parents[1]
+preview=None
+if os.environ.get('URSKETCH_PREVIEW')=='1':
+ sys.path.insert(0,str(ROOT/'scripts'));preview=runpy.run_path(str(ROOT/'scripts/build.py'))['html']
+
 sys.excepthook=lambda kind,error,tb:sys.stderr.write(''.join(line for line in traceback.format_exception(kind,error,tb) if 'cookie:' not in line.lower()))
 def dojo(port,command):
  request=urllib.request.Request(f'http://127.0.0.1:{port}',data=json.dumps({'source':{'dojo':command},'sink':{'stdout':None}}).encode(),headers={'Content-Type':'application/json'})
@@ -16,6 +20,9 @@ with sync_playwright() as p:
  for context,ship,origin in zip(contexts,['~zod','~nec'],['http://127.0.0.1:18080','http://127.0.0.1:18081']):
   code=re.search(r'[a-z]{6}(?:-[a-z]{6}){3}',dojo(lenses[ship],'+code')).group()
   assert context.request.post(origin+'/~/login',form={'password':code}).ok
+  if preview:
+   body=preview.replace('URSKETCH_SHIP_VALUE',json.dumps(ship)).replace(json.loads((ROOT/'web/chat-config.json').read_text())['host'],'~zod')
+   for path in ['play','connect']:context.route('**/apps/ursketch/'+path+'**',lambda route,request,body=body:route.fulfill(status=200,content_type='text/html',body=body))
   page=context.new_page();page.on('pageerror',lambda e:errors.append(str(e)))
   page.add_init_script("window.heard=[];window.addEventListener('ursketch:sound',e=>heard.push(e.detail));")
   page.goto(origin+'/apps/ursketch/play');expect(page.locator('#host-search')).to_be_enabled(timeout=30000)
@@ -30,6 +37,7 @@ with sync_playwright() as p:
  g.evaluate("setSearchMode('invite')");g.locator('#host').fill(f'~zod/{rid}');g.locator('#host-search').click();expect(g.locator('#game')).to_be_visible(timeout=30000)
  cue(h,'JoinRoom',2);cue(g,'JoinRoom')
  h.locator('#start').click();expect(h.locator('#choices button')).to_have_count(3);cue(h,'YourTurnToDraw')
+ for page in pages:cue(page,'NewRound')
  assert g.evaluate("!heard.some(e=>e.cue==='YourTurnToDraw')")
  h.locator('#choices button').first.click()
  for page in pages:
@@ -38,11 +46,15 @@ with sync_playwright() as p:
  assert g.evaluate("api.poke('hint').then(()=>false,()=>true)")
  h.locator('#give-hint').click()
  for page in pages:cue(page,'HintNoise')
+ # Ordinary wrong guesses stay public; close guesses are private.
+ g.locator('#guess').fill('zzzxq');g.locator('#guess').press('Enter');expect(h.locator('#messages')).to_contain_text('zzzxq')
  # A typo is detected privately by the host; only its sender gets the cue/message.
  near=answer[:-1] if len(answer)>3 else answer[0]+answer[-1]
- g.locator('#guess').fill(near);g.locator('#guess-form button').click();cue(g,'CloseGuess')
+ g.locator('#guess').fill(near);g.locator('#guess').press('Enter');cue(g,'CloseGuess')
  expect(g.locator('#messages .close')).to_have_text(near+' is close!')
  assert h.locator('#messages .close').count()==0
+ assert not h.evaluate('(near)=>state.messages.some(m=>m.text===near)',near)
+ assert not g.evaluate('(near)=>state.messages.some(m=>m.text===near)',near)
  assert h.evaluate("!heard.some(e=>e.cue==='CloseGuess')")
  h.evaluate("api.poke('chat',{text:'Keep drawing'})")
  expect(g.locator('#chat-messages')).to_contain_text('Keep drawing');expect(g.locator('#messages .close')).to_have_text(near+' is close!')
@@ -52,7 +64,7 @@ with sync_playwright() as p:
   expect(page.locator('#chat-messages')).to_contain_text('reminds ~zod not to violate drawing rules.');cue(page,'RemindsRules')
  assert g.evaluate("api.poke('warn',{player:'~bud'}).then(()=>false,()=>true)")
  assert g.evaluate("api.poke('warn',{player:'~nec'}).then(()=>false,()=>true)")
- g.locator('#guess').fill(answer);started=time.monotonic();g.locator('#guess-form button').click()
+ g.locator('#guess').fill(answer);started=time.monotonic();g.locator('#guess').press('Enter')
  cue(g,'YouGotTheWord');cue(h,'SomeoneElseGotTheWord')
  for page in pages:
   assert page.evaluate("state.phase==='drawing' && state.finishing && state.duration===20 && state.remainingMs>19000")

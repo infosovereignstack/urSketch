@@ -10,7 +10,7 @@ let activeName = SELF, profiles = [];
 const profileKey = `ursketch.players.${SELF}`;
 let host = SELF, roomId = '', state = null, lobbySub = null, roomSub = null;
 let drawing;
-let gameAudio=null,roomTimeline=[],serverMessages=[],feedbackSeen=new Set();
+let gameAudio=null,roomTimeline=[],serverMessages=[],feedbackSeen=new Set(),selectedChat='game',lastTheme='';
 let clockAt = 0, clockSeconds = 0, connectionReady = false;
 const ctx = $('canvas').getContext('2d');
 // Swatch centers sampled from the supplied palette reference; black/white are exact.
@@ -22,9 +22,18 @@ const colors = [
 function toast(message) { $('toast').textContent = message; $('toast').hidden = false; clearTimeout(toast.timer); toast.timer = setTimeout(() => $('toast').hidden = true, 4500); }
 function connection(text, good) { $('status').textContent = text; $('status-dot').classList.toggle('connected', good); connectionReady = good; renderPlayerTotal(); chatControls(); }
 function element(tag, className, text) { const el = document.createElement(tag); if (className) el.className = className; if (text != null) el.textContent = text; return el; }
+function rejectedAction(action){
+  const detail={join:'The room may be full or no longer available.',guess:'The drawing turn may have changed, or you have already guessed correctly.',choose:'Only the current artist can choose one of the offered words.',hint:'Only the artist can give hints, before the first correct guess and up to three times.',draw:'The drawing turn may have changed or its command limit was reached.',start:'The room owner needs at least two players to start.',skip:'Only the current artist can end this drawing turn.',chat:'The message may contain the secret word.',heartbeat:'Your membership may have expired. Use Rejoin to return.',warn:'Both players must still be in the room.', 'global-chat':'Messages must be at most 240 bytes and at least one second apart.'};
+  return new Error('The host could not accept this action. '+(detail[action]||'Check your room connection and try again.'));
+}
 class Eyre {
   constructor(){this.uid=`${Date.now()}-${crypto.randomUUID()}`;this.next=1;this.handlers=new Map();this.subscriptions=new Map();this.waiters=new Map();this.requests=new Map();this.url=`/~/channel/ursketch-${this.uid}`;this.opening=null;}
-  async send(action){const id=this.next++;const response=await fetch(this.url,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify([{id,...action}]),signal:AbortSignal.timeout(15000)});if(!response.ok)throw new Error(response.status===403?'Log into your ship, then reload this page.':`Your ship returned HTTP ${response.status}.`);return id;}
+  async send(action){
+    const id=this.next++;let response;
+    try{response=await fetch(this.url,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify([{id,...action}]),signal:AbortSignal.timeout(15000)});}
+    catch(error){if(error.name==='TimeoutError'||error.name==='AbortError')throw new Error('Your ship did not respond within 15 seconds. Check the connection and room before retrying; the action may still have arrived.');throw error;}
+    if(!response.ok)throw new Error(response.status===403?'Log into your ship, then reload this page.':`Your ship returned HTTP ${response.status}.`);return id;
+  }
   ensure(){if(this.events&&this.events.readyState!==EventSource.CLOSED)return Promise.resolve();if(this.opening)return this.opening;this.opening=this.open().finally(()=>this.opening=null);return this.opening;}
   async open(){
     await this.send({action:'poke',ship:SELF.slice(1),app:'hood',mark:'helm-hi',json:'urSketch connected'});
@@ -46,16 +55,16 @@ class Eyre {
       const waiter=this.waiters.get(data.id);
       if(waiter&&data.response==='poke'){
         if(waiter.remote&&!data.err)return;
-        this.finish(waiter,data.err?new Error('The host rejected that action. Check the room and your role.'):null);
+        this.finish(waiter,data.err?rejectedAction(waiter.action):null);
       }
     };
-    await this.subscribe('/relay',data=>{const waiter=this.requests.get(data.request);if(waiter)this.finish(waiter,data.ok?null:new Error('The host rejected that action. Check the room and your role.'));},false,SELF);
+    await this.subscribe('/relay',data=>{const waiter=this.requests.get(data.request);if(waiter)this.finish(waiter,data.ok?null:rejectedAction(waiter.action));},false,SELF);
   }
   finish(waiter,error){clearTimeout(waiter.timer);this.waiters.delete(waiter.id);this.requests.delete(waiter.request);error?waiter.reject(error):waiter.resolve();}
   poke(action,data={},target={host,room:roomId}){
     const id=this.next,request=`${this.uid}-${id}`;
     const result=new Promise((resolve,reject)=>{
-      const waiter={id,request,resolve,reject,remote:target.host!==SELF};
+      const waiter={id,request,action,resolve,reject,remote:target.host!==SELF};
       waiter.timer=setTimeout(()=>this.finish(waiter,new Error('The host did not respond. You can try again.')),20000);
       this.waiters.set(id,waiter);if(waiter.remote)this.requests.set(request,waiter);
       this.send({action:'poke',ship:SELF.slice(1),app:'ursketch',mark:'json',json:{action,room:target.room,host:target.host,request,name:activeName,token:state?.token||0,...data}}).catch(e=>this.finish(waiter,e));
@@ -96,7 +105,7 @@ function setSearchMode(mode){
 $('search-host-mode').onclick=()=>setSearchMode('host');$('search-invite-mode').onclick=()=>setSearchMode('invite');
 for(const id of ['search-host-mode','search-invite-mode'])$(id).onkeydown=event=>{if(['ArrowLeft','ArrowRight','Home','End'].includes(event.key)){event.preventDefault();const mode=event.key==='Home'?'host':event.key==='End'?'invite':searchMode==='host'?'invite':'host';setSearchMode(mode);$(mode==='host'?'search-host-mode':'search-invite-mode').focus();}};
 function operation(id,text,busy=false){const el=$(id);el.textContent=text;el.classList.toggle('is-busy',busy);el.setAttribute('aria-label',text+(busy?'…':''));}
-function busyControls(){const busy=browsing||joining;$('host-search').disabled=busy;$('host').disabled=joining;$('search-host-mode').disabled=busy;$('search-invite-mode').disabled=busy;$('create-open').disabled=busy||host!==SELF;for(const b of $('room-list').querySelectorAll('button'))b.disabled=busy||b.dataset.full==='true';$('rejoin-room').disabled=busy;$('leave-saved-room').disabled=busy;}
+function busyControls(){const busy=browsing||joining;$('host-search').disabled=busy;$('host').disabled=joining;$('search-host-mode').disabled=busy;$('search-invite-mode').disabled=busy;$('create-open').disabled=busy;for(const b of $('room-list').querySelectorAll('button'))b.disabled=busy||b.dataset.full==='true';$('rejoin-room').disabled=busy;$('leave-saved-room').disabled=busy;}
 function saveRecovery(record){savedRoom=record;try{record?localStorage.setItem(recoveryKey,JSON.stringify(record)):localStorage.removeItem(recoveryKey);}catch{}renderRecovery();}
 function rememberRoom(title){if(!roomId)return;saveRecovery({host,id:roomId,title:title||state?.title||savedRoom?.title||roomId,expiresAt:Date.now()+GRACE_MS});}
 function renderRecovery(){const visible=!!savedRoom&&!state;$('room-recovery').hidden=!visible;if(!visible)return;const seconds=Math.max(0,Math.ceil((savedRoom.expiresAt-Date.now())/1000));$('recovery-title').textContent=savedRoom.title;$('recovery-detail').textContent=`On ${savedRoom.host} · Rejoin available for ${Math.floor(seconds/60)}:${String(seconds%60).padStart(2,'0')}`;}
@@ -160,13 +169,13 @@ function renderLobby(data){
   $('browse-status').title=$('browse-status').textContent;listedRooms=data.rooms;renderRoomList();
 }
 function renderRoomCards(rooms){
-  const list=$('room-list'),shown=rooms.filter(r=>!(hideFull&&r.count>=12)&&!(hideEmpty&&r.count===0));list.hidden=false;
+  const list=$('room-list'),shown=rooms.filter(r=>!(hideFull&&r.count>=10)&&!(hideEmpty&&r.count===0));list.hidden=false;
   if(!shown.length){list.replaceChildren(element('p','browser-empty',browsing?'Searching…':rooms.length?'No rooms match your filters.':'None found'));return;}
   list.replaceChildren(...shown.map(r=>{
-    const row=element('article',`room-row${r.count?' occupied':''}`),rejoin=savedRoom?.host===host&&savedRoom?.id===r.id,full=r.count>=12&&!rejoin;
-    const button=element('button','room-name',r.title);button.dataset.full=String(full);button.disabled=full||browsing||joining;button.onclick=()=>run(()=>joinRoom(r.id,r.title));button.title=`${r.title}\n${r.phase} · ${r.count}/12 players\nHosted by ${host}`;
-    const count=element('span','room-occupancy',`${r.count}/12`);count.tabIndex=0;count.title=Array.isArray(r.players)?r.players.map(p=>`${p.name||p.ship} (${p.ship})`).join('\n')||'No players yet':`${r.count} players`;
-    const details=element('div','room-details');details.append(element('b','',r.title),element('p','',`Phase: ${r.phase}`),element('p','',`Players: ${r.count}/12`));
+    const row=element('article',`room-row${r.count?' occupied':''}`),rejoin=savedRoom?.host===host&&savedRoom?.id===r.id,full=r.count>=10&&!rejoin;
+    const button=element('button','room-name',r.title);button.dataset.full=String(full);button.disabled=full||browsing||joining;button.onclick=()=>run(()=>joinRoom(r.id,r.title));button.title=`${r.title}\n${r.phase} · ${r.count}/10 players\nHosted by ${host}`;
+    const count=element('span','room-occupancy',`${r.count}/10`);count.tabIndex=0;count.title=Array.isArray(r.players)?r.players.map(p=>`${p.name||p.ship} (${p.ship})`).join('\n')||'No players yet':`${r.count} players`;
+    const details=element('div','room-details');details.append(element('b','',r.title),element('p','',`Phase: ${r.phase}`),element('p','',`Players: ${r.count}/10`));
     row.append(button,count,details);return row;
   }));
 }
@@ -305,11 +314,25 @@ function renderRoomMessages(){
   renderMessages('messages',roomTimeline.filter(m=>!['chat','warning'].includes(m.kind)));
   renderMessages('chat-messages',roomTimeline.filter(m=>['chat','warning'].includes(m.kind)||(m.kind==='system'&&m.text==='joined the room')));
 }
+function selectChat(which,focus=false){
+  selectedChat=which;document.body.dataset.activeChat=which;
+  for(const name of ['game','chat']){
+    document.querySelector(`[data-chat="${name}"]`).classList.toggle('chat-selected',which===name);
+    $('select-'+name+'-chat').setAttribute('aria-pressed',String(which===name));
+  }
+  if(focus){const input=$(which==='game'?'guess':'chat-input');(input.disabled?$(which==='game'?'messages':'chat-messages'):input).focus({preventScroll:true});}
+}
+for(const name of ['game','chat']){
+  $('select-'+name+'-chat').onclick=()=>selectChat(name,true);
+  const pane=document.querySelector(`[data-chat="${name}"]`);
+  pane.addEventListener('pointerdown',()=>selectChat(name));pane.addEventListener('focusin',()=>selectChat(name));
+}
+for(const [id,name] of [['guess','game'],['chat-input','chat']])$(id).addEventListener('focus',()=>selectChat(name));
+selectChat('game');
 function roomSounds(before,after,fresh){
   if(before){
     if(after.players.some(p=>!before.players.some(old=>old.ship===p.ship)))void gameAudio?.play('JoinRoom');
-    if(after.phase==='choosing'&&(before.phase!=='choosing'||before.token!==after.token)&&after.players[0]?.ship===SELF)void gameAudio?.play('YourTurnToDraw');
-    if(after.phase==='drawing'&&(before.phase!=='drawing'||before.token!==after.token))void gameAudio?.play('NewRound');
+    if(after.phase==='choosing'&&(before.phase!=='choosing'||before.token!==after.token)){void gameAudio?.play('NewRound');if(after.players[0]?.ship===SELF)void gameAudio?.play('YourTurnToDraw');}
     if(after.phase==='drawing'&&before.phase==='drawing'&&before.token===after.token){
       const solved=after.players.filter(p=>p.solved&&before.players.some(old=>old.ship===p.ship&&!old.solved));
       if(solved.some(p=>p.ship===SELF))void gameAudio?.play('YouGotTheWord');
@@ -329,20 +352,21 @@ function renderRoom(data) {
   state=data;clockSeconds=(data.remainingMs??data.seconds*1000)/1000;clockAt=performance.now();
   roomSounds(before,data,fresh);
   if(changedTurn)drawing?.cancel();
+  if(data.players[0]?.ship===SELF&&data.phase==='drawing'&&(!before||before.phase!=='drawing'||before.token!==data.token||before.players[0]?.ship!==SELF))drawing?.resetTools();
   $('room-title').textContent=data.title;
   document.body.classList.toggle('is-artist',isArtist()&&data.phase==='drawing');
   document.body.classList.toggle('is-guesser',!isArtist()&&data.phase==='drawing');
-  $('round').textContent=`Round ${Math.min(3,Math.floor(data.turn/Math.max(1,data.players.length))+1)} / 3`;
+  $('round').textContent=`Round ${Math.min(10,data.turn+1)} / 10`;
   const artist=data.players[0], name=artist?.name||artist?.ship||'The artist';
   const labels={waiting:'Waiting for players',choosing:`${name} is choosing a word`,drawing:`${name} is drawing`,reveal:'The word is revealed',finished:'Game over'};
-  const round=Math.min(3,Math.floor(data.turn/Math.max(1,data.players.length))+1);
-  $('classic-round').replaceChildren(document.createTextNode(`Round ${round} of 3 in ${data.title} by `),element('b','',name));
+  const round=Math.min(10,data.turn+1);
+  $('classic-round').replaceChildren(document.createTextNode(`Round ${round} of 10 in ${data.title} by `),element('b','',name));
   $('classic-round').title=$('classic-round').textContent;
   $('classic-player-count').textContent=data.players.length;
   $('phase-label').textContent=labels[data.phase];$('game-status').textContent=data.phase;
   $('artist-secret').hidden=!(isArtist()&&data.phase==='drawing');
   $('word').textContent=isArtist()?data.answer:'';$('word-value').textContent=data.artistValue??10;
-  $('player-count').textContent=`${data.players.length}/12`;
+  $('player-count').textContent=`${data.players.length}/10`;
   $('players').replaceChildren(...data.players.map((p,i)=>{const li=element('li',[(p.ship===SELF?'me':''),(p.solved?'solved':'')].filter(Boolean).join(' '));const label=element('div','player-name',p.name||p.ship);label.title=p.ship;label.tabIndex=0;label.setAttribute('role','button');label.setAttribute('aria-label',`Inspect ${p.name||p.ship}`);label.onclick=()=>inspectPlayer(p);label.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();inspectPlayer(p);}};label.append(element('span','player-role',p.solved?'✓ Correct':i===0&&['choosing','drawing'].includes(data.phase)?'✎ Drawing':p.ship===SELF?'You':'Guessing'));li.append(label,element('span','player-score',p.score));return li;}));
   drawing.render(data.lines,data.token);rememberRoom(data.title);
   $('overlay').hidden=data.phase==='drawing';$('start').hidden=!(data.owner===SELF&&['waiting','finished'].includes(data.phase));$('start').disabled=data.players.length<2;
@@ -400,8 +424,13 @@ $('host-form').onsubmit=event=>{event.preventDefault();run(async()=>{
   if(!ship||!id||!/^[a-z0-9-]{1,40}$/.test(id))throw new Error('Paste a room invite link or a code like ~sampel-palnet/room-abcd1234.');
   await browse(ship);await joinRoom(id);
 });};
-$('create-open').onclick=()=>$('create-dialog').showModal();$('cancel-create').onclick=()=>$('create-dialog').close();
-$('create-form').onsubmit=event=>{event.preventDefault();run(async()=>{host=SELF;roomId=`room-${crypto.randomUUID().slice(0,8)}`;try{await api.poke('create',{title:$('title').value.trim()});await joinRoom(roomId);$('create-dialog').close();}catch(e){roomId='';throw e;}});};
+$('create-open').onclick=()=>{$('create-error').hidden=true;$('create-dialog').showModal();};$('cancel-create').onclick=()=>$('create-dialog').close();
+$('create-form').onsubmit=event=>{event.preventDefault();run(async()=>{
+  const previous=host,id=`room-${crypto.randomUUID().slice(0,8)}`,button=$('create-form').querySelector('button.primary');button.disabled=true;$('create-error').hidden=true;
+  try{await api.ensure();await api.poke('create',{title:$('title').value.trim()},{host:SELF,room:id});host=SELF;await joinRoom(id);$('create-dialog').close();}
+  catch(e){$('create-error').textContent=e.message;$('create-error').hidden=false;if(!state){roomId='';host=previous;renderLobby(knownHosts.get(previous)?.data||{kind:'lobby',rooms:[]});}throw e;}
+  finally{button.disabled=false;busyControls();}
+});};
 function localLeave(){showLobby({keepRoom:false});}
 $('leave').onclick=()=>run(async()=>{await api.poke('leave');await api.unsubscribe(roomSub);localLeave();await browse(host);});
 $('invite').onclick=()=>run(async()=>{const invite=`${location.origin}/apps/ursketch/play?host=${encodeURIComponent(host)}&room=${roomId}`;await navigator.clipboard.writeText(invite);toast('Invite copied. Friends can paste it into urSketch on their own ship.');});
@@ -455,17 +484,17 @@ function installClassicScrollbars(){
   }
 }
 function syncThemeLayout(){
-  const classic=document.body.dataset.theme==='classic';
+  const classic=document.body.dataset.layout==='classic';
   for(const [id,anchor] of [['guess-form','guess-form-home'],['round-controls','round-controls-home']]){
     const target=classic?$('classic-left-controls'):$(anchor).parentElement;
     if($(id).parentElement!==target){if(classic)target.append($(id));else $(anchor).after($(id));}
   }
 }
-function fitCanvas(){const wrap=$('canvas').parentElement;if(!wrap.clientWidth||!wrap.clientHeight)return;const scale=Math.min(wrap.clientWidth/1000,wrap.clientHeight/700);$('canvas').style.width=`${Math.floor(1000*scale)}px`;$('canvas').style.height=`${Math.floor(700*scale)}px`;drawing?.fit();}
+function fitCanvas(){const wrap=$('canvas').parentElement;if(!wrap.clientWidth||!wrap.clientHeight)return;const width=Math.min(wrap.clientWidth,wrap.clientHeight*1000/700),height=width*700/1000;$('canvas').style.width=`${width}px`;$('canvas').style.height=`${height}px`;drawing?.fit();}
 new ResizeObserver(fitCanvas).observe($('canvas').parentElement);
 try{const saved=JSON.parse(localStorage.getItem(profileKey)||'null');if(saved){profiles=(saved.names||[]).filter(n=>typeof n==='string'&&validPlayerName(n));if(profiles.includes(saved.active))activeName=saved.active;}}catch{}
 installClassicScrollbars();
-const preferences=createSettings({notify:toast,onChange:()=>{gameAudio?.settings();syncThemeLayout();requestAnimationFrame(fitCanvas);}});
+const preferences=createSettings({notify:toast,onChange:prefs=>{if(lastTheme!==prefs.theme){drawing?.resetView();lastTheme=prefs.theme;}gameAudio?.settings();syncThemeLayout();requestAnimationFrame(fitCanvas);}});
 if(!connectPage)gameAudio=createGameAudio({urls:URSKETCH_CUE_URLS,getPrefs:()=>preferences.values,notify:toast});
 renderProfiles();drawing=createDrawing({canvas:$('canvas'),colors,canDraw,send:(action,data)=>api.poke(action,action==='draw'&&roomStream?{encoding:1,lines:data.lines.map(l=>UrSketchWire.pack(l))}:data),error:e=>toast(e.message||String(e)),storageKey:`ursketch.palettes.${SELF}`});restoreRecovery();
-if(!connectPage)run(async()=>{if(!SELF)throw new Error('Open urSketch through your Urbit ship at /apps/ursketch.');const query=new URLSearchParams(location.search);restoreKnownHosts();void connectGlobalChat();await browse(query.get('host')||SELF);void watchOtherHosts();const id=query.get('room');if(id){if(!savedRoom)saveRecovery({host,id,title:id,expiresAt:Date.now()+GRACE_MS});await joinRoom(id);}});
+if(!connectPage)run(async()=>{if(!SELF)throw new Error('Open urSketch through your Urbit ship at /apps/ursketch.');const query=new URLSearchParams(location.search);restoreKnownHosts();void connectGlobalChat();await browse(query.get('host')||GLOBAL_CHAT_HOST);void watchOtherHosts();const id=query.get('room');if(id){if(!savedRoom)saveRecovery({host,id,title:id,expiresAt:Date.now()+GRACE_MS});await joinRoom(id);}});

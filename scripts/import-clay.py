@@ -55,7 +55,7 @@ def send(names):
     payload = {'source': {'dojo': command}, 'sink': {'app': 'hood'}}
     request = urllib.request.Request(os.environ.get('URSKETCH_LENS_URL','http://127.0.0.1:12321'),
         data=json.dumps(payload).encode(), headers={'Content-Type': 'application/json'})
-    with urllib.request.urlopen(request, timeout=180) as response:
+    with urllib.request.urlopen(request, timeout=int(os.environ.get('URSKETCH_IMPORT_TIMEOUT','300'))) as response:
         result = json.load(response)
     print(', '.join(names) + ': ' + str(result).strip(), flush=True)
     if str(result).strip() != '>=':

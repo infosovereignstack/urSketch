@@ -7,7 +7,7 @@ services. All browser assets are embedded and served by the ship.
 
 ## Install from the publisher
 
-urSketch 0.12.0 is published from
+urSketch 0.13.0 is published from
 `~livbec-pitsyd-botryp-hoshec--faltec-lavtel-firrup-marzod`.
 On another ship, run:
 
@@ -67,7 +67,7 @@ preferences from another app are separate; create new rooms and invitations.
   host. Urbit ship identity still authenticates actions.
 - The game fits laptop viewports; the players and game log are on the left,
   conversation is below, and the canvas is on the right. The timer uses a grey dial that turns red for the final 20 seconds.
-- Create a room on your own ship. It supports 2–12 players.
+- Create a room on your own ship. It supports 2–10 players.
 - Friends install urSketch on their ships, open their own `/apps/ursketch/play`, and
   enter your ship in the search box above the room list.
   Search and join each show progress until the host responds.
@@ -89,12 +89,12 @@ preferences from another app are separate; create new rooms and invitations.
   Give hint closes after the first correct guess; Skip becomes Done.
 - Open the game screen's **⚙ Settings** for volume, mute, audio output,
   a test sound, theme, reduced motion, and larger chat text. Preferences are
-  saved in this browser. Default and Classic are available; Classic uses the supplied drawer/
+  saved in this browser. Classic is the default; Blingee adds pink glitter, hearts and black velvet chrome. The previous Default theme is hidden. Classic uses the supplied drawer/
   guesser layouts, floating palettes, compact panes, and original control sprites. Grubbery
   Theme is a coming-soon placeholder. Game effects honor the same master volume, mute, and output device.
   Output selection depends on [browser support](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/setSinkId);
   unsupported browsers use system default. Microphone permission is not requested.
-- Players rotate through three rounds. The owner can start another game afterward.
+- A game contains exactly 10 drawing turns total, one artist per round. The owner can start another game afterward.
 - The drawer has Pen (**P**), Brush (**B**), Spray (**Y**), Eraser (**E**),
   Rectangle (**S**), Circle (**C**), Line (**L**), Fill, Zoom (**Z**), and Clear,
   following the reference drawing controls.
@@ -238,7 +238,7 @@ rooms or hosts counts once. The title tooltip reports reachable/known scope.
 Older hosts without player IDs contribute a conservative minimum, marked ≥.
 Unreachable hosts are excluded rather than presenting stale counts as live.
 
-Full means 12 players; empty means zero. The two filters are independent and
+Full means 10 players; empty means zero. The two filters are independent and
 saved locally. Point to a room name for its phase/capacity, or its player count
 for names and ship IDs. Click a room name to join. Rejoin/Leave recovery remains
 in the welcome panel. Direct invite URLs and the hidden code parser are retained.
@@ -290,3 +290,33 @@ from YourTurnToDraw using fractional delay and a smoothly varying gain. It keeps
 all 92,160 stereo samples (44.1 kHz) and does not crop the clip. The original is
 kept in `assets/audio-originals/`; the reproducible report is
 `artifacts/turn-audio-cleanup.json`. Rerunning requires NumPy, SciPy, and ffmpeg.
+
+## Classic and Blingee update (0.13.0)
+
+Classic is selected for fresh browsers and replaces any saved former Default
+selection. Both Classic and Blingee share the full 1000×700 drawing surface,
+fit without cropping; visible chrome marks any letterbox space. Changing themes
+resets zoom while retaining drawing commands. Every new drawing turn resets
+the artist to a black pen. Create-room and word-choice menus use Classic
+controls, and the room header uses the current urSketch wordmark. The browser
+favicon uses the blue app tile.
+
+Connecting after name selection automatically browses the publisher comet
+(`~livbec_marzod` is its shorthand; the full ship ID remains in chat-config.json).
+Explicit host/invite URLs still override this default. Creating a room on your
+own ship remains available while browsing the publisher.
+
+NewRound plays when a new round begins, at word selection; choosing the word
+adds no sound. Close guesses never enter the public room log and only their
+sender receives the close feedback. Select Game or Chat by clicking its title,
+log or input; the selected log is yellow and the other is white.
+
+A signal timeout is the browser request deadline (15 seconds), distinct from
+the host-action acknowledgement deadline (20 seconds). A timed-out action may
+still have reached the ship; mutations are not retried automatically. Host
+rejections mean a native rule/permission check failed; action-specific messages
+now describe likely causes. The old acknowledgement contains no detailed error,
+so these explanations do not identify a past incident's exact cause.
+
+[GlueWear PR #1 source review](docs/gluewear-pr-1-review.md) records compatibility
+issues and recommended fixes. The embedding PR has not been merged.

@@ -47,11 +47,13 @@
   |-  ^-  room
   ?:  ?=(%finished phase.r)  r
   $(r (advance:ursketch-game r deadline.r))
-?>  =(5 turn.r)
+?>  =(9 turn.r)
 ?>  (levy players.r |=(p=player =(0 score.p)))
 =/  scoring=room  (fresh:ursketch-game 'Scoring test' ~zod)
 =.  scoring
   scoring(players ~[[~zod 0 %.n] [~nec 0 %.n] [~bud 0 %.n] [~wes 0 %.n] [~sev 0 %.n] [~per 0 %.n] [~sut 0 %.n] [~let 0 %.n] [~ful 0 %.n] [~pen 0 %.n] [~syt 0 %.n] [~dur 0 %.n]])
+?>  (full:ursketch-game scoring(players (scag 10 players.scoring)))
+?>  !(full:ursketch-game scoring(players (scag 9 players.scoring)))
 =/  solvers=(list player)  (slag 1 players.scoring)
 =.  scoring
   |-  ^-  room
@@ -74,4 +76,4 @@
 ?>  ?=(~ players.empty)
 =/  reassigned=room  (depart:ursketch-game migrated ~zod now)
 ?>  ?&(?=(%waiting phase.reassigned) =(~nec owner.reassigned))
-[%noun 'PASS: close guesses, 120/20 timers, departure-safe solve order, saved rooms, rotation and scoring']
+[%noun 'PASS: ten total rounds, close guesses, 120/20 timers, departure-safe solve order, saved rooms and scoring']

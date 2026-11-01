@@ -1,11 +1,11 @@
 /* Browser-local preferences and the audio output used by game sounds. */
 function createSettings({notify,onChange}) {
   const $=id=>document.getElementById(id),key='ursketch.settings.v1';
-  const defaults={theme:'default',volume:70,muted:false,output:'',reduceMotion:false,largeChat:false,themeQuiet:false,themeDisabled:false};
+  const defaults={theme:'classic',volume:70,muted:false,output:'',reduceMotion:false,largeChat:false,themeQuiet:false,themeDisabled:false};
   function readPrefs(){
     const next={...defaults};
     try{const saved=JSON.parse(localStorage.getItem(key)||'null');if(saved){
-      next.theme=['default','classic'].includes(saved.theme)?saved.theme:'default';
+      next.theme=['classic','blingee'].includes(saved.theme)?saved.theme:'classic';
       next.volume=Number.isFinite(saved.volume)?Math.max(0,Math.min(100,saved.volume)):70;
       for(const name of ['muted','reduceMotion','largeChat','themeQuiet','themeDisabled'])next[name]=saved[name]===true;
       next.output=typeof saved.output==='string'?saved.output:'';
@@ -16,7 +16,7 @@ function createSettings({notify,onChange}) {
   const audio=new Audio();audio.preload='auto';
   let toneUrl=null;
   function apply(){
-    document.body.dataset.theme=prefs.theme;
+    document.body.dataset.theme=prefs.theme;document.body.dataset.layout='classic';
     document.body.classList.toggle('reduce-motion',prefs.reduceMotion);
     document.body.classList.toggle('large-chat',prefs.largeChat);
     audio.volume=prefs.volume/100;audio.muted=prefs.muted;

@@ -132,7 +132,7 @@ function createDrawing({canvas, colors, canDraw, send, error, storageKey}) {
   let dragged=null,dragOffset={x:0,y:0},classicLayout={};
   const palettes=$('drawing-palettes');
   try{classicLayout=JSON.parse(localStorage.getItem(storageKey+'.classic')||'{}')||{};}catch{}
-  const isClassic=()=>document.body.dataset.theme==='classic';
+  const isClassic=()=>document.body.dataset.layout==='classic';
   function placeClassic(panel,x,y){
     const box=panel.getBoundingClientRect(),board=canvas.parentElement.getBoundingClientRect();
     x=Math.max(2,Math.min(innerWidth-box.width-2,x));y=Math.max(2,Math.min(innerHeight-box.height-2,y));
@@ -148,5 +148,5 @@ function createDrawing({canvas, colors, canDraw, send, error, storageKey}) {
   for(const panel of palettes.children){const grip=panel.querySelector('.palette-grip');grip.ondblclick=()=>{if(isClassic()){const box=panel.getBoundingClientRect();panel.classList.toggle('classic-rotated');classicLayout[panel.dataset.palette]=placeClassic(panel,box.x,box.y);saveClassic();}else{panel.classList.toggle('rotated');saveLayout();}};grip.ondragstart=e=>{dragged=panel;const box=panel.getBoundingClientRect();dragOffset={x:e.clientX-box.left,y:e.clientY-box.top};e.dataTransfer.setData('text/plain',panel.dataset.palette);};grip.ondragend=()=>{dragged=null;if(!isClassic())saveLayout();};panel.ondragover=e=>{e.preventDefault();if(!isClassic()&&dragged&&dragged!==panel){const r=panel.getBoundingClientRect();palettes.insertBefore(dragged,e.clientX<r.left+r.width/2?panel:panel.nextSibling);}};}
   try{for(const entry of JSON.parse(localStorage.getItem(storageKey)||'[]')){const panel=[...palettes.children].find(p=>p.dataset.palette===entry.name);if(panel){panel.classList.toggle('rotated',!!entry.rotated);palettes.append(panel);}}}catch{}
   canvas.tabIndex=0;resetBase();repaint();setColor(color);select('pen',{toggle:false});
-  return {render,flushAll,clear,fit(){transform();fitClassic();},cancel(){gesture=null;pending=[];optimistic.clear();setZoom(1);repaint();},get selected(){return selected;},get color(){return color;},get zoom(){return zoom;},select,setColor,setWidth};
+  return {render,flushAll,clear,resetView(){setZoom(1);},resetTools(){setColor('#000000');select('pen',{toggle:false});setZoom(1);},fit(){transform();fitClassic();},cancel(){gesture=null;pending=[];optimistic.clear();setZoom(1);repaint();},get selected(){return selected;},get color(){return color;},get zoom(){return zoom;},select,setColor,setWidth};
 }

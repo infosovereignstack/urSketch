@@ -10,8 +10,8 @@
   "hintsAndDeduplication": true,
   "drawingSeconds": 120,
   "finishSeconds": 20,
-  "measuredFinishSeconds": 20.12,
-  "tickCount": 81,
+  "measuredFinishSeconds": 20.066,
+  "tickCount": 80,
   "tickIntervalSeconds": 0.25,
   "masterGainMuteAndThemeIndependence": true,
   "refreshDoesNotReplay": true

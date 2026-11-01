@@ -1,6 +1,7 @@
 """The Docket version is authoritative for UI builds and Clay publication."""
 import re
 import base64
+import hashlib
 from pathlib import Path
 
 _docket = Path(__file__).resolve().parents[1] / 'desk/desk.docket-0'
@@ -11,6 +12,6 @@ VERSION_PARTS = tuple(int(part) for part in _match.groups())
 VERSION = '.'.join(map(str, VERSION_PARTS))
 
 LOGO_SVG = (_docket.parents[1] / 'web/logo.svg').read_text()
-FAVICON_DATA_URL = 'data:image/svg+xml;base64,' + base64.b64encode(LOGO_SVG.encode()).decode()
+FAVICON_URL = '/apps/ursketch/media/'+hashlib.sha256((_docket.parents[1]/'web/tile.png').read_bytes()).hexdigest()[:16]+'/images/app-tile.png'
 TILE_COLOR_HOON = re.search(r'^\s*color\+(0x[0-9a-f.]+)', _docket.read_text(), re.MULTILINE).group(1)
 ICON_DATA_URL = 'data:image/png;base64,' + base64.b64encode((_docket.parents[1] / 'web/tile.png').read_bytes()).decode()

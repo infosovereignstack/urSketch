@@ -1,0 +1,18 @@
+{
+  "defaultClassicAndMigration": true,
+  "hiddenOldTheme": true,
+  "publisherDefaultRooms": true,
+  "createWhileBrowsingPublisher": true,
+  "classicDialogs": true,
+  "currentGameLogo": true,
+  "tileFavicon": true,
+  "themes": [
+    "classic",
+    "blingee"
+  ],
+  "canvasAllCornersAndFullAspect": true,
+  "themeSwitchResetsZoom": true,
+  "chatSelectionAndUniformRows": true,
+  "artistResetsPenAndBlack": true,
+  "friendlyTimeoutAndRejection": true
+}

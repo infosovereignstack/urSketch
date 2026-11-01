@@ -81,7 +81,7 @@ with sync_playwright() as p:
     page.set_viewport_size({'width':1440,'height':1000})
     assert response.status == 200
     favicon=page.locator('link[rel="icon"]').get_attribute('href')
-    assert favicon == RELEASE['FAVICON_DATA_URL'], 'Browser tab logo is missing'
+    assert favicon == RELEASE['FAVICON_URL'], 'Browser tab logo is missing'
     expect(page.locator('#status')).to_contain_text('Connected as', timeout=30000)
     expect(page.locator('#host-search')).to_be_enabled(timeout=30000)
     expect(page.locator('#host-search')).to_have_text('Search →')
@@ -112,7 +112,7 @@ with sync_playwright() as p:
     page.locator('#browser-settings').click();expect(page.locator('#settings-dialog')).to_be_visible();page.locator('#theme-select').select_option('classic');page.locator('#settings-close').click()
     assert page.locator('#hide-full-rooms').evaluate('el=>getComputedStyle(el).borderRadius')=='50%'
     assert page.locator('.browser-version').evaluate('el=>getComputedStyle(el).color')=='rgb(0, 0, 0)'
-    page.locator('#browser-settings').click();page.locator('#theme-select').select_option('default');page.locator('#settings-close').click()
+    page.locator('#browser-settings').click();page.locator('#theme-select').select_option('classic');page.locator('#settings-close').click()
     page.locator('#browser-help').click();expect(page.locator('#help-dialog')).to_be_visible();page.locator('#close-help').click()
     host_draft = page.locator('#host').input_value()
     page.evaluate("setSearchMode(\'invite\')")
@@ -148,7 +148,7 @@ with sync_playwright() as p:
     assert result['total']=='Rooms (3 players)' and result['subscriptions']==900002,result
     page.evaluate("remoteFeeds['~nec']({kind:'lobby',rooms:[{id:'other',title:'Other',phase:'waiting',count:1,players:[{ship:'~bud',name:'Bud'}]}]})")
     expect(page.locator('#browser-player-total')).to_have_text('Rooms (2 players)')
-    page.evaluate('''()=>{const players=Array.from({length:12},(_,i)=>({ship:'~fixture-'+i,name:'Player '+i}));remoteFeeds['~zod']({kind:'lobby',rooms:[{id:'full',title:'Full room',phase:'drawing',count:12,players},{id:'empty',title:'Empty room',phase:'waiting',count:0,players:[]},{id:'open',title:'Open room',phase:'choosing',count:1,players:[{ship:'~bud',name:'Bud'}]}]});}''')
+    page.evaluate('''()=>{const players=Array.from({length:10},(_,i)=>({ship:'~fixture-'+i,name:'Player '+i}));remoteFeeds['~zod']({kind:'lobby',rooms:[{id:'full',title:'Full room',phase:'drawing',count:10,players},{id:'empty',title:'Empty room',phase:'waiting',count:0,players:[]},{id:'open',title:'Open room',phase:'choosing',count:1,players:[{ship:'~bud',name:'Bud'}]}]});}''')
     before=page.locator('#browser-player-total').inner_text()
     assert page.locator('#room-list article').count()==3
     page.locator('#hide-full-rooms').check();assert page.locator('#room-list article').count()==2
@@ -187,7 +187,7 @@ with sync_playwright() as p:
     assert page.evaluate('document.documentElement.scrollHeight <= innerHeight')
     assert page.locator('#timer-dial').is_visible()
     assert page.locator('#chat-form').bounding_box()['y'] < 720
-    expect(page.locator('#player-count')).to_have_text('1/12')
+    expect(page.locator('#player-count')).to_have_text('1/10')
     if not preview:
         page.wait_for_function('knownHosts.get(SELF)?.data?.rooms.find(r=>r.id===roomId)?.players?.some(p=>p.ship===SELF)')
         roster=page.evaluate('knownHosts.get(SELF).data.rooms.find(r=>r.id===roomId).players')

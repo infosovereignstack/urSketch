@@ -23,6 +23,8 @@
     `['audio/mpeg' '"262d70bca42c5ffc21c8b66f5d66b9ce61bbce6c588d805551c0f66457f2b3f0"' /['media']/['audio']/['cues']/['YourTurnToDraw']/['mp3']]
   ?:  =(url '/apps/ursketch/media/dc3e0a37af589226/audio/music/theme_song.mp3')
     `['audio/mpeg' '"dc3e0a37af5892268bfa8b6a6e9cf30bde82f0ac248db4714b311ce9de10e10d"' /['media']/['audio']/['music']/['theme_song']/['mp3']]
+  ?:  =(url '/apps/ursketch/media/ccfc04ad004fad99/images/app-tile.png')
+    `['image/png' '"ccfc04ad004fad99fb1676edc96f3e7fdb3fe070744dbdc1e96941bd8ddb68c1"' /['media']/['images']/['app-tile']/['png']]
   ?:  =(url '/apps/ursketch/media/3cd27feef6be5d8c/images/intro-poster.jpg')
     `['image/jpeg' '"3cd27feef6be5d8cb6c25486d7d25656155990529e9a8ff2508643a02dd4bc0c"' /['media']/['images']/['intro-poster']/['jpg']]
   ?:  =(url '/apps/ursketch/media/deb59b42e5c6a5ad/images/intro-wordmark-mask.png')
