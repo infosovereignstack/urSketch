@@ -4,6 +4,13 @@
 <body>
 <header><a class="brand" href="/apps/ursketch"><!-- URSKETCH_LOGO -->urSketch<span class="brand-tag">ON URBIT</span></a><div class="connection"><span id="status-dot"></span><span id="status">Connecting to your ship…</span></div><div class="header-actions"><button id="help" class="quiet">How to play ↗</button><button id="settings-open" class="quiet settings-button" title="Settings" aria-label="Settings">⚙</button></div></header>
 <main>
+<section id="noltbook-tool" class="noltbook-tool" aria-label="Add an urSketch room" hidden>
+ <p class="eyebrow">URSKETCH · SHARED DRAWING ROOM</p>
+ <h2>Add urSketch to this note.</h2>
+ <p>Everyone who opens the artifact enters this ship's shared room.</p>
+ <button id="noltbook-publish" class="primary" type="button">Add room →</button>
+ <p id="noltbook-status" class="operation-status" role="status" aria-live="polite"></p>
+</section>
 <section id="connect-page" aria-label="Connect to urSketch" hidden>
 <!-- URSKETCH_CONNECT_LOGO -->
 <div class="connect-copy"><p>Welcome to urSketch, the net's premier sketching game!</p><p>Enter your display name in the box to the right and click the Connect button to connect to the game</p><p>Your Urbit ID will always be able to be seen when a player inspects your profile.</p></div>

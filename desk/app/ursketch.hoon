@@ -1,6 +1,10 @@
 /+  *ursketch-types, ursketch-game, ursketch-assets, ursketch-wire, ursketch-media
 |%
 +$  card  card:agent:gall
+++  noltbook-room  'room-noltbook'
+++  manifest
+  ^-  @t
+  '{"noltbookVersion":"365K","version":"0.12.0","title":"urSketch","summary":"Draw, guess, and laugh together in multiplayer drawing rooms.","permissions":["media"],"launch":{"href":"/apps/ursketch/play","target":"embedded","width":1000,"height":760,"media":true},"artifact":{"label":"urSketch","href":"/apps/ursketch/play","width":760,"height":680,"media":true},"actions":[{"id":"open","kind":"open","label":"Open urSketch","description":"Open the shared drawing room.","href":"/apps/ursketch/play","target":"embedded","width":1000,"height":760,"media":true}]}'
 +$  state-0  [%0 rooms=(map @t old-room)]
 +$  state-1  [%1 rooms=(map @t old-room) proxies=(map path json)]
 +$  state-2  [%2 rooms=(map @t old-room) proxies=(map path json) names=(map @p @t)]
@@ -103,6 +107,8 @@
       =/  req  !<([id=@ta req=inbound-request:eyre] vase)
       ?.  authenticated.req.req
         (respond id.req 303 'text/plain' 'Log into your ship first.')
+      ?:  =(url.request.req.req '/apps/ursketch/noltbook.json')
+        (respond id.req 200 'application/json; charset=utf-8' manifest)
       =/  asset  (lookup:ursketch-media url.request.req.req)
       ?^  asset
         =/  location=path
@@ -148,6 +154,13 @@
       =/  rid=@t  (text j 'room')
       ?>  ?&((gth (lent (trip rid)) 0) (lte (lent (trip rid)) 40))
       ?>  (levy (trip rid) |=(c=@tD ?|(?&((gte c 'a') (lte c 'z')) ?&((gte c '0') (lte c '9')) =(c '-'))))
+      ?:  =(act 'noltbook-room')
+        ?>  ?&(=(src.bowl our.bowl) =(rid noltbook-room))
+        ?:  (~(has by rooms) rid)  [~ state]
+        =/  r=room
+          (depart:ursketch-game (fresh:ursketch-game 'urSketch' src.bowl) src.bowl now.bowl)
+        =.  rooms  (~(put by rooms) rid r)
+        [(snoc (publish rid) lobby-card) state]
       ?:  =(act 'create')
         ?>  =(src.bowl our.bowl)
         ?>  (lth ~(wyt by rooms) 64)
@@ -241,6 +254,8 @@
         ==
       =.  rooms
         ?:  =(0 (lent players.r))
+          ?:  =(rid noltbook-room)
+            (~(put by rooms) rid r(owner our.bowl))
           (~(del by rooms) rid)
         (~(put by rooms) rid r)
       =.  leases
@@ -397,7 +412,10 @@
   =/  r=room
     (depart:ursketch-game (say:ursketch-game u.found (player-name who) 'disconnected (two-minute timeout)' 'system') who now.bowl)
   =.  rooms
-    ?~  players.r  (~(del by rooms) rid)
+    ?~  players.r
+      ?:  =(rid noltbook-room)
+        (~(put by rooms) rid r(owner our.bowl))
+      (~(del by rooms) rid)
     (~(put by rooms) rid r)
   =/  cards=(list card)  (snoc (publish rid) lobby-card)
   ?:  ?&(!=(old-token token.r) (gth deadline.r now.bowl))

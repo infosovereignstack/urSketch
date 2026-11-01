@@ -57,6 +57,20 @@ The desk and agent are both `%ursketch`. `/apps/ursketch` is the animated intro;
 Install this desk on every participating ship. Existing rooms and browser
 preferences from another app are separate; create new rooms and invitations.
 
+## Noltbook and Glurff
+
+urSketch exposes a Noltbook 365K plugin manifest at
+`/apps/ursketch/noltbook.json`. Noltbook can add the game to a note as an
+interactive artifact, and Glurff can open it from an app spot using the same
+`nb:ready` / `nb:init` embedding protocol.
+
+Embedded artifacts use one persistent `room-noltbook` room per hosting ship.
+Adding urSketch to several notes or Glurff locations creates several entrances
+to that same room, not several rooms. The artifact records the host ship so
+every participant still connects through their own locally installed copy of
+urSketch. The ordinary standalone room browser and its temporary rooms are
+unchanged.
+
 ## Play
 
 - The room search box switches between **Browse a host ship** and

@@ -4,6 +4,9 @@ const $ = id => document.getElementById(id);
 const SELF = window.URSKETCH_SHIP;
 const GLOBAL_CHAT_HOST=URSKETCH_GLOBAL_CHAT_HOST;
 const connectPage = document.documentElement.classList.contains('connect-route');
+const NB_ROOM='room-noltbook';
+const NB={session:null,context:null,publishing:false};
+const framed=window.parent!==window;
 $('connect-page').hidden=!connectPage;
 if(connectPage)document.title='urSketch · Connect';else document.body.classList.add('browsing');
 let activeName = SELF, profiles = [];
@@ -468,4 +471,62 @@ installClassicScrollbars();
 const preferences=createSettings({notify:toast,onChange:()=>{gameAudio?.settings();syncThemeLayout();requestAnimationFrame(fitCanvas);}});
 if(!connectPage)gameAudio=createGameAudio({urls:URSKETCH_CUE_URLS,getPrefs:()=>preferences.values,notify:toast});
 renderProfiles();drawing=createDrawing({canvas:$('canvas'),colors,canDraw,send:(action,data)=>api.poke(action,action==='draw'&&roomStream?{encoding:1,lines:data.lines.map(l=>UrSketchWire.pack(l))}:data),error:e=>toast(e.message||String(e)),storageKey:`ursketch.palettes.${SELF}`});restoreRecovery();
-if(!connectPage)run(async()=>{if(!SELF)throw new Error('Open urSketch through your Urbit ship at /apps/ursketch.');const query=new URLSearchParams(location.search);restoreKnownHosts();void connectGlobalChat();await browse(query.get('host')||SELF);void watchOtherHosts();const id=query.get('room');if(id){if(!savedRoom)saveRecovery({host,id,title:id,expiresAt:Date.now()+GRACE_MS});await joinRoom(id);}});
+function nbSend(type,payload={}){
+  if(!framed)return;
+  const message={source:'noltbook-plugin',protocol:1,type,payload};
+  if(type!=='nb:ready')message.session=NB.session;
+  window.parent.postMessage(message,'*');
+}
+function embeddedRoom(data){
+  if(!data||typeof data!=='object'||data.kind!=null&&data.kind!=='ursketch-room')return null;
+  const target=String(data.host||''),room=String(data.room||'');
+  return /^~[a-z-]+$/.test(target)&&room===NB_ROOM?{host:target,room}:null;
+}
+async function ensureNoltbookRoom(){
+  await api.ensure();
+  await api.poke('noltbook-room',{}, {host:SELF,room:NB_ROOM});
+}
+$('noltbook-publish').onclick=()=>run(async()=>{
+  if(NB.publishing)return;
+  NB.publishing=true;$('noltbook-publish').disabled=true;operation('noltbook-status','Preparing the shared room',true);
+  try{
+    await ensureNoltbookRoom();
+    operation('noltbook-status','Adding room to the note',true);
+    nbSend('nb:publish',{name:'urSketch',data:{kind:'ursketch-room',host:SELF,room:NB_ROOM}});
+  }catch(error){
+    NB.publishing=false;$('noltbook-publish').disabled=false;operation('noltbook-status',error.message||'Could not prepare the room.');throw error;
+  }
+});
+let appStarted=false;
+async function startApp(context=null){
+  if(appStarted||connectPage)return;
+  appStarted=true;
+  if(!SELF)throw new Error('Open urSketch through your Urbit ship at /apps/ursketch.');
+  if(context?.mode==='private-tool'){
+    document.body.classList.add('noltbook-tool-mode');
+    $('connect-page').hidden=$('lobby').hidden=$('game').hidden=true;$('noltbook-tool').hidden=false;
+    nbSend('nb:resize',{width:520,height:245});
+    return;
+  }
+  const supplied=context?.mode==='note-artifact'
+    ? embeddedRoom(context.artifact?.data)
+    : embeddedRoom(context?.context);
+  if(context?.mode==='note-artifact'&&!supplied)throw new Error('This urSketch artifact does not contain a valid room.');
+  const query=new URLSearchParams(location.search);
+  const target=supplied||{host:query.get('host')||SELF,room:query.get('room')||''};
+  restoreKnownHosts();void connectGlobalChat();await browse(target.host);void watchOtherHosts();
+  if(target.room){if(!savedRoom)saveRecovery({host:target.host,id:target.room,title:'urSketch',expiresAt:Date.now()+GRACE_MS});await joinRoom(target.room);}
+}
+window.addEventListener('message',event=>{
+  if(!framed||event.source!==window.parent)return;
+  const data=event.data;
+  if(!data||data.source!=='noltbook-host'||data.protocol!==1)return;
+  if(data.type==='nb:init'&&!NB.context){NB.session=data.session;NB.context=data.payload||{};run(()=>startApp(NB.context));return;}
+  if(data.session!==NB.session||data.type!=='nb:publish-result')return;
+  if(data.payload?.ok){operation('noltbook-status','Room added.');nbSend('nb:close');return;}
+  NB.publishing=false;$('noltbook-publish').disabled=false;operation('noltbook-status','Could not add the room to this note.');
+});
+if(!connectPage){
+  if(framed){nbSend('nb:ready');setTimeout(()=>run(()=>startApp(null)),1500);}
+  else run(()=>startApp(null));
+}

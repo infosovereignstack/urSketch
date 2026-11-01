@@ -61,3 +61,9 @@ body:not([data-theme=classic]) #hints-used{position:absolute;width:1px;height:1p
 /* URSKETCH_BROWSER */
 
 .message.close,.message.warning{color:#ad4138}
+
+/* Compact Noltbook composer surface. Glurff and note artifacts use the game UI. */
+body.noltbook-tool-mode>header,body.noltbook-tool-mode>footer{display:none}
+body.noltbook-tool-mode main{max-width:520px;padding:20px}
+.noltbook-tool{padding:22px;border:1px solid var(--line);border-radius:8px;background:var(--white);box-shadow:0 5px 18px #253e3414}
+.noltbook-tool h2{margin-bottom:8px}.noltbook-tool>p:not(.eyebrow):not(.operation-status){color:var(--muted);font-size:13px;line-height:1.5;margin:0 0 18px}.noltbook-tool .operation-status{margin-bottom:0}
