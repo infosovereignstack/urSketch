@@ -75,13 +75,12 @@ preferences from another app are separate; create new rooms and invitations.
   player’s own ship. The invite-code parser and compact codes such as
   `~sampel-palnet/room-abcd1234` are retained; invite-entry controls are currently
   hidden from the browser. No one needs to log into another player’s ship.
-- The owner starts the game. Each artist chooses among three words in 15 seconds,
-  then has 120 seconds to draw. The first correct guess starts a full 20-second finish window. Guessers use the input under the Game log.
+- The owner starts the game. Each artist is assigned a word and immediately has 120 seconds to draw. The first correct guess starts a full 20-second finish window. Guessers use the input under the Game log.
 - Correct guesses earn 10, 9, 8, 7, 6, then 5 points each. The drawer earns
   10 points for the first solve and 1 for each additional solve. Hints reduce
   that initial artist reward to 5, then 4, then 3 points. No solves means
   no drawer points. A turn ends when everyone guesses,
-  time expires, or the artist passes. The answer stays visible for seven seconds.
+  time expires, or the artist passes. The result is logged and the next artist starts immediately.
 - Before anyone guesses correctly, the drawer can press **Give hint** at most
   three times. The first shows the word's letter count and blanks. The next
   two reveal one random, previously hidden letter position each. Spaces stay
@@ -275,9 +274,8 @@ transposed letters) and substantial contiguous matches. Only the sender receives
 the “guess is close!” response; the answer stays on the host.
 
 Drawing turns last 120 seconds. The first solve starts a full 20-second finish
-window; later solves do not reset it. Even when everyone has solved, the timer
-continues until its deadline (the artist can still choose Done). Solve order and the finish window survive a correct guesser leaving. Saved
-rooms upgrade to state 6 while preserving drawings, scores, names, hints, and
+window; later solves do not reset it. When everyone has solved, the round ends immediately. Solve order and the finish window survive a correct guesser leaving. Saved
+rooms upgrade to state 7 while preserving drawings, scores, names, hints, and
 shared chat. Four ticks per
 second are scheduled on the Web Audio clock. Leaving, muting,
 or ending the turn stops scheduled ticks. The remaining ticks are scheduled
@@ -306,8 +304,7 @@ Connecting after name selection automatically browses the publisher comet
 Explicit host/invite URLs still override this default. Creating a room on your
 own ship remains available while browsing the publisher.
 
-NewRound plays when a new round begins, at word selection; choosing the word
-adds no sound. Close guesses never enter the public room log and only their
+NewRound plays when the automatically assigned drawing turn begins. Close guesses never enter the public room log and only their
 sender receives the close feedback. Select Game or Chat by clicking its title,
 log or input; the selected log is yellow and the other is white.
 
@@ -320,3 +317,20 @@ so these explanations do not identify a past incident's exact cause.
 
 [GlueWear PR #1 source review](docs/gluewear-pr-1-review.md) records compatibility
 issues and recommended fixes. The embedding PR has not been merged.
+
+## Immediate rounds update (0.14.0)
+
+Words are assigned automatically with no prep or reveal pause. Artists see a
+yellow word/rules banner until their first mark. The canvas clears between
+rounds and remains visible after the tenth round. Game logs retain ordered
+results, with private artist prompts and private solver word/score messages.
+The guessing field receives focus on joining and after drawing.
+
+A normal tab close sends a room leave immediately; refreshing or navigating
+away does too. Crashes, offline devices and browsers that discard the final
+request still use the existing two-minute presence timeout.
+
+Countdown ticks have fixed, unique slots per turn, preventing an exhausted
+audio queue from re-arming after clock divergence. The intro circle repair
+uses its measured blue palette instead of sampling a pixel obscured by the
+animated exclamation mark and lightbulb.

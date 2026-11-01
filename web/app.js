@@ -10,7 +10,7 @@ let activeName = SELF, profiles = [];
 const profileKey = `ursketch.players.${SELF}`;
 let host = SELF, roomId = '', state = null, lobbySub = null, roomSub = null;
 let drawing;
-let gameAudio=null,roomTimeline=[],serverMessages=[],feedbackSeen=new Set(),selectedChat='game',lastTheme='';
+let gameAudio=null,roomTimeline=[],serverMessages=[],feedbackSeen=new Set(),selectedChat='game',lastTheme='',bannerDismissed=null;
 let clockAt = 0, clockSeconds = 0, connectionReady = false;
 const ctx = $('canvas').getContext('2d');
 // Swatch centers sampled from the supplied palette reference; black/white are exact.
@@ -23,7 +23,7 @@ function toast(message) { $('toast').textContent = message; $('toast').hidden = 
 function connection(text, good) { $('status').textContent = text; $('status-dot').classList.toggle('connected', good); connectionReady = good; renderPlayerTotal(); chatControls(); }
 function element(tag, className, text) { const el = document.createElement(tag); if (className) el.className = className; if (text != null) el.textContent = text; return el; }
 function rejectedAction(action){
-  const detail={join:'The room may be full or no longer available.',guess:'The drawing turn may have changed, or you have already guessed correctly.',choose:'Only the current artist can choose one of the offered words.',hint:'Only the artist can give hints, before the first correct guess and up to three times.',draw:'The drawing turn may have changed or its command limit was reached.',start:'The room owner needs at least two players to start.',skip:'Only the current artist can end this drawing turn.',chat:'The message may contain the secret word.',heartbeat:'Your membership may have expired. Use Rejoin to return.',warn:'Both players must still be in the room.', 'global-chat':'Messages must be at most 240 bytes and at least one second apart.'};
+  const detail={join:'The room may be full or no longer available.',guess:'The drawing turn may have changed, or you have already guessed correctly.',hint:'Only the artist can give hints, before the first correct guess and up to three times.',draw:'The drawing turn may have changed or its command limit was reached.',start:'The room owner needs at least two players to start.',skip:'Only the current artist can end this drawing turn.',chat:'The message may contain the secret word.',heartbeat:'Your membership may have expired. Use Rejoin to return.',warn:'Both players must still be in the room.', 'global-chat':'Messages must be at most 240 bytes and at least one second apart.'};
   return new Error('The host could not accept this action. '+(detail[action]||'Check your room connection and try again.'));
 }
 class Eyre {
@@ -214,6 +214,7 @@ function requestDrawingSnapshot(){
   api.poke('sync').catch(e=>{if(snapshotRequest===request){clearTimeout(request.timer);snapshotRequest=null;toast(e.message);}});
 }
 function roomEvent(data){
+  if(state&&Number.isInteger(data.token)&&data.token<state.token)return null;
   if(data.kind==='feedback'){
     if(data.feedback==='close'&&state?.phase==='drawing'&&data.room===roomId&&data.token===state.token&&!feedbackSeen.has(data.id)){
       feedbackSeen.add(data.id);if(feedbackSeen.size>100)feedbackSeen.delete(feedbackSeen.values().next().value);
@@ -229,7 +230,7 @@ function roomEvent(data){
     if(data.from!==state.lines.length||data.count!==data.from+data.lines.length){requestDrawingSnapshot();return null;}
     state.lines.push(...data.lines.map(l=>UrSketchWire.unpack(l)));state.count=data.count;state.seconds=data.seconds;state.remainingMs=data.remainingMs;
     clockSeconds=(data.remainingMs??data.seconds*1000)/1000;clockAt=performance.now();
-    gameAudio?.countdown(state.finishing?clockSeconds*1000:null);
+    gameAudio?.countdown(state.finishing?clockSeconds*1000:null,`${host}/${roomId}/${state.token}`);
     drawing.render(state.lines,state.token);updateDial();
     return null;
   }
@@ -270,7 +271,7 @@ async function joinRoom(id,title=''){
     }
     $('lobby').hidden=true;$('game').hidden=false;$('room-host').textContent=`HOSTED BY ${host.toUpperCase()}`;
     document.body.classList.add('playing');requestAnimationFrame(fitCanvas);history.replaceState(null,'',`?host=${encodeURIComponent(host)}&room=${id}`);
-    rememberRoom(state.title);operation('join-status','');
+    rememberRoom(state.title);operation('join-status','');requestAnimationFrame(focusGuess);
     if(!recovering)void gameAudio?.play('JoinRoom');
   }catch(e){showLobby({keepRoom:accepted||!!savedRoom});operation('join-status',`Could not join: ${e.message}`);throw e;}
   finally{joining=false;busyControls();}
@@ -299,7 +300,7 @@ async function maintainPresence(){
 }
 setInterval(()=>{void maintainPresence();},10000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)void maintainPresence();});
-window.addEventListener('pagehide',()=>{if(!api.events&&!api.opening)return;const actions=[];if(state&&roomId){rememberRoom(state.title);actions.push({id:api.next++,action:'poke',ship:SELF.slice(1),app:'ursketch',mark:'json',json:{action:'away',host,room:roomId,request:`away-${api.uid}`,name:activeName}});}actions.push({id:api.next++,action:'delete'});api.events?.close();fetch(api.url,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(actions),keepalive:true}).catch(()=>{});});
+window.addEventListener('pagehide',()=>{if(!api.events&&!api.opening)return;const actions=[];if(state&&roomId){saveRecovery(null);actions.push({id:api.next++,action:'poke',ship:SELF.slice(1),app:'ursketch',mark:'json',json:{action:'leave',host,room:roomId,request:`leave-${api.uid}`,name:activeName}});}actions.push({id:api.next++,action:'delete'});api.events?.close();fetch(api.url,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(actions),keepalive:true}).catch(()=>{});});
 
 function isArtist() { return state?.players[0]?.ship === SELF; }
 function canDraw() { return connectionReady && state?.phase === 'drawing' && isArtist(); }
@@ -332,17 +333,18 @@ selectChat('game');
 function roomSounds(before,after,fresh){
   if(before){
     if(after.players.some(p=>!before.players.some(old=>old.ship===p.ship)))void gameAudio?.play('JoinRoom');
-    if(after.phase==='choosing'&&(before.phase!=='choosing'||before.token!==after.token)){void gameAudio?.play('NewRound');if(after.players[0]?.ship===SELF)void gameAudio?.play('YourTurnToDraw');}
-    if(after.phase==='drawing'&&before.phase==='drawing'&&before.token===after.token){
-      const solved=after.players.filter(p=>p.solved&&before.players.some(old=>old.ship===p.ship&&!old.solved));
-      if(solved.some(p=>p.ship===SELF))void gameAudio?.play('YouGotTheWord');
-      if(solved.some(p=>p.ship!==SELF))void gameAudio?.play('SomeoneElseGotTheWord');
-      if(after.hintCount>before.hintCount)void gameAudio?.play('HintNoise');
+    if(fresh.some(m=>m.kind==='found-word'))void gameAudio?.play('YouGotTheWord');
+    if(fresh.some(m=>m.kind==='correct'&&m.ship!==SELF))void gameAudio?.play('SomeoneElseGotTheWord');
+    if(after.phase==='drawing'&&(before.phase!=='drawing'||before.token!==after.token)){
+      void gameAudio?.play('NewRound');if(after.players[0]?.ship===SELF)void gameAudio?.play('YourTurnToDraw');
     }
+    if(after.phase==='drawing'&&before.phase==='drawing'&&before.token===after.token&&after.hintCount>before.hintCount)void gameAudio?.play('HintNoise');
     if(fresh.some(m=>m.kind==='warning'))void gameAudio?.play('RemindsRules');
   }
-  gameAudio?.countdown(after.phase==='drawing'&&after.finishing?(after.remainingMs??after.seconds*1000):null);
+  gameAudio?.countdown(after.phase==='drawing'&&after.finishing?(after.remainingMs??after.seconds*1000):null,`${host}/${roomId}/${after.token}`);
 }
+function focusGuess(){if(!document.querySelector('dialog[open]')&&!$('game').hidden&&!$('guess').disabled){selectChat('game');$('guess').focus({preventScroll:true});}}
+function dismissBanner(){if(state)bannerDismissed=state.token;$('artist-banner').hidden=true;}
 function renderRoom(data) {
   if (data.kind === 'removed') { localLeave(); return; }
   if (data.kind !== 'room') return;
@@ -369,12 +371,12 @@ function renderRoom(data) {
   $('player-count').textContent=`${data.players.length}/10`;
   $('players').replaceChildren(...data.players.map((p,i)=>{const li=element('li',[(p.ship===SELF?'me':''),(p.solved?'solved':'')].filter(Boolean).join(' '));const label=element('div','player-name',p.name||p.ship);label.title=p.ship;label.tabIndex=0;label.setAttribute('role','button');label.setAttribute('aria-label',`Inspect ${p.name||p.ship}`);label.onclick=()=>inspectPlayer(p);label.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();inspectPlayer(p);}};label.append(element('span','player-role',p.solved?'✓ Correct':i===0&&['choosing','drawing'].includes(data.phase)?'✎ Drawing':p.ship===SELF?'You':'Guessing'));li.append(label,element('span','player-score',p.score));return li;}));
   drawing.render(data.lines,data.token);rememberRoom(data.title);
-  $('overlay').hidden=data.phase==='drawing';$('start').hidden=!(data.owner===SELF&&['waiting','finished'].includes(data.phase));$('start').disabled=data.players.length<2;
-  const winner=[...data.players].sort((a,b)=>b.score-a.score)[0];
-  const titles={waiting:'The crew is gathering.',choosing:isArtist()?'Your turn. Pick a word.':'A little inspiration is brewing…',reveal:data.answer,finished:'That’s a masterpiece of a game.'};
-  const descriptions={waiting:'Invite a friend. You need at least two players to start.',choosing:isArtist()?'You have 15 seconds to choose. Give hints if your guessers need help.':`${name} is choosing a word.`,reveal:'The next artist is up in a moment.',finished:`${winner?.name||winner?.ship} leads with ${winner?.score} points. Fancy another round?`};
-  $('overlay-title').textContent=titles[data.phase]||'';$('overlay-text').textContent=descriptions[data.phase]||'';
-  $('choices').replaceChildren(...data.choices.map(word=>{const button=element('button','',word);button.onclick=()=>run(()=>api.poke('choose',{word}));return button;}));
+  const waiting=['waiting','finished'].includes(data.phase);
+  $('room-notice').hidden=!waiting;
+  $('room-notice-text').textContent=data.phase==='finished'?'Game over — 10 rounds completed.':'Waiting for players. At least two players are needed.';
+  $('start').hidden=!(data.owner===SELF&&waiting);$('start').disabled=data.players.length<2;
+  $('banner-word').textContent=isArtist()?data.answer:'';
+  $('artist-banner').hidden=!(isArtist()&&data.phase==='drawing'&&bannerDismissed!==data.token&&!data.lines.some(l=>l.kind!=='clear'));
   $('tools').hidden=!(isArtist()&&data.phase==='drawing');
   $('round-controls').hidden=!(isArtist()&&data.phase==='drawing');
   const hintCount=data.hintCount||0,solved=data.finishing||data.players.some(p=>p.solved);
@@ -388,15 +390,30 @@ function renderRoom(data) {
   for(const control of $('tools').querySelectorAll('button,input'))control.disabled=!canDraw();
   $('skip').disabled=!canDraw();
   $('drawing-status').textContent=canDraw()?'Draw the word. No letters or numbers.':data.phase==='drawing'?'Watch the drawing. Enter guesses in Game.':'Everyone has an artist in them.';
-  const me=data.players.find(p=>p.ship===SELF),locked=data.phase!=='drawing'||isArtist()||me?.solved;
-  $('guess').disabled=locked;$('guess-form').querySelector('button').disabled=locked;
+  const me=data.players.find(p=>p.ship===SELF),locked=data.phase==='drawing'&&(isArtist()||me?.solved);
+  $('guess').disabled=locked;$('guess-form').querySelector('button').disabled=locked||data.phase!=='drawing';
   $('guess').placeholder=data.phase!=='drawing'?'Guesses open when a round starts':isArtist()?'You’re drawing this turn':me?.solved?'You guessed it!':'Type your guess…';
   renderRoomMessages();
   $('skip').textContent=solved?'Done':'Skip';
   $('round-controls').dataset.done=String(solved);
-  updateDial();requestAnimationFrame(fitCanvas);
+  if(changedTurn)$('guess').value='';
+  const doneDrawing=before?.players[0]?.ship===SELF&&before.phase==='drawing'&&(data.players[0]?.ship!==SELF||data.phase!=='drawing');
+  updateDial();requestAnimationFrame(()=>{fitCanvas();if(doneDrawing)focusGuess();});
 }
-function renderMessages(id,messages){const list=$(id);const atBottom=list.scrollHeight-list.scrollTop-list.clientHeight<50;list.replaceChildren(...messages.map(m=>{const row=element('div',`message ${m.kind}`);if(m.who)row.append(element('b','',m.who+':'));row.append(document.createTextNode(m.text));return row;}));if(atBottom)list.scrollTop=list.scrollHeight;}
+function renderMessages(id,messages){
+  const list=$(id),atBottom=list.scrollHeight-list.scrollTop-list.clientHeight<50;
+  list.replaceChildren(...messages.map(m=>{
+    const row=element('div',`message ${m.kind}`);if(m.who)row.append(element('b','',m.who+':'));
+    if(m.kind==='found-word'){
+      const prefix='You found the word: ';row.append(document.createTextNode(prefix),element('strong','',m.text.slice(prefix.length)));
+    }else if(m.kind==='round-result'){
+      const match=m.text.match(/"([^"]+)"$/);
+      if(match)row.append(document.createTextNode(m.text.slice(0,match.index+1)),element('strong','',match[1]),document.createTextNode('"'));
+      else row.append(document.createTextNode(m.text));
+    }else row.append(document.createTextNode(m.text));
+    return row;
+  }));if(atBottom)list.scrollTop=list.scrollHeight;
+}
 function updateDial() {
   const dial=$('timer-dial'), inactive=!state||['waiting','finished'].includes(state.phase);
   const duration=state?.duration || ({choosing:15,drawing:120,reveal:7}[state?.phase] || 120);
@@ -412,7 +429,7 @@ async function run(fn) {try {await fn();} catch(e) {toast(e.message || 'Somethin
 $('start').onclick=()=>run(()=>api.poke('start'));
 $('give-hint').onclick=()=>run(async()=>{const button=$('give-hint');button.disabled=true;try{await api.poke('hint');}catch(e){if(state)renderRoom(state);throw e;}});
 $('skip').onclick=()=>run(async()=>{await drawing.flushAll();await api.poke('skip');});
-$('guess-form').onsubmit=event=>{event.preventDefault();const text=$('guess').value.trim();if(!text||state?.phase!=='drawing')return;run(async()=>{await api.poke('guess',{text});$('guess').value='';});};
+$('guess-form').onsubmit=event=>{event.preventDefault();const text=$('guess').value.trim();if(!text||state?.phase!=='drawing')return;const token=state.token;run(async()=>{await api.poke('guess',{text});if(state?.token===token&&$('guess').value.trim()===text)$('guess').value='';});};
 $('chat-form').onsubmit=event=>{event.preventDefault();const text=$('chat-input').value.trim();if(!text)return;run(async()=>{await api.poke('chat',{text});$('chat-input').value='';});};
 $('host-form').onsubmit=event=>{event.preventDefault();run(async()=>{
   const value=$('host').value.trim();searchDrafts[searchMode]=value;
@@ -490,11 +507,11 @@ function syncThemeLayout(){
     if($(id).parentElement!==target){if(classic)target.append($(id));else $(anchor).after($(id));}
   }
 }
-function fitCanvas(){const wrap=$('canvas').parentElement;if(!wrap.clientWidth||!wrap.clientHeight)return;const width=Math.min(wrap.clientWidth,wrap.clientHeight*1000/700),height=width*700/1000;$('canvas').style.width=`${width}px`;$('canvas').style.height=`${height}px`;drawing?.fit();}
+function fitCanvas(){const wrap=$('canvas').parentElement;if(!wrap.clientWidth||!wrap.clientHeight)return;const width=Math.min(wrap.clientWidth,wrap.clientHeight*1000/700),height=width*700/1000;$('canvas').style.width=`${width}px`;$('canvas').style.height=`${height}px`;wrap.style.setProperty('--board-left',`${(wrap.clientWidth-width)/2}px`);wrap.style.setProperty('--board-top',`${(wrap.clientHeight-height)/2}px`);wrap.style.setProperty('--board-width',`${width}px`);drawing?.fit();}
 new ResizeObserver(fitCanvas).observe($('canvas').parentElement);
 try{const saved=JSON.parse(localStorage.getItem(profileKey)||'null');if(saved){profiles=(saved.names||[]).filter(n=>typeof n==='string'&&validPlayerName(n));if(profiles.includes(saved.active))activeName=saved.active;}}catch{}
 installClassicScrollbars();
 const preferences=createSettings({notify:toast,onChange:prefs=>{if(lastTheme!==prefs.theme){drawing?.resetView();lastTheme=prefs.theme;}gameAudio?.settings();syncThemeLayout();requestAnimationFrame(fitCanvas);}});
 if(!connectPage)gameAudio=createGameAudio({urls:URSKETCH_CUE_URLS,getPrefs:()=>preferences.values,notify:toast});
-renderProfiles();drawing=createDrawing({canvas:$('canvas'),colors,canDraw,send:(action,data)=>api.poke(action,action==='draw'&&roomStream?{encoding:1,lines:data.lines.map(l=>UrSketchWire.pack(l))}:data),error:e=>toast(e.message||String(e)),storageKey:`ursketch.palettes.${SELF}`});restoreRecovery();
+renderProfiles();drawing=createDrawing({canvas:$('canvas'),colors,canDraw,send:(action,data)=>api.poke(action,action==='draw'&&roomStream?{encoding:1,lines:data.lines.map(l=>UrSketchWire.pack(l))}:data),error:e=>toast(e.message||String(e)),onDraw:dismissBanner,storageKey:`ursketch.palettes.${SELF}`});restoreRecovery();
 if(!connectPage)run(async()=>{if(!SELF)throw new Error('Open urSketch through your Urbit ship at /apps/ursketch.');const query=new URLSearchParams(location.search);restoreKnownHosts();void connectGlobalChat();await browse(query.get('host')||GLOBAL_CHAT_HOST);void watchOtherHosts();const id=query.get('room');if(id){if(!savedRoom)saveRecovery({host,id,title:id,expiresAt:Date.now()+GRACE_MS});await joinRoom(id);}});

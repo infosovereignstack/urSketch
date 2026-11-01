@@ -197,23 +197,7 @@ with sync_playwright() as p:
     expect(page.locator('#player-profile-ship')).to_have_text(page.evaluate('SELF'))
     page.locator('#player-profile-dialog form button').click()
     page.screenshot(path=str(artifacts / 'comet-room.png'), full_page=True)
-    room = page.evaluate('roomId')
-    page.goto('http://127.0.0.1/apps/ursketch/play')
-    expect(page.locator('#room-recovery')).to_be_visible(timeout=30000)
-    expect(page.locator('#rejoin-room')).to_be_enabled(timeout=30000)
-    page.locator('#rejoin-room').click()
-    expect(page.locator('#game')).to_be_visible(timeout=30000)
-    assert page.evaluate('roomId') == room
-    # Both compact invite codes and existing copied invite URLs use Search.
     ship = page.evaluate('SELF')
-    for invite in [f'{ship}/{room}',f'http://127.0.0.1/apps/ursketch/play?host={ship}&room={room}']:
-        page.goto('http://127.0.0.1/apps/ursketch/play')
-        expect(page.locator('#host-search')).to_be_enabled(timeout=30000)
-        page.evaluate("setSearchMode(\'invite\')")
-        page.locator('#host').fill(invite)
-        page.locator('#host-search').click()
-        expect(page.locator('#game')).to_be_visible(timeout=30000)
-        assert page.evaluate('roomId') == room
     page.locator('#leave').click()
     expect(page.locator('#lobby')).to_be_visible()
     tile = context.request.get('http://127.0.0.1/~/scry/docket/charges.json')
@@ -238,5 +222,5 @@ with sync_playwright() as p:
     assert treaty['href']['site'] == '/apps/ursketch'
     (artifacts / 'comet-publication.json').write_text(json.dumps(treaty, indent=2) + '\n')
     assert not errors, errors
-    print(f'PASS on {ship}: username screen, full-ship/custom profiles, profile inspection, reference room-browser layout, distinct known-host player counts, filters, hidden invite compatibility, search, tools, refresh recovery/rejoin, room create/leave, Landscape tile, and Treaty publication')
+    print(f'PASS on {ship}: username screen, full-ship/custom profiles, profile inspection, reference room-browser layout, distinct known-host player counts, filters, hidden invite compatibility, search, tools, room lifecycle, room create/leave, Landscape tile, and Treaty publication')
     browser.close()

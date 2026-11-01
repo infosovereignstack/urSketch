@@ -1,0 +1,15 @@
+{
+  "ships": [
+    "~zod",
+    "~nec",
+    "~bud"
+  ],
+  "immediateAssignedWords": true,
+  "yellowBannerDismissesOnDrawing": true,
+  "privateSolverAndArtistMessages": true,
+  "partialSolveSeconds": 20.13,
+  "tickCount": 80,
+  "allSolvedImmediate": true,
+  "guessFocus": true,
+  "tabCloseDisconnects": true
+}

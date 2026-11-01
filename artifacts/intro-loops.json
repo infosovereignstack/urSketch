@@ -2,26 +2,26 @@
   "passes": [
     {
       "samples": 20,
-      "peakRms": 0.20381941072018595,
-      "maxDrift": 0.053172,
+      "peakRms": 0.20783080626876688,
+      "maxDrift": 0.007861999999999814,
       "minBrightness": 1,
       "paused": false
     },
     {
       "samples": 20,
-      "peakRms": 0.21453116330831165,
-      "maxDrift": 0.012237999999999971,
+      "peakRms": 0.22067794175350974,
+      "maxDrift": 0.016462999999999894,
       "minBrightness": 1,
       "paused": false
     },
     {
       "samples": 8,
-      "peakRms": 0.1684093634914189,
-      "maxDrift": 0.012175000000000047,
+      "peakRms": 0.15822590805650216,
+      "maxDrift": 0.014657000000000142,
       "minBrightness": 1,
       "paused": false
     }
   ],
-  "callbackTime": 39.166667000000004,
-  "videoTime": 2.3863
+  "callbackTime": 39.250001,
+  "videoTime": 2.4108
 }

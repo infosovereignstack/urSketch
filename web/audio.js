@@ -1,16 +1,18 @@
 /* Game cues use decoded buffers: overlapping voices and an audio-clock ticker. */
 function createGameAudio({urls,getPrefs,notify}) {
   let context=null,master=null,bridge=null,output=null,loading=null,disposed=false;
-  let deadline=0,nextTick=null,ticker=null,outputRevision=0;
+  let deadline=0,ticker=null,outputRevision=0,tickKey=null,tickOrigin=0,tickLimit=0,tickDone=false;
+  const tickVoices=new Map(),tickFinished=new Set();
   const buffers=new Map(),voices=new Set();
   const audible=()=>!disposed&&!getPrefs().muted&&getPrefs().volume>0&&context?.state==='running';
-  function stopVoice(voice){try{voice.stop();}catch{}voices.delete(voice);}
-  function stopTicks(){for(const voice of voices)if(voice.urSketchCue==='TickingNoise')stopVoice(voice);nextTick=null;}
-  function source(cue,when=context?.currentTime){
+  function stopVoice(voice){voice.cancelled=true;if(tickVoices.get(voice.urSketchTickIndex)===voice)tickVoices.delete(voice.urSketchTickIndex);if(voice.urSketchTickIndex!=null&&performance.now()>=tickOrigin+voice.urSketchTickIndex*250-5)tickFinished.add(voice.urSketchTickIndex);try{voice.stop();}catch{}voices.delete(voice);}
+  function stopTicks(){for(const voice of tickVoices.values())stopVoice(voice);tickVoices.clear();}
+  function source(cue,when=context?.currentTime,index=null){
     if(!audible()||!buffers.has(cue))return;
     const voice=context.createBufferSource();voice.buffer=buffers.get(cue);voice.urSketchCue=cue;
-    voice.connect(master);voices.add(voice);voice.onended=()=>{voices.delete(voice);voice.disconnect();};voice.start(when);
-    window.dispatchEvent(new CustomEvent('ursketch:sound',{detail:{cue,when}}));
+    voice.connect(master);voices.add(voice);voice.urSketchTickIndex=index;const sourceKey=tickKey;voice.onended=()=>{voices.delete(voice);if(index!==null&&!voice.cancelled&&sourceKey===tickKey)tickFinished.add(index);if(index!==null&&tickVoices.get(index)===voice)tickVoices.delete(index);voice.disconnect();};voice.start(when);
+    if(index!==null)tickVoices.set(index,voice);
+    window.dispatchEvent(new CustomEvent('ursketch:sound',{detail:{cue,when,index,key:tickKey}}));
   }
   async function routeOutput(){
     if(!context)return;
@@ -55,20 +57,31 @@ function createGameAudio({urls,getPrefs,notify}) {
     await loading;if(disposed||performance.now()-received>1500)return;source(cue);
   }
   function schedule(){
-    if(!audible()||!buffers.has('TickingNoise')||performance.now()>=deadline){stopTicks();return;}
-    const now=context.currentTime,until=now+(deadline-performance.now())/1000;
-    if(nextTick==null||nextTick<now-.025)nextTick=now+.015;
-    // Schedule the whole remaining window so background-tab timer throttling
-    // cannot change the tempo. Leaving/muting/reveal cancels these sources.
-    while(nextTick<until){source('TickingNoise',nextTick);nextTick+=.25;}
+    if(tickKey===null||tickDone||!deadline)return;
+    const now=performance.now();
+    if(now>=deadline){tickDone=true;stopTicks();return;}
+    if(!audible()||!buffers.has('TickingNoise')){stopTicks();return;}
+    // Each slot belongs to one round and one wall-clock instant. Never reset a
+    // cursor when its queued ticks finish, and never play an overdue slot.
+    for(const [index,voice] of tickVoices){if(tickOrigin+index*250>=deadline){stopVoice(voice);tickVoices.delete(index);}}
+    const first=Math.max(0,Math.ceil((now+5-tickOrigin)/250)),clockBase=context.currentTime-now/1000;
+    for(let index=first;index<tickLimit;index++){
+      const time=tickOrigin+index*250;if(time>=deadline)break;
+      if(tickVoices.has(index)||tickFinished.has(index))continue;
+      const delay=(time-performance.now())/1000;if(delay<.003)continue;
+      const when=clockBase+time/1000;if(when<context.currentTime+.003)continue;
+      source('TickingNoise',when,index);
+    }
   }
-  function countdown(ms){
-    if(ms==null||ms<=0){deadline=0;stopTicks();return;}
-    const until=performance.now()+ms;
-    // Authoritative updates refine the stop time without restarting the tick rhythm.
-    deadline=until;schedule();
+  function countdown(ms,key='round'){
+    if(key!==tickKey){stopTicks();tickKey=key;tickFinished.clear();tickDone=false;deadline=0;tickLimit=0;}
+    if(ms==null||ms<=0){if(deadline){tickDone=true;stopTicks();}return;}
+    if(tickDone)return;
+    if(!deadline){tickOrigin=performance.now()+15;deadline=performance.now()+Math.min(20000,ms);tickLimit=Math.min(80,Math.ceil(ms/250));}
+    else deadline=Math.min(deadline,performance.now()+ms);
+    schedule();
   }
-  function stop(){deadline=0;for(const voice of [...voices])stopVoice(voice);nextTick=null;}
+  function stop(){deadline=0;tickKey=null;tickDone=true;stopTicks();for(const voice of [...voices])stopVoice(voice);}
   document.addEventListener('pointerdown',unlock,{passive:true});document.addEventListener('keydown',unlock);
   window.addEventListener('pagehide',()=>{stop();disposed=true;clearInterval(ticker);void context?.close();output?.pause();});
   ticker=setInterval(schedule,25);

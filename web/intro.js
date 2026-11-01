@@ -16,7 +16,9 @@
     context.drawImage(source,0,0,track.width,track.height);
     const image=context.getImageData(0,0,track.width,track.height),d=image.data;
     const at=(x,y)=>Array.from(d.slice((y*track.width+x)*4,(y*track.width+x)*4+3));
-    const sky=at(1590,10),circle=at(738,70),tolerance=Math.max(1,Math.round(8*sky[2]/224));
+    const sky=at(1590,10),circle=[45,100,154].map((v,i)=>Math.round(v*sky[i]/[159,193,224][i])),tolerance=Math.max(1,Math.round(8*sky[2]/224));
+    // The original sample at (738,70) is occluded by the exclamation and bulb.
+    // Use the measured circle palette, scaled only by the unobstructed sky fade.
     // Flatten compression noise in both solid blues. The canvas edge and page
     // then contain identical pixels, including during the source's fade to black.
     for(let i=0;i<d.length;i+=4){

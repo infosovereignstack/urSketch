@@ -18,7 +18,7 @@ Each prompts for a hidden JSON object with `host` and `guest` login codes.
 Never save real ship login codes or cookies in artifacts.
 
 `comet.py` authenticates to the local comet through Lens, checks the served
-page and favicon, exercises room creation, invite search and refresh/rejoin,
+page and favicon, exercises room creation, search and explicit leave,
 and verifies the urSketch tile and Treaty image/version/route. It saves only
 public metadata and screenshots in `artifacts/`.
 
@@ -243,3 +243,26 @@ successfully and checks ownership on the guest's own ship. Live 0.13.0 smoke
 checks and the full intro/media regression passed; no Global Chat test posts
 were sent to the publisher. The tile favicon is an exact, content-addressed
 local PNG rather than an inline copy in each HTML page.
+
+### 0.14 immediate-round regression
+
+`tests/round-flow.py` runs real native ~zod, ~nec and ~bud at HTTP ports
+18080–18082 / Lens 12322–12324, previews the current built client, and routes
+local media without posting to real Global Chat. It verifies assigned words,
+private exact messages, artist banner dismissal, 20-second partial endings,
+immediate all-solved endings, focus and normal tab-close membership cleanup.
+`tests/audio-clock.py` also checks clock-divergence/replayed-slot prevention;
+`URSKETCH_AUDIO_BASELINE=1` reproduces the previous-release defect.
+Older gameplay scripts that expect choosing/reveal phases describe historical
+releases; round-flow is the current lifecycle integration regression.
+
+0.14.0 verification passed on three isolated native ships: a partial solve
+advanced after 20.13 seconds with 80 ticks; all-solved advanced immediately;
+private word/reward/artist prompts, banner, focus and tab-close leave passed.
+The prior audio scheduler reproduced an exhausted-window replay (16 ticks
+from an eight-tick window); the fixed implementation schedules each slot once.
+The installed comet reports 0.14.0 with its Treaty publication and passes the
+updated browser/room lifecycle suite.
+Installed intro/media verification also passed, including the repaired blue
+circle at exclamation/lightbulb frames and three audible loop passes. Native
+hints, vector codec and bandwidth generators passed on the comet.

@@ -38,7 +38,7 @@ def clean_background(page):
  assert page.evaluate("""()=>{
   const c=document.querySelector('#intro-scene'),x=c.getContext('2d'),d=x.getImageData(0,0,c.width,c.height).data;
   const pixel=(a,b)=>Array.from(d.slice((b*c.width+a)*4,(b*c.width+a)*4+3));
-  const sky=pixel(1590,10),circle=pixel(738,70);
+  const sky=pixel(1590,10),circle=pixel(1000,200);
   for(let y=0;y<280;y++)for(let a=940;a<1620;a++){
    const radius=Math.hypot(a+.5-738,y+.5-532);if(Math.abs(radius-511)<2)continue;
    const expected=radius<511?circle:sky,actual=pixel(a,y);
@@ -84,12 +84,15 @@ with sync_playwright() as p:
  page.wait_for_function("document.body.classList.contains('art-ready') && document.querySelector('video').readyState>=2",timeout=30000)
  page.locator('video').evaluate('v=>v.pause()')
  sizes=[]
- for frame in [0,1,24,60,96,180,300,420,441]:
+ for frame in [0,1,24,60,72,84,96,144,156,180,300,420,441]:
   seek(page,frame/24+.002)
   stage=page.locator('#intro-stage').bounding_box();box=page.locator('#intro-play').bounding_box();x,y,w,h=track['frames'][frame]
   assert abs((box['x']+box['width']/2-stage['x'])/stage['width']*1620-x)<3
   assert abs((box['y']+box['height']/2-stage['y'])/stage['height']*1080-y)<3
   sizes.append(box['width']);clean_background(page)
+ for time in [3.002,3.502,6.002,6.502]:
+  seek(page,time)
+  pixel=page.evaluate("()=>Array.from(document.querySelector('#intro-scene').getContext('2d').getImageData(1000,200,1,1).data).slice(0,3)");assert all(abs(a-b)<=3 for a,b in zip(pixel,[45,100,154])),(time,pixel)
  assert max(sizes)>min(sizes)*2
  seek(page,4)
  # The page's colour follows the decoded video, including fade-out colour changes.

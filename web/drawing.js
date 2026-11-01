@@ -9,7 +9,7 @@ const UrSketchWire={
   }
 };
 /* Replayable drawing tools. The host stores commands; every viewer renders them. */
-function createDrawing({canvas, colors, canDraw, send, error, storageKey}) {
+function createDrawing({canvas, colors, canDraw, send, error, storageKey,onDraw}) {
   const ctx=canvas.getContext('2d'), board=document.createElement('canvas');
   board.width=1000;board.height=700;
   const base=board.getContext('2d',{willReadFrequently:true});
@@ -87,7 +87,7 @@ function createDrawing({canvas, colors, canDraw, send, error, storageKey}) {
     repaint();
   }
   function command(kind,a,b){return {kind,color,width:Number($('width').value),x1:a.x,y1:a.y,x2:b.x,y2:b.y,opacity:kind==='brush'?25:100,filled,seed:kind==='spray'?crypto.getRandomValues(new Uint32Array(1))[0]:0,id:`${uid}-${++sequence}`};}
-  function queue(l){optimistic.set(l.id,l);pending.push(l);repaint();}
+  function queue(l){if(l.kind!=='clear')onDraw?.();optimistic.set(l.id,l);pending.push(l);repaint();}
   function point(event){const r=canvas.getBoundingClientRect();return{x:Math.max(0,Math.min(1000,Math.round((event.clientX-r.left)*1000/r.width))),y:Math.max(0,Math.min(700,Math.round((event.clientY-r.top)*700/r.height)))};}
   function clampedEnd(a,b,event){if(event.shiftKey&&['rectangle','circle'].includes(selected)){const n=Math.max(Math.abs(b.x-a.x),Math.abs(b.y-a.y));return{x:Math.max(0,Math.min(1000,a.x+Math.sign(b.x-a.x||1)*n)),y:Math.max(0,Math.min(700,a.y+Math.sign(b.y-a.y||1)*n))};}return b;}
   function transform(){const wrap=canvas.parentElement;const mx=Math.max(0,(canvas.clientWidth*zoom-wrap.clientWidth)/2),my=Math.max(0,(canvas.clientHeight*zoom-wrap.clientHeight)/2);panX=Math.max(-mx,Math.min(mx,panX));panY=Math.max(-my,Math.min(my,panY));canvas.style.transform=`translate(${panX}px,${panY}px) scale(${zoom})`;canvas.dataset.zoom=String(zoom);}

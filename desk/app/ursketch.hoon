@@ -8,9 +8,10 @@
 +$  state-4  [%4 rooms=(map @t room-v5) proxies=(map path json) names=(map @p @t) leases=(map lease-key @da)]
 +$  global-message  [who=@p label=@t text=@t at=@da]
 +$  state-5  [%5 rooms=(map @t room-v5) proxies=(map path json) names=(map @p @t) leases=(map lease-key @da) global-chat=(list global-message)]
-+$  state-6  [%6 rooms=(map @t room) proxies=(map path json) names=(map @p @t) leases=(map lease-key @da) global-chat=(list global-message)]
++$  state-6  [%6 rooms=(map @t room-v6) proxies=(map path json) names=(map @p @t) leases=(map lease-key @da) global-chat=(list global-message)]
++$  state-7  [%7 rooms=(map @t room) proxies=(map path json) names=(map @p @t) leases=(map lease-key @da) global-chat=(list global-message)]
 --
-=|  state-6
+=|  state-7
 =*  state  -
 ^-  agent:gall
 =<
@@ -23,6 +24,7 @@
   ++  on-save  !>(state)
   ++  on-load
     |=  old=vase
+    =/  v7=(unit state-7)  (mole |.(!<(state-7 old)))
     =/  v6=(unit state-6)  (mole |.(!<(state-6 old)))
     =/  v5=(unit state-5)  (mole |.(!<(state-5 old)))
     =/  v4=(unit state-4)  (mole |.(!<(state-4 old)))
@@ -30,14 +32,15 @@
     =/  v2=(unit state-2)  (mole |.(!<(state-2 old)))
     =/  v1=(unit state-1)  (mole |.(!<(state-1 old)))
     =.  state
-      ?^  v6  u.v6
-      ?^  v5  [%6 (~(run by rooms.u.v5) |=(r=room-v5 (migrate-v5:ursketch-game r now.bowl))) proxies.u.v5 names.u.v5 leases.u.v5 global-chat.u.v5]
-      ?^  v4  [%6 (~(run by rooms.u.v4) |=(r=room-v5 (migrate-v5:ursketch-game r now.bowl))) proxies.u.v4 names.u.v4 leases.u.v4 ~]
-      ?^  v3  [%6 (~(run by rooms.u.v3) migrate-v3:ursketch-game) proxies.u.v3 names.u.v3 leases.u.v3 ~]
-      ?^  v2  [%6 (~(run by rooms.u.v2) migrate-room:ursketch-game) proxies.u.v2 names.u.v2 ~ ~]
-      ?^  v1  [%6 (~(run by rooms.u.v1) migrate-room:ursketch-game) proxies.u.v1 ~ ~ ~]
+      ?^  v7  u.v7
+      ?^  v6  [%7 (~(run by rooms.u.v6) migrate-v6:ursketch-game) proxies.u.v6 names.u.v6 leases.u.v6 global-chat.u.v6]
+      ?^  v5  [%7 (~(run by rooms.u.v5) |=(r=room-v5 (migrate-v5:ursketch-game r now.bowl))) proxies.u.v5 names.u.v5 leases.u.v5 global-chat.u.v5]
+      ?^  v4  [%7 (~(run by rooms.u.v4) |=(r=room-v5 (migrate-v5:ursketch-game r now.bowl))) proxies.u.v4 names.u.v4 leases.u.v4 ~]
+      ?^  v3  [%7 (~(run by rooms.u.v3) migrate-v3:ursketch-game) proxies.u.v3 names.u.v3 leases.u.v3 ~]
+      ?^  v2  [%7 (~(run by rooms.u.v2) migrate-room:ursketch-game) proxies.u.v2 names.u.v2 ~ ~]
+      ?^  v1  [%7 (~(run by rooms.u.v1) migrate-room:ursketch-game) proxies.u.v1 ~ ~ ~]
       =/  previous=state-0  !<(state-0 old)
-      [%6 (~(run by rooms.previous) migrate-room:ursketch-game) ~ ~ ~ ~]
+      [%7 (~(run by rooms.previous) migrate-room:ursketch-game) ~ ~ ~ ~]
     on-init
   ++  on-poke
     |=  [=mark =vase]
@@ -70,7 +73,8 @@
 --
 |_  =bowl:gall
 ++  init
-  ^-  (quip card state-6)
+  ^-  (quip card state-7)
+  =.  rooms  (~(run by rooms) resume-turn)
   =/  keys=(list lease-key)
     %-  zing
     %+  turn  ~(tap by rooms)
@@ -97,7 +101,7 @@
   (welp ~[[%pass /bind %arvo %e %connect [~ /apps/ursketch] %ursketch]] (welp turns presence))
 ++  poke
   |=  [=mark =vase]
-  ^-  (quip card state-6)
+  ^-  (quip card state-7)
   ?+  mark  ~|('unsupported mark' !!)
     %handle-http-request
       =/  req  !<([id=@ta req=inbound-request:eyre] vase)
@@ -197,12 +201,6 @@
             ?>  ?|(?=(%waiting phase.r) ?=(%finished phase.r))
             ?>  (gte (lent players.r) 2)
             (choose:ursketch-game r(turn 0, players (turn players.r |=(p=player p(score 0, solved %.n)))) now.bowl)
-          %choose
-            ?>  ?&(?=(%choosing phase.r) is-drawer)
-            ?>  =(token.r (number j 'token'))
-            =/  word=@t  (text j 'word')
-            ?>  (lien choices.r |=(w=@t =(w word)))
-            (begin:ursketch-game r word now.bowl)
           %hint
             ?>  ?&(?=(%drawing phase.r) is-drawer =(token.r (number j 'token')))
             (hint:ursketch-game r now.bowl)
@@ -212,7 +210,7 @@
           %skip
             ?>  ?&(?=(%drawing phase.r) is-drawer)
             ?>  =(token.r (number j 'token'))
-            (reveal:ursketch-game r now.bowl)
+            (end-round r 'skip')
           %guess
             ?>  ?&(?=(%drawing phase.r) !is-drawer)
             ?>  =(token.r (number j 'token'))
@@ -221,8 +219,18 @@
             ?>  !solved.p
             =/  guess=@t  (crip (scag 160 (trip (text j 'text'))))
             ?:  =((normalize:ursketch-game guess) (normalize:ursketch-game answer.r))
+              =/  first=?  =(solves.r 0)
+              =/  points=@ud  (guess-points:ursketch-game solves.r)
+              =/  artist=@t  (player-name drawer)
               =.  r  (finish-window:ursketch-game r src.bowl now.bowl)
-              =.  r  (say:ursketch-game r (player-name src.bowl) 'guessed the word!' 'correct')
+              =.  r  r(solvers (snoc solvers.r [src.bowl (player-name src.bowl) points]))
+              =.  r
+                ?:  !first  r
+                (say:ursketch-game r '' 'The word has been found! The round will end in 20 seconds!' 'announcement')
+              =.  r  (whisper:ursketch-game r src.bowl (rap 3 ~['You found the word: ' answer.r '!']) 'found-word')
+              =.  r  (whisper:ursketch-game r src.bowl (rap 3 ~['You found ' artist '\27s word and get ' (scot %ud points) ' points!']) 'reward')
+              =.  r  (log:ursketch-game r (player-name src.bowl) 'guessed the word!' 'correct' ~ `src.bowl)
+              ?:  (all-solved:ursketch-game r)  (end-round r 'all')
               r
             ?:  close  r
             (say:ursketch-game r (player-name src.bowl) guess 'guess')
@@ -238,8 +246,11 @@
                 ==
             (say:ursketch-game r (player-name src.bowl) msg 'chat')
           %leave
-            (depart:ursketch-game (say:ursketch-game r (player-name src.bowl) 'left the room' 'system') src.bowl now.bowl)
+            (leave-room r src.bowl 'left the room')
         ==
+      =.  r
+        ?:  ?&(?=(%drawing phase.r) !=(old-token token.r))  (announce r)
+        r
       =.  rooms
         ?:  =(0 (lent players.r))
           (~(del by rooms) rid)
@@ -259,7 +270,7 @@
   ==
 ++  watch
   |=  =path
-  ^-  (quip card state-6)
+  ^-  (quip card state-7)
   ?:  ?=([%http-response *] path)  [~ state]
   ?:  ?=([%proxy @ *] path)
     ?>  =(src.bowl our.bowl)
@@ -288,7 +299,7 @@
   [~[(view-card rid viewer)] state]
 ++  leave
   |=  =path
-  ^-  (quip card state-6)
+  ^-  (quip card state-7)
   ?.  ?=([%proxy @ *] path)  [~ state]
   ?:  (lien ~(tap by sup.bowl) |=([d=duct who=ship p=(list @ta)] =(p path)))
     [~ state]
@@ -301,7 +312,7 @@
   ~
 ++  agent
   |=  [=wire =sign:agent:gall]
-  ^-  (quip card state-6)
+  ^-  (quip card state-7)
   ?:  ?=([%proxy @ *] wire)
     ?+  -.sign  [~ state]
       %fact
@@ -330,7 +341,7 @@
   [~[[%give %fact ~[/relay] %json !>(payload)]] state]
 ++  arvo
   |=  [=wire =sign-arvo]
-  ^-  (quip card state-6)
+  ^-  (quip card state-7)
   ?:  ?=([%presence @ @ ~] wire)
     ?.  ?=([%behn %wake *] sign-arvo)  [~ state]
     (expire i.t.wire (slav %p i.t.t.wire))
@@ -342,7 +353,10 @@
   =/  r=room  u.found
   ?.  =((slav %ud i.t.t.wire) token.r)  [~ state]
   ?:  (gth deadline.r now.bowl)  [~ state]
-  =.  r  (advance:ursketch-game r now.bowl)
+  =.  r
+    ?:  ?=(%drawing phase.r)  (end-round r 'time')
+    (advance:ursketch-game r now.bowl)
+  =.  r  (announce r)
   =.  rooms  (~(put by rooms) rid r)
   =/  cards=(list card)  (snoc (publish rid) lobby-card)
   ?:  (gth deadline.r now.bowl)
@@ -350,7 +364,7 @@
   [cards state]
 ++  fail
   |=  [=term =tang]
-  ^-  (quip card state-6)
+  ^-  (quip card state-7)
   ~&  tang
   [~ state]
 ++  text
@@ -372,7 +386,7 @@
   p.value
 ++  touch
   |=  [rid=@t who=@p]
-  ^-  (quip card state-6)
+  ^-  (quip card state-7)
   =/  exists=?  (~(has by leases) [rid who])
   =/  until=@da  (add now.bowl ~m2)
   =.  leases  (~(put by leases) [rid who] until)
@@ -385,7 +399,7 @@
   [%pass /presence/[rid]/[(scot %p who)] %arvo %b %wait (max until (add now.bowl ~s1))]
 ++  expire
   |=  [rid=@t who=@p]
-  ^-  (quip card state-6)
+  ^-  (quip card state-7)
   =/  until=(unit @da)  (~(get by leases) [rid who])
   ?~  until  [~ state]
   ?:  (gth u.until now.bowl)
@@ -396,7 +410,8 @@
   =/  old-token=@ud  token.u.found
   ~&  [%ursketch-presence-expired rid who]
   =/  r=room
-    (depart:ursketch-game (say:ursketch-game u.found (player-name who) 'disconnected (two-minute timeout)' 'system') who now.bowl)
+    (leave-room u.found who 'disconnected (two-minute timeout)')
+  =.  r  ?:(!=(old-token token.r) (announce r) r)
   =.  rooms
     ?~  players.r  (~(del by rooms) rid)
     (~(put by rooms) rid r)
@@ -416,7 +431,7 @@
   [%pass /turn/[rid]/[(scot %ud token.r)] %arvo %b %wait deadline.r]
 ++  respond
   |=  [id=@ta code=@ud mime=@t body=@t]
-  ^-  (quip card state-6)
+  ^-  (quip card state-7)
   =/  headers=(list [@t @t])
     ~[['Content-Type' mime] ['Cache-Control' 'no-store'] ['X-Content-Type-Options' 'nosniff']]
   =.  headers
@@ -429,7 +444,7 @@
   ==
 ++  respond-media
   |=  [id=@ta mime=@t etag=@t body=octs]
-  ^-  (quip card state-6)
+  ^-  (quip card state-7)
   =/  headers=(list [@t @t])
     :~  ['Content-Type' mime]
         ['Cache-Control' 'private, max-age=31536000, immutable']
@@ -556,9 +571,9 @@
     ?.  ?=(%legacy mode)  (pack:ursketch-wire l)
     (obj ~[['color' s+color.l] ['width' (numb width.l)] ['x1' (numb x1.l)] ['y1' (numb y1.l)] ['x2' (numb x2.l)] ['y2' (numb y2.l)] ['kind' s+kind.l] ['opacity' (numb opacity.l)] ['filled' b+filled.l] ['seed' (numb seed.l)] ['id' s+id.l]])
   =/  ms=(list json)
-    %+  turn  (flop chat.r)
+    %+  turn  (flop (skim chat.r |=(m=message ?~(audience.m %.y =(viewer u.audience.m)))))
     |=  m=message
-    (obj ~[['who' s+who.m] ['text' s+text.m] ['kind' s+kind.m]])
+    (obj ~[['who' s+who.m] ['text' s+text.m] ['kind' s+kind.m] ['ship' s+?~(actor.m '' (scot %p u.actor.m))]])
   =/  choices=(list json)
     ?:  private  (turn choices.r |=(w=@t [%s w]))
     ~
@@ -577,7 +592,7 @@
       ['seconds' (numb seconds)]
       ['remainingMs' (numb ?:((gth deadline.r now.bowl) (div (mul 1.000 (sub deadline.r now.bowl)) ~s1) 0))]
       ['finishing' b+?&(drawing (gth solves.r 0))]
-      ['duration' (numb ?:(?=(%choosing phase.r) 15 ?:(drawing ?:((gth solves.r 0) 20 120) 7)))]
+      ['duration' (numb ?:(drawing ?:((gth solves.r 0) 20 120) 120))]
       ['value' (numb (guess-points:ursketch-game solves.r))]
       ['hintCount' (numb hints.r)]
       ['hint' s+(hint-mask:ursketch-game r)]
@@ -588,6 +603,37 @@
       ['lines' a+ls]
       ['messages' a+ms]
   ==
+++  resume-turn
+  |=  r=room
+  ^-  room
+  ?:  ?=(%choosing phase.r)  (announce (choose:ursketch-game r now.bowl))
+  ?:  ?=(%reveal phase.r)  (announce (advance:ursketch-game r now.bowl))
+  r
+++  announce
+  |=  r=room
+  ^-  room
+  ?.  ?&(?=(%drawing phase.r) ?=(^ players.r))  r
+  =/  artist=@p  who.i.players.r
+  =/  r=room  r
+  =.  r  (whisper:ursketch-game r artist (cat 3 'You\27re up next to draw! Your word is: ' answer.r) 'artist-word')
+  (say:ursketch-game r '' (rap 3 ~[(player-name artist) ' drawing round ' (scot %ud +(turn.r))]) 'round')
+++  result
+  |=  [r=room reason=@t]
+  ^-  room
+  ?.  ?&(?=(%drawing phase.r) ?=(^ players.r))  r
+  (say:ursketch-game r '' (result-text:ursketch-game r (player-name who.i.players.r) reason) 'round-result')
+++  end-round
+  |=  [r=room reason=@t]
+  ^-  room
+  (advance:ursketch-game (result r reason) now.bowl)
+++  leave-room
+  |=  [r=room who=@p text=@t]
+  ^-  room
+  =/  artist=?  ?&(?=(%drawing phase.r) ?|(?&(?=(^ players.r) =(who who.i.players.r)) (lte (lent players.r) 2)))
+  =.  r  ?:(!artist r (result r 'left'))
+  =.  r  (depart:ursketch-game (say:ursketch-game r (player-name who) text 'system') who now.bowl)
+  ?:  (all-solved:ursketch-game r)  (end-round r 'all')
+  r
 ++  player-name
   |=  who=@p
   ^-  @t
