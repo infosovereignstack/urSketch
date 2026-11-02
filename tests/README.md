@@ -396,3 +396,16 @@ proportional ten-player roster, chat selection, room-list contrast and
 laptop/phone fit. The installed Classic/Blingee comet regression also passed,
 including native create/leave, profile/character media, tile and Treaty 0.21.0.
 JavaScript/Python syntax and whitespace checks passed.
+
+### 0.22.0 Snoopy, Mountain Dew and M1A1 Abrams
+
+The theme suite now exercises all ten additional themes, including the three
+new choices, with saved selection, Classic/theme transitions, full canvas edge
+strokes, drawing-pixel identity, room-list contrast, roster colors/proportions
+and laptop/phone layouts. All art remains local and self-contained.
+
+0.22.0 preview and installed checks passed across all ten themes. Snoopy and
+Woodstock, Mountain Dew and M1A1 Abrams save and restore correctly; tank
+controls use monospace text and citrus buttons retain readable dark labels.
+The installed Classic/Blingee room/profile/canvas regression and Treaty 0.22.0
+checks also passed. All six new SVG assets parse; syntax/whitespace checks pass.

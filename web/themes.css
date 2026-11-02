@@ -6,6 +6,9 @@ body[data-theme=dark-souls]{--theme-bg:radial-gradient(ellipse at 48% 108%,#6b2d
 body[data-theme=kitty-cat]{--theme-bg:linear-gradient(130deg,#fff1de,#f7d8dc 60%,#d5e9df);--theme-surface:#fff3ecf2;--theme-sheet:#fffaf4;--theme-text:#6c4852;--theme-heading:#885663;--theme-border:#dba5af;--theme-accent:#b66b82;--theme-soft:#f9e0e5;--theme-button:linear-gradient(#fff9ef,#f4ced8);--theme-radius:9px;--theme-shadow:0 2px 4px #a4657c25;--theme-bar:linear-gradient(#ffeef2,#f3cbd7);--theme-notice:#b5344e}
 body[data-theme=pikachu]{--theme-bg:linear-gradient(140deg,#fff6aa,#f8cf38 62%,#e9af28);--theme-surface:#fff5cdeb;--theme-sheet:#fffdf0;--theme-text:#513821;--theme-heading:#473121;--theme-border:#ae7b24;--theme-accent:#b94935;--theme-soft:#ffe89a;--theme-button:linear-gradient(#fff8bc,#f4d344);--theme-radius:7px;--theme-shadow:2px 2px 0 #a7732b40;--theme-bar:linear-gradient(#ffe37d,#edbc33);--theme-notice:#bf392d}
 body[data-theme=garfield]{--theme-bg:linear-gradient(135deg,#ffd591,#e79a43 70%,#bd7134);--theme-surface:#fff0d3ed;--theme-sheet:#fff8e9;--theme-text:#483123;--theme-heading:#4d2c19;--theme-border:#875330;--theme-accent:#a54c22;--theme-soft:#f8d2a2;--theme-button:linear-gradient(#ffe2b4,#efa44d);--theme-radius:4px;--theme-shadow:2px 2px 0 #57331c55;--theme-bar:linear-gradient(#f5b668,#df8c32);--theme-notice:#b93422}
+body[data-theme=snoopy-woodstock]{--theme-bg:linear-gradient(145deg,#f7f4e7,#e8e0c8 66%,#ebcd72);--theme-surface:#fffdf1f2;--theme-sheet:#fffef5;--theme-text:#34312b;--theme-heading:#292723;--theme-border:#514a3f;--theme-accent:#a82e2e;--theme-soft:#f6df91;--theme-button:linear-gradient(#fffef6,#e9e0c5);--theme-radius:5px;--theme-shadow:2px 2px 0 #3c352b40;--theme-bar:linear-gradient(#fffbed,#e8dfc7);--theme-notice:#c02f29}
+body[data-theme=mountain-dew]{--theme-bg:radial-gradient(ellipse at 18% 10%,#b4e93666,transparent 55%),linear-gradient(135deg,#1a4c1b,#0b2913 65%,#487e1c);--theme-surface:#16391bed;--theme-sheet:#102d18;--theme-text:#edffce;--theme-heading:#d0fa53;--theme-border:#86b73b;--theme-accent:#d4ff73;--theme-soft:#304d22;--theme-button:linear-gradient(#b4e83e,#7bac27);--theme-radius:3px;--theme-shadow:2px 2px 0 #02190780,inset 0 1px #dfff9277;--theme-bar:linear-gradient(#477125,#24451c);--theme-notice:#ffafa1}
+body[data-theme=m1a1-abrams]{--theme-bg:linear-gradient(135deg,#454a38,#272d23 55%,#343b2a);--theme-surface:#353c2bf5;--theme-sheet:#20291e;--theme-text:#e3e6cf;--theme-heading:#e5c67e;--theme-border:#909379;--theme-accent:#f4cc73;--theme-soft:#465039;--theme-button:linear-gradient(#646b51,#3e4733);--theme-radius:2px;--theme-shadow:inset 0 1px #c4c5a955,inset 0 -2px #101b14,2px 2px 0 #10171099;--theme-bar:linear-gradient(#636950,#323b2a);--theme-notice:#ffb499;--theme-font:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
 body.extra-theme:is(.browsing,.playing),.connect-route body.extra-theme{--ink:var(--theme-text);--muted:var(--theme-text);--green:var(--theme-accent);--line:var(--theme-border);--white:var(--theme-sheet);--soft:var(--theme-soft);background:var(--theme-pattern) repeat,var(--theme-bg);background-size:128px 128px,cover;background-attachment:fixed;color:var(--theme-text)}
 body.extra-theme[data-theme] #lobby{background:var(--theme-pattern) repeat,var(--theme-bg);background-size:128px 128px,cover;border-color:var(--theme-border)}
 body.extra-theme[data-theme] .browser-masthead::after{content:"";position:absolute;left:205px;top:6px;width:58px;height:58px;background:var(--theme-badge) center/contain no-repeat;pointer-events:none}
@@ -82,3 +85,26 @@ body.extra-theme[data-theme] #lobby #room-list,body.extra-theme[data-theme] .roo
 body.extra-theme[data-theme] #lobby .room-name{background:transparent;color:inherit}
 body.extra-theme[data-theme] #lobby .room-name:hover{background:var(--theme-soft)}
 body.extra-theme[data-theme] .room-row:hover{background:var(--theme-soft)}
+
+/* Inked newspaper panels, citrus-can chrome, and a riveted crew compartment. */
+body.extra-theme[data-theme=snoopy-woodstock] :is(.classic-scroll-shell,dialog,#room-browser){border:2px solid #514a3f;box-shadow:2px 2px 0 #514a3f44}
+body.extra-theme[data-theme=snoopy-woodstock] #tool-grid button[aria-pressed=true]{background:#f8de77;border-color:#a82e2e}
+body.extra-theme[data-theme=snoopy-woodstock] :is(.panel-label,.browser-panel-label){font-weight:700;letter-spacing:.4px}
+body.extra-theme[data-theme=mountain-dew] :is(.browser-actions button,#host-search,#global-chat-send,#connect-submit){color:#173319}
+body.extra-theme[data-theme=mountain-dew] :is(.browser-columns,.panel-label,.browser-panel-label){font-weight:800;letter-spacing:.6px}
+body.extra-theme[data-theme=mountain-dew] .browser-masthead{background:linear-gradient(155deg,transparent 65%,#bded3740 65% 70%,transparent 70% 72%,#e63b3640 72% 74%,transparent 74%)}
+body.extra-theme[data-theme=mountain-dew] #tool-grid button{color:#173319}
+body.extra-theme[data-theme=mountain-dew] #tool-grid button[aria-pressed=true]{background:#e4ffaf;border-color:#bb352d;box-shadow:inset 0 0 0 1px #bb352d}
+body.extra-theme[data-theme=m1a1-abrams] :is(button,input,select,.panel-label,.browser-panel-label,.browser-columns,.round-meta,#classic-round,.browser-room-controls h2){font-family:var(--theme-font)!important}
+body.extra-theme[data-theme=m1a1-abrams] :is(.classic-scroll-shell,dialog,#room-browser){border-style:ridge;border-width:3px;box-shadow:inset 0 0 0 1px #141e12,2px 3px 0 #16201399}
+body.extra-theme[data-theme=m1a1-abrams] :is(.browser-masthead,header){background-image:radial-gradient(circle at 97% 50%,#e8bb59 0 2px,#0b1a10 3px 5px,transparent 6px),var(--theme-bar)}
+body.extra-theme[data-theme=m1a1-abrams] .browser-columns{letter-spacing:1px;text-transform:uppercase}
+body.extra-theme[data-theme=m1a1-abrams] #tool-grid button[aria-pressed=true]{background:#263122;border-color:#ffce70;box-shadow:inset 0 0 0 1px #ffce70;color:#ffdf99}
+body.extra-theme[data-theme=m1a1-abrams] :is(.game-log,.game-grid>.chat) .message-log{background:#141e15;color:#e0e8ce}
+body.extra-theme[data-theme=m1a1-abrams] :is(.game-log,.game-grid>.chat).chat-selected .message-log{background:#273621;box-shadow:inset 2px 0 #e5c67e}
+body.extra-theme[data-theme=m1a1-abrams] .message:is(.guess,.chat){color:#e0e8ce}
+body.extra-theme[data-theme=m1a1-abrams] .message:is(.system,.announcement,.round,.artist-word,.found-word,.reward,.round-result,.game-result,.correct,.close,.warning){color:#ff9990}
+body.extra-theme[data-theme=m1a1-abrams] :is(#guess,#chat-input){background:#141e15;color:#e0e8ce}
+body.extra-theme[data-theme=m1a1-abrams][data-active-chat=game] #guess,body.extra-theme[data-theme=m1a1-abrams][data-active-chat=chat] #chat-input{background:#273621;color:#f3edcc}
+body.extra-theme[data-theme=mountain-dew] :is(button,button.primary){color:#173319}
+body.extra-theme[data-theme=mountain-dew] #lobby :is(.browser-actions button,#host-search,#global-chat-send,.recovery-actions button){color:#173319}

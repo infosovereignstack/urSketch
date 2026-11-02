@@ -1,7 +1,7 @@
 /* Browser-local preferences and the audio output used by game sounds. */
 function createSettings({notify,onChange}) {
   const $=id=>document.getElementById(id),key='ursketch.settings.v1';
-  const extraThemes=['aero','milady','terminal','dark-souls','kitty-cat','pikachu','garfield'];
+  const extraThemes=['aero','milady','terminal','dark-souls','kitty-cat','pikachu','garfield','snoopy-woodstock','mountain-dew','m1a1-abrams'];
   const defaults={theme:'classic',volume:70,muted:false,output:'',reduceMotion:false,largeChat:false,themeQuiet:false,themeDisabled:false};
   function readPrefs(){
     const next={...defaults};

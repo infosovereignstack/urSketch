@@ -445,3 +445,12 @@ Editable original badges and repeating motifs live in `web/theme-art/`;
 `web/themes.css` defines materials and palettes. The build embeds these SVGs
 without external requests. Milady takes its pastel Y2K direction from the
 [official Milady aesthetic description](https://miladymaker.net/).
+
+## More themes (0.22.0)
+
+Settings → Theme adds Snoopy and Woodstock (cream paper, inked borders and
+a doghouse/bird badge), Mountain Dew (citrus-green can chrome and diagonal
+motifs), and M1A1 Abrams (riveted olive crew-compartment panels, amber controls
+and a sight emblem). These use original local SVG decoration. M1A1 uses dark
+selected/unselected chat panels and monospace controls. Canvas pixels,
+characters, tools and gameplay retain their existing behavior.

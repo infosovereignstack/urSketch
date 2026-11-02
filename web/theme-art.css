@@ -6,3 +6,6 @@ body[data-theme=dark-souls]{--theme-badge:url('THEME_ART_DARK_SOULS_BADGE');--th
 body[data-theme=kitty-cat]{--theme-badge:url('THEME_ART_KITTY_CAT_BADGE');--theme-pattern:url('THEME_ART_KITTY_CAT_PATTERN')}
 body[data-theme=pikachu]{--theme-badge:url('THEME_ART_PIKACHU_BADGE');--theme-pattern:url('THEME_ART_PIKACHU_PATTERN')}
 body[data-theme=garfield]{--theme-badge:url('THEME_ART_GARFIELD_BADGE');--theme-pattern:url('THEME_ART_GARFIELD_PATTERN')}
+body[data-theme=snoopy-woodstock]{--theme-badge:url('THEME_ART_SNOOPY_WOODSTOCK_BADGE');--theme-pattern:url('THEME_ART_SNOOPY_WOODSTOCK_PATTERN')}
+body[data-theme=mountain-dew]{--theme-badge:url('THEME_ART_MOUNTAIN_DEW_BADGE');--theme-pattern:url('THEME_ART_MOUNTAIN_DEW_PATTERN')}
+body[data-theme=m1a1-abrams]{--theme-badge:url('THEME_ART_M1A1_ABRAMS_BADGE');--theme-pattern:url('THEME_ART_M1A1_ABRAMS_PATTERN')}

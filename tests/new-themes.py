@@ -1,9 +1,9 @@
-"""Seven new themes: persistence, distinct art, game colors and responsive tools."""
+"""Additional themes: persistence, distinct art, game colors and responsive tools."""
 import base64,json,os,re,runpy,sys,urllib.request
 from pathlib import Path
 from playwright.sync_api import sync_playwright,expect
 ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT/'scripts'));render=runpy.run_path(str(ROOT/'scripts/build.py'))
-ORIGIN='http://127.0.0.1';themes=['aero','milady','terminal','dark-souls','kitty-cat','pikachu','garfield']
+ORIGIN='http://127.0.0.1';themes=['aero','milady','terminal','dark-souls','kitty-cat','pikachu','garfield','snoopy-woodstock','mountain-dew','m1a1-abrams']
 r=urllib.request.Request('http://127.0.0.1:12321',data=json.dumps({'source':{'dojo':'+code'},'sink':{'stdout':None}}).encode(),headers={'Content-Type':'application/json'})
 code=re.search(r'[a-z]{6}(?:-[a-z]{6}){3}',json.load(urllib.request.urlopen(r,timeout=30))).group()
 with sync_playwright() as p:
@@ -15,8 +15,10 @@ with sync_playwright() as p:
  for theme in themes:
   page.goto(ORIGIN+'/apps/ursketch/play');page.wait_for_function('connectionReady')
   page.locator('#browser-settings').click();page.locator('#theme-select').select_option(theme);page.locator('#sound-volume').evaluate("e=>{e.value=25;e.dispatchEvent(new Event('input'))}");page.locator('#sound-muted').check();page.locator('#settings-close').click()
+  if theme=='mountain-dew':assert page.locator('#host-search').evaluate('e=>getComputedStyle(e).color')=='rgb(23, 51, 25)'
   page.reload();page.wait_for_function('connectionReady');assert page.evaluate('(theme)=>preferences.values.theme===theme && preferences.values.volume===25 && preferences.values.muted && document.body.classList.contains("extra-theme")',theme)
   assert page.locator('#room-list').evaluate('e=>{const probe=document.createElement("i");probe.style.background="var(--theme-sheet)";document.body.append(probe);const same=getComputedStyle(e).backgroundColor===getComputedStyle(probe).backgroundColor;probe.remove();return same;}')
+  if theme=='m1a1-abrams':assert 'monospace' in page.locator('#classic-round').evaluate('e=>getComputedStyle(e).fontFamily')
   palettes.append(page.locator('body').evaluate('e=>getComputedStyle(e).getPropertyValue("--theme-bg")'))
   page.screenshot(path=str(ROOT/f'artifacts/theme-{theme}-lobby.png'))
   page.evaluate("""()=>{
@@ -51,11 +53,11 @@ with sync_playwright() as p:
   for w,h in [(1280,720),(320,568)]:
    page.set_viewport_size({'width':w,'height':h});page.wait_for_timeout(60);assert page.locator('#connect-page').evaluate('e=>e.scrollHeight<=e.clientHeight+1'),theme
   page.set_viewport_size({'width':1280,'height':720})
- assert len(set(palettes))==7
+ assert len(set(palettes))==len(themes)
  assert not errors,errors
  # A standalone visual contact sheet of the actual game renders.
  gallery=browser.new_page(viewport={'width':1320,'height':1700})
  cards=''.join('<figure><figcaption>'+theme+'</figcaption><img src="data:image/png;base64,'+base64.b64encode((ROOT/f'artifacts/theme-{theme}-game.png').read_bytes()).decode()+'"></figure>' for theme in themes)
  gallery.set_content('<style>body{background:#20242b;color:white;display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:16px;font:18px Arial}figure{margin:0}figcaption{padding:8px}img{width:100%}</style>'+cards);gallery.screenshot(path=str(ROOT/'artifacts/theme-gallery.png'),full_page=True)
  (ROOT/'artifacts/new-themes-verification.json').write_text(json.dumps({'installed':os.environ.get('URSKETCH_INSTALLED')=='1','themes':themes,'savedSelectionAndAudioPrefs':True,'distinctPalettes':True,'canvasPixelsPreserved':True,'fullCanvasEdgeDrawing':True,'rosterColorsAndProportions':True,'chatSelection':True,'terminalMonospace':True,'laptopAndPhoneFit':True,'browserOnlyFixtures':True},indent=2)+'\n')
- browser.close();print('PASS: seven distinct saved themes, unchanged drawing pixels, full canvas edges, chat selection, roster colors/proportions, Terminal font and laptop/phone fit')
+ browser.close();print('PASS: ten distinct saved themes, unchanged drawing pixels, full canvas edges, chat selection, roster colors/proportions, Terminal font and laptop/phone fit')
