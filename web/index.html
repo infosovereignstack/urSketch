@@ -6,8 +6,13 @@
 <main>
 <section id="connect-page" aria-label="Connect to urSketch" hidden>
 <!-- URSKETCH_CONNECT_LOGO -->
+<section id="character-builder" aria-label="Build your character"><div id="character-preview"></div><div class="character-controls">
+<div class="character-control"><button type="button" class="character-arrow previous" data-character-part="hat" data-step="-1" aria-label="Previous hat"><svg viewBox="0 0 80 72" aria-hidden="true"><path d="M76 4L4 36l72 32-13-32Z"/></svg></button><div><span>Hat</span><output id="character-hat-value"></output></div><button type="button" class="character-arrow next" data-character-part="hat" data-step="1" aria-label="Next hat"><svg viewBox="0 0 80 72" aria-hidden="true"><path d="M4 4l72 32L4 68l13-32Z"/></svg></button></div>
+<div class="character-control"><button type="button" class="character-arrow previous" data-character-part="face" data-step="-1" aria-label="Previous face"><svg viewBox="0 0 80 72" aria-hidden="true"><path d="M76 4L4 36l72 32-13-32Z"/></svg></button><div><span>Face</span><output id="character-face-value"></output></div><button type="button" class="character-arrow next" data-character-part="face" data-step="1" aria-label="Next face"><svg viewBox="0 0 80 72" aria-hidden="true"><path d="M4 4l72 32L4 68l13-32Z"/></svg></button></div>
+<div class="character-control"><button type="button" class="character-arrow previous" data-character-part="body" data-step="-1" aria-label="Previous body"><svg viewBox="0 0 80 72" aria-hidden="true"><path d="M76 4L4 36l72 32-13-32Z"/></svg></button><div><span>Body</span><output id="character-body-value"></output></div><button type="button" class="character-arrow next" data-character-part="body" data-step="1" aria-label="Next body"><svg viewBox="0 0 80 72" aria-hidden="true"><path d="M4 4l72 32L4 68l13-32Z"/></svg></button></div>
+</div><span id="character-status" class="sr-only" role="status" aria-live="polite"></span></section><div class="connect-details">
 <div class="connect-copy"><p>Welcome to urSketch, the net's premier sketching game!</p><p>Enter your display name in the box to the right and click the Connect button to connect to the game.</p><p>Your Urbit ID is your permanent name. You can choose to change your in-game display name, or leave your display name as your Urbit ID.</p></div>
-<form id="profile-form"><label for="player-name">Name:</label><input id="player-name" name="name" maxlength="96" autocomplete="nickname" spellcheck="false" required><button id="connect-submit" type="submit">Connect</button><p id="connect-error" role="alert" aria-live="polite"></p></form>
+<form id="profile-form"><label for="player-name">Name:</label><input id="player-name" name="name" maxlength="96" autocomplete="nickname" spellcheck="false" required><button id="connect-submit" type="submit">Connect</button><p id="connect-error" role="alert" aria-live="polite"></p></form></div>
 </section>
 <section id="lobby" aria-label="Room browser">
  <div class="browser-left">
@@ -20,7 +25,7 @@
    <p><b>SEARCH:</b> Enter a friend's Urbit ship in the search box above the rooms. Select a room from the results to join.</p>
    <p><b>ROOMS:</b> Create a room on your ship and invite your friends. Use the full and empty selections to hide those rooms from the list.</p>
    <p class="browser-courtesy">Use common courtesy, play a fair game and <b>ENJOY!</b></p>
-   <div class="player-summary"><p id="profile-current"></p><a href="/apps/ursketch/connect">Change name</a></div>
+   <div class="player-summary"><p id="profile-current"></p><a href="/apps/ursketch/connect">Change name / character</a></div>
 
    <p id="join-status" class="operation-status" role="status" aria-live="polite"></p><div id="global-messages" role="log" aria-label="Global Chat messages" aria-live="polite"></div>
   </div>
@@ -72,6 +77,7 @@
 <dialog id="help-dialog"><p class="eyebrow">WELCOME TO URSKETCH</p><h2>A picture is worth… points.</h2><p>Each player takes a turn drawing. Your word is assigned automatically. Illustrate it with the drawing tools. No letters, numbers, or giving the answer away!</p><p>Everyone else has 120 seconds to guess. The first correct guess starts a 20-second finish timer. A round ends immediately if all guessers solve it. Correct guesses earn 10, 9, 8, 7, 6, then 5 points each. The drawer earns 10 points for the first correct guess and 1 for each additional guess. Give hint can be used three times before anyone guesses correctly: first it shows the letter count, then reveals one random letter per press. The artist’s first-solve reward becomes 5, 4, then 3 points. Additional correct guessers still add 1 point each. No correct guesses means no drawer points. Each game has 10 drawing rounds, followed by a 40-second winner celebration. The next game starts automatically. Rooms hold at most 10 players.</p><p>Search a friend's host ship or share your room's invite. Every player joins through their own Urbit ship with urSketch installed.</p><details class="shortcut-help"><summary>Drawing tools and shortcuts</summary><p>Pen P · Brush B · Spray Y · Eraser E · Rectangle S · Circle C · Line L · Zoom Z. Repeat S or C to toggle solid / outline shapes.</p><p>+ / − zoom · Space pans · Space+Alt zooms in · Space+Command zooms out · Alt picks a color · D toggles black / white.</p><p>↑ / ↓ change brightness · ← / → change width · 1–8 set width · 9 sets 16px · 0 sets 32px · Tab switches Game / Chat. Shift+Clear fills with your color. Shift+Zoom zooms out; double-click Zoom to reset zoom and pan.</p><p>Drag palette grips to rearrange them outside the canvas; double-click a grip to rotate. Your palette arrangement is saved.</p></details><button id="close-help" class="primary">Got it →</button></dialog>
 <div id="toast" role="status" hidden></div>
 <script>/* URSKETCH_DRAWING */
+/* URSKETCH_CHARACTERS */
 /* URSKETCH_SETTINGS */
 /* URSKETCH_AUDIO */
 /* URSKETCH_FINALE */

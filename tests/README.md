@@ -324,3 +324,27 @@ hints and vector codecs passed, including migration of state-8 private logs.
 Installed-comet verification passed after atomic 0.16.0 import and Treaty
 publication. State-6/7/8 migrations, native round rules, full canvas, Name page,
 settings, profile/room lifecycle, tile and published version all passed.
+
+### 0.17.0 character builder
+
+`tests/characters.py` uses private ~zod/~nec to decode and cycle every layer,
+check body/face/hat order, draft restoration, distinct non-default character
+persistence in a clean browser, catalog insertion and unknown future IDs.
+It also checks manual discovery (zero lobby subscriptions on arrival), peer
+avatar propagation, and screen fit at 1920×1080 through 320×568. The Connect
+checks in comet.py now use the supplied builder composition and explicitly
+search after history restoration. Character artwork is served from local
+source assets in preview tests.
+
+0.17.0 character checks passed with every supplied layer, a distinct non-default
+character saved/restored from the ship in a clean browser, catalog insertion,
+unknown future IDs, draft preservation, zero automatic room searches, peer
+character propagation and laptop/phone fit. All 25 copied SVG files match the
+original artwork byte for byte. The complete continuous-game regression also
+passed with character payloads and manual discovery enabled.
+
+Installed-comet verification passed after the atomic 0.17.0 import and Treaty
+publication: all 25 native SVG responses have the expected MIME type and exact
+source hash; the authenticated character endpoint returns valid data; builder
+geometry, phone fit, native rules and existing room/game flows passed. Game-room
+character placement remains pending the user's follow-up layout reference.

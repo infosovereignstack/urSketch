@@ -33,3 +33,7 @@ silver-blue gradient whose colours were sampled from that reference.
 The room-browser styling reference was supplied by the owner in room browser.png.
 The new HTML/CSS browser uses urSketch's existing logo and functional room data;
 the reference's people, Studio and language-category controls are not included.
+
+Character artwork: 25 user-supplied urSketch cat SVGs (6 bodies, 9 faces and
+10 hats), copied unchanged into `desk/media/characters/`. Layer registration
+and selector controls are implemented in the application's own code.

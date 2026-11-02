@@ -59,6 +59,156 @@
     "bytes": 210046,
     "sha256": "dc3e0a37af5892268bfa8b6a6e9cf30bde82f0ac248db4714b311ce9de10e10d"
   },
+  "characters/body/black.svg": {
+    "url": "/apps/ursketch/media/4bc821b6cf31155f/characters/body/black.svg",
+    "mime": "image/svg+xml",
+    "bytes": 2700,
+    "sha256": "4bc821b6cf31155f44d3f5a241a23dc959257d8e4466447e553f51851b6255c9"
+  },
+  "characters/body/calico.svg": {
+    "url": "/apps/ursketch/media/cfacb7ec5795d734/characters/body/calico.svg",
+    "mime": "image/svg+xml",
+    "bytes": 7217,
+    "sha256": "cfacb7ec5795d734aa398b376216e9a2dbde59604396552f30d09d2a85bf2343"
+  },
+  "characters/body/green.svg": {
+    "url": "/apps/ursketch/media/0de5cd7cc13e9261/characters/body/green.svg",
+    "mime": "image/svg+xml",
+    "bytes": 2588,
+    "sha256": "0de5cd7cc13e9261e3ecd7426e4d3d79e3069abaaa423012f5857d11f6bcb032"
+  },
+  "characters/body/grey.svg": {
+    "url": "/apps/ursketch/media/1821246b9d522251/characters/body/grey.svg",
+    "mime": "image/svg+xml",
+    "bytes": 8800,
+    "sha256": "1821246b9d522251401dddc8a0fa47ebb2fcd18c7d94e118412e860315fd7099"
+  },
+  "characters/body/orange.svg": {
+    "url": "/apps/ursketch/media/ccdbff6cf1e0f479/characters/body/orange.svg",
+    "mime": "image/svg+xml",
+    "bytes": 8801,
+    "sha256": "ccdbff6cf1e0f4798f73acbbe2e7540499353ed0bb27842603fbc732fc680f20"
+  },
+  "characters/body/white.svg": {
+    "url": "/apps/ursketch/media/9e158edf65370425/characters/body/white.svg",
+    "mime": "image/svg+xml",
+    "bytes": 2588,
+    "sha256": "9e158edf65370425d347eaefc83f5f599a80a227670b8663a70b3c3a09293da8"
+  },
+  "characters/face/alien.svg": {
+    "url": "/apps/ursketch/media/3956118106603b65/characters/face/alien.svg",
+    "mime": "image/svg+xml",
+    "bytes": 1222,
+    "sha256": "3956118106603b65265d77d30cdf3835cf7aaf9f77717df51987c08c5f8c5193"
+  },
+  "characters/face/excited.svg": {
+    "url": "/apps/ursketch/media/40e2e7105eb6bf0b/characters/face/excited.svg",
+    "mime": "image/svg+xml",
+    "bytes": 3365,
+    "sha256": "40e2e7105eb6bf0ba4b7c31bb8a7cfb5461aea18af762783b7f69edcbf06e8ca"
+  },
+  "characters/face/mischief.svg": {
+    "url": "/apps/ursketch/media/ee1c727eb5b88ebf/characters/face/mischief.svg",
+    "mime": "image/svg+xml",
+    "bytes": 1436,
+    "sha256": "ee1c727eb5b88ebf3e1e27c74c8a769acb936f5c67879d2f16e2e6e582d72997"
+  },
+  "characters/face/neutral.svg": {
+    "url": "/apps/ursketch/media/3e2169ab9970d634/characters/face/neutral.svg",
+    "mime": "image/svg+xml",
+    "bytes": 1295,
+    "sha256": "3e2169ab9970d6347ccfaa996c5efc944243d664151ae4ad9140a5c9c655d8e9"
+  },
+  "characters/face/raspberry.svg": {
+    "url": "/apps/ursketch/media/28c63531e79b43f3/characters/face/raspberry.svg",
+    "mime": "image/svg+xml",
+    "bytes": 3391,
+    "sha256": "28c63531e79b43f3044ea66032d0e18f648d626e0d79ad3af658a8743209bc92"
+  },
+  "characters/face/sad.svg": {
+    "url": "/apps/ursketch/media/823816305fbc12e6/characters/face/sad.svg",
+    "mime": "image/svg+xml",
+    "bytes": 3956,
+    "sha256": "823816305fbc12e657da7b22a6a4d255fbdb8365d1e21d9936bda9aa7c9d3431"
+  },
+  "characters/face/scared.svg": {
+    "url": "/apps/ursketch/media/bf195c687427f5e0/characters/face/scared.svg",
+    "mime": "image/svg+xml",
+    "bytes": 1239,
+    "sha256": "bf195c687427f5e0225c097ec4c4ef4b6e9f92ce61d62bd4d38234031ddd714f"
+  },
+  "characters/face/shocked.svg": {
+    "url": "/apps/ursketch/media/491ad85d1e16e335/characters/face/shocked.svg",
+    "mime": "image/svg+xml",
+    "bytes": 2131,
+    "sha256": "491ad85d1e16e335a3f3f31e6afa2b87b56f7388940748493493387752b5766e"
+  },
+  "characters/face/sleepy.svg": {
+    "url": "/apps/ursketch/media/d8d7affbe6a06301/characters/face/sleepy.svg",
+    "mime": "image/svg+xml",
+    "bytes": 2878,
+    "sha256": "d8d7affbe6a06301589c9453675d0eb3583f7806f0afe7b04a204398b02ca53b"
+  },
+  "characters/hat/alien-ears.svg": {
+    "url": "/apps/ursketch/media/956d15218df5f816/characters/hat/alien-ears.svg",
+    "mime": "image/svg+xml",
+    "bytes": 930,
+    "sha256": "956d15218df5f81602c07d9cc8f4a3a1e7e100ad2529d9f4888fcde9f1aa33eb"
+  },
+  "characters/hat/baseball-cap.svg": {
+    "url": "/apps/ursketch/media/9d4fc763d064e125/characters/hat/baseball-cap.svg",
+    "mime": "image/svg+xml",
+    "bytes": 1634,
+    "sha256": "9d4fc763d064e12518b429ef14f74c1f6524f263dc9857093128b5bed7cb30ad"
+  },
+  "characters/hat/beret.svg": {
+    "url": "/apps/ursketch/media/b08f01539866d758/characters/hat/beret.svg",
+    "mime": "image/svg+xml",
+    "bytes": 925,
+    "sha256": "b08f01539866d75807f9fff249e9ad0b965e5661671247045e10534b46f26f6a"
+  },
+  "characters/hat/bow.svg": {
+    "url": "/apps/ursketch/media/53255780c42b5fd9/characters/hat/bow.svg",
+    "mime": "image/svg+xml",
+    "bytes": 1740,
+    "sha256": "53255780c42b5fd9fb438b5865587b5dfd6f7f2d5df44147ff1dd5a70b98b7c6"
+  },
+  "characters/hat/crown.svg": {
+    "url": "/apps/ursketch/media/c114d4fc96f10827/characters/hat/crown.svg",
+    "mime": "image/svg+xml",
+    "bytes": 871,
+    "sha256": "c114d4fc96f10827593e666f99677d33a92763035c6b6603c9f1abb7c16f5f79"
+  },
+  "characters/hat/curly-thing.svg": {
+    "url": "/apps/ursketch/media/7620416c5ddee280/characters/hat/curly-thing.svg",
+    "mime": "image/svg+xml",
+    "bytes": 750,
+    "sha256": "7620416c5ddee280eba28244d15c5f66c2051d99c0a99445b73f826b77ddd892"
+  },
+  "characters/hat/halo-wings.svg": {
+    "url": "/apps/ursketch/media/78bcc8ea5c851986/characters/hat/halo-wings.svg",
+    "mime": "image/svg+xml",
+    "bytes": 1555,
+    "sha256": "78bcc8ea5c85198648c78879f9da8227e2b210e2c1fc2d5205e62449ee924695"
+  },
+  "characters/hat/party-hat.svg": {
+    "url": "/apps/ursketch/media/f2529c4cbb7f0181/characters/hat/party-hat.svg",
+    "mime": "image/svg+xml",
+    "bytes": 8019,
+    "sha256": "f2529c4cbb7f0181457fa10ee11262923e1e7c14979dba2c73bc4a6c78c6c01b"
+  },
+  "characters/hat/propellor-hat.svg": {
+    "url": "/apps/ursketch/media/7bca90b98223ecfa/characters/hat/propellor-hat.svg",
+    "mime": "image/svg+xml",
+    "bytes": 1513,
+    "sha256": "7bca90b98223ecfa7a58f9abc05e0b5689b480b6dc943e46d6bb19aa5fbe87b8"
+  },
+  "characters/hat/wizard-hat.svg": {
+    "url": "/apps/ursketch/media/1ca10671ec6cbdc8/characters/hat/wizard-hat.svg",
+    "mime": "image/svg+xml",
+    "bytes": 1364,
+    "sha256": "1ca10671ec6cbdc832292332b52b43452584adfa57bb927880247d815159675e"
+  },
   "images/app-tile.png": {
     "url": "/apps/ursketch/media/ccfc04ad004fad99/images/app-tile.png",
     "mime": "image/png",

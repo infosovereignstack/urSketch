@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 254.61 92.72">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: none;
+      }
+
+      .cls-1, .cls-2 {
+        stroke: #231f20;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 2px;
+      }
+
+      .cls-3 {
+        fill: #fff;
+      }
+
+      .cls-2 {
+        fill: #231f20;
+      }
+    </style>
+  </defs>
+  <g id="Alien_Face" data-name="Alien Face">
+    <ellipse class="cls-2" cx="57.44" cy="36.53" rx="56.44" ry="35.53"/>
+    <ellipse class="cls-2" cx="197.17" cy="36.53" rx="56.44" ry="35.53"/>
+    <line class="cls-1" x1="116.58" y1="59.82" x2="140.73" y2="91.72"/>
+    <line class="cls-1" x1="135.98" y1="59.82" x2="111.83" y2="91.72"/>
+    <ellipse class="cls-3" cx="26.61" cy="20.66" rx="10.92" ry="8.04"/>
+    <ellipse class="cls-3" cx="73.6" cy="52.41" rx="16.16" ry="9.88"/>
+    <circle class="cls-3" cx="67.52" cy="36.88" r="2.82"/>
+    <ellipse class="cls-3" cx="163.87" cy="22.91" rx="10.92" ry="8.04"/>
+    <ellipse class="cls-3" cx="210.86" cy="54.66" rx="16.16" ry="9.88"/>
+    <circle class="cls-3" cx="204.78" cy="39.13" r="2.82"/>
+  </g>
+</svg>

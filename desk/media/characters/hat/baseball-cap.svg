@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 171.46 80.42">
+  <defs>
+    <style>
+      .cls-1, .cls-2, .cls-3, .cls-4 {
+        stroke: #231f20;
+        stroke-width: 2px;
+      }
+
+      .cls-1, .cls-2, .cls-4 {
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .cls-1, .cls-3 {
+        fill: none;
+      }
+
+      .cls-2 {
+        fill: #ed1c24;
+      }
+
+      .cls-5 {
+        fill: #231f20;
+      }
+
+      .cls-3 {
+        stroke-miterlimit: 10;
+      }
+
+      .cls-4 {
+        fill: #ec2027;
+      }
+    </style>
+  </defs>
+  <g id="Baseball_Cap" data-name="Baseball Cap">
+    <path class="cls-4" d="M138.41,44.49c7.76,1.16,15.79,2.37,22.39,5.85,8.58,4.41,12.63,12.48,7.2,19.09-3.48,4.13-9.35,6.56-14.86,9.01"/>
+    <path class="cls-2" d="M76.6,3.82C34.85,3.82,1,37.67,1,79.42h151.2C152.2,37.67,118.35,3.82,76.6,3.82ZM54.09,67.65c0-12.43,10.08-22.51,22.51-22.51s22.51,10.08,22.51,22.51h-45.01Z"/>
+    <path class="cls-3" d="M98.23,67.23c8.83,3.69,9.23,8.96-.23,12.19"/>
+    <circle class="cls-5" cx="59.82" cy="73.77" r="1.94"/>
+    <circle class="cls-5" cx="76.6" cy="73.77" r="1.94"/>
+    <circle class="cls-5" cx="93.07" cy="73.77" r="1.94"/>
+    <ellipse class="cls-2" cx="76.6" cy="3.82" rx="5.15" ry="2.82"/>
+    <line class="cls-1" x1="54.09" y1="67.65" x2="2.52" y2="67.65"/>
+    <line class="cls-1" x1="99.1" y1="67.65" x2="151.22" y2="67.65"/>
+    <path class="cls-1" d="M72.11,6.08c-25.54,14.13-32.62,32.65-37.35,60.76"/>
+    <path class="cls-1" d="M81.75,6.08c25.54,14.13,32.62,32.65,37.35,60.76"/>
+  </g>
+</svg>

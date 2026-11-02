@@ -23,6 +23,56 @@
     `['audio/mpeg' '"262d70bca42c5ffc21c8b66f5d66b9ce61bbce6c588d805551c0f66457f2b3f0"' /['media']/['audio']/['cues']/['YourTurnToDraw']/['mp3']]
   ?:  =(url '/apps/ursketch/media/dc3e0a37af589226/audio/music/theme_song.mp3')
     `['audio/mpeg' '"dc3e0a37af5892268bfa8b6a6e9cf30bde82f0ac248db4714b311ce9de10e10d"' /['media']/['audio']/['music']/['theme_song']/['mp3']]
+  ?:  =(url '/apps/ursketch/media/4bc821b6cf31155f/characters/body/black.svg')
+    `['image/svg+xml' '"4bc821b6cf31155f44d3f5a241a23dc959257d8e4466447e553f51851b6255c9"' /['media']/['characters']/['body']/['black']/['svg']]
+  ?:  =(url '/apps/ursketch/media/cfacb7ec5795d734/characters/body/calico.svg')
+    `['image/svg+xml' '"cfacb7ec5795d734aa398b376216e9a2dbde59604396552f30d09d2a85bf2343"' /['media']/['characters']/['body']/['calico']/['svg']]
+  ?:  =(url '/apps/ursketch/media/0de5cd7cc13e9261/characters/body/green.svg')
+    `['image/svg+xml' '"0de5cd7cc13e9261e3ecd7426e4d3d79e3069abaaa423012f5857d11f6bcb032"' /['media']/['characters']/['body']/['green']/['svg']]
+  ?:  =(url '/apps/ursketch/media/1821246b9d522251/characters/body/grey.svg')
+    `['image/svg+xml' '"1821246b9d522251401dddc8a0fa47ebb2fcd18c7d94e118412e860315fd7099"' /['media']/['characters']/['body']/['grey']/['svg']]
+  ?:  =(url '/apps/ursketch/media/ccdbff6cf1e0f479/characters/body/orange.svg')
+    `['image/svg+xml' '"ccdbff6cf1e0f4798f73acbbe2e7540499353ed0bb27842603fbc732fc680f20"' /['media']/['characters']/['body']/['orange']/['svg']]
+  ?:  =(url '/apps/ursketch/media/9e158edf65370425/characters/body/white.svg')
+    `['image/svg+xml' '"9e158edf65370425d347eaefc83f5f599a80a227670b8663a70b3c3a09293da8"' /['media']/['characters']/['body']/['white']/['svg']]
+  ?:  =(url '/apps/ursketch/media/3956118106603b65/characters/face/alien.svg')
+    `['image/svg+xml' '"3956118106603b65265d77d30cdf3835cf7aaf9f77717df51987c08c5f8c5193"' /['media']/['characters']/['face']/['alien']/['svg']]
+  ?:  =(url '/apps/ursketch/media/40e2e7105eb6bf0b/characters/face/excited.svg')
+    `['image/svg+xml' '"40e2e7105eb6bf0ba4b7c31bb8a7cfb5461aea18af762783b7f69edcbf06e8ca"' /['media']/['characters']/['face']/['excited']/['svg']]
+  ?:  =(url '/apps/ursketch/media/ee1c727eb5b88ebf/characters/face/mischief.svg')
+    `['image/svg+xml' '"ee1c727eb5b88ebf3e1e27c74c8a769acb936f5c67879d2f16e2e6e582d72997"' /['media']/['characters']/['face']/['mischief']/['svg']]
+  ?:  =(url '/apps/ursketch/media/3e2169ab9970d634/characters/face/neutral.svg')
+    `['image/svg+xml' '"3e2169ab9970d6347ccfaa996c5efc944243d664151ae4ad9140a5c9c655d8e9"' /['media']/['characters']/['face']/['neutral']/['svg']]
+  ?:  =(url '/apps/ursketch/media/28c63531e79b43f3/characters/face/raspberry.svg')
+    `['image/svg+xml' '"28c63531e79b43f3044ea66032d0e18f648d626e0d79ad3af658a8743209bc92"' /['media']/['characters']/['face']/['raspberry']/['svg']]
+  ?:  =(url '/apps/ursketch/media/823816305fbc12e6/characters/face/sad.svg')
+    `['image/svg+xml' '"823816305fbc12e657da7b22a6a4d255fbdb8365d1e21d9936bda9aa7c9d3431"' /['media']/['characters']/['face']/['sad']/['svg']]
+  ?:  =(url '/apps/ursketch/media/bf195c687427f5e0/characters/face/scared.svg')
+    `['image/svg+xml' '"bf195c687427f5e0225c097ec4c4ef4b6e9f92ce61d62bd4d38234031ddd714f"' /['media']/['characters']/['face']/['scared']/['svg']]
+  ?:  =(url '/apps/ursketch/media/491ad85d1e16e335/characters/face/shocked.svg')
+    `['image/svg+xml' '"491ad85d1e16e335a3f3f31e6afa2b87b56f7388940748493493387752b5766e"' /['media']/['characters']/['face']/['shocked']/['svg']]
+  ?:  =(url '/apps/ursketch/media/d8d7affbe6a06301/characters/face/sleepy.svg')
+    `['image/svg+xml' '"d8d7affbe6a06301589c9453675d0eb3583f7806f0afe7b04a204398b02ca53b"' /['media']/['characters']/['face']/['sleepy']/['svg']]
+  ?:  =(url '/apps/ursketch/media/956d15218df5f816/characters/hat/alien-ears.svg')
+    `['image/svg+xml' '"956d15218df5f81602c07d9cc8f4a3a1e7e100ad2529d9f4888fcde9f1aa33eb"' /['media']/['characters']/['hat']/['alien-ears']/['svg']]
+  ?:  =(url '/apps/ursketch/media/9d4fc763d064e125/characters/hat/baseball-cap.svg')
+    `['image/svg+xml' '"9d4fc763d064e12518b429ef14f74c1f6524f263dc9857093128b5bed7cb30ad"' /['media']/['characters']/['hat']/['baseball-cap']/['svg']]
+  ?:  =(url '/apps/ursketch/media/b08f01539866d758/characters/hat/beret.svg')
+    `['image/svg+xml' '"b08f01539866d75807f9fff249e9ad0b965e5661671247045e10534b46f26f6a"' /['media']/['characters']/['hat']/['beret']/['svg']]
+  ?:  =(url '/apps/ursketch/media/53255780c42b5fd9/characters/hat/bow.svg')
+    `['image/svg+xml' '"53255780c42b5fd9fb438b5865587b5dfd6f7f2d5df44147ff1dd5a70b98b7c6"' /['media']/['characters']/['hat']/['bow']/['svg']]
+  ?:  =(url '/apps/ursketch/media/c114d4fc96f10827/characters/hat/crown.svg')
+    `['image/svg+xml' '"c114d4fc96f10827593e666f99677d33a92763035c6b6603c9f1abb7c16f5f79"' /['media']/['characters']/['hat']/['crown']/['svg']]
+  ?:  =(url '/apps/ursketch/media/7620416c5ddee280/characters/hat/curly-thing.svg')
+    `['image/svg+xml' '"7620416c5ddee280eba28244d15c5f66c2051d99c0a99445b73f826b77ddd892"' /['media']/['characters']/['hat']/['curly-thing']/['svg']]
+  ?:  =(url '/apps/ursketch/media/78bcc8ea5c851986/characters/hat/halo-wings.svg')
+    `['image/svg+xml' '"78bcc8ea5c85198648c78879f9da8227e2b210e2c1fc2d5205e62449ee924695"' /['media']/['characters']/['hat']/['halo-wings']/['svg']]
+  ?:  =(url '/apps/ursketch/media/f2529c4cbb7f0181/characters/hat/party-hat.svg')
+    `['image/svg+xml' '"f2529c4cbb7f0181457fa10ee11262923e1e7c14979dba2c73bc4a6c78c6c01b"' /['media']/['characters']/['hat']/['party-hat']/['svg']]
+  ?:  =(url '/apps/ursketch/media/7bca90b98223ecfa/characters/hat/propellor-hat.svg')
+    `['image/svg+xml' '"7bca90b98223ecfa7a58f9abc05e0b5689b480b6dc943e46d6bb19aa5fbe87b8"' /['media']/['characters']/['hat']/['propellor-hat']/['svg']]
+  ?:  =(url '/apps/ursketch/media/1ca10671ec6cbdc8/characters/hat/wizard-hat.svg')
+    `['image/svg+xml' '"1ca10671ec6cbdc832292332b52b43452584adfa57bb927880247d815159675e"' /['media']/['characters']/['hat']/['wizard-hat']/['svg']]
   ?:  =(url '/apps/ursketch/media/ccfc04ad004fad99/images/app-tile.png')
     `['image/png' '"ccfc04ad004fad99fb1676edc96f3e7fdb3fe070744dbdc1e96941bd8ddb68c1"' /['media']/['images']/['app-tile']/['png']]
   ?:  =(url '/apps/ursketch/media/3cd27feef6be5d8c/images/intro-poster.jpg')

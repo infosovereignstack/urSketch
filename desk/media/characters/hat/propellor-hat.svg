@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 153.2 106.79">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #a8a8a8;
+      }
+
+      .cls-1, .cls-2 {
+        stroke-miterlimit: 10;
+      }
+
+      .cls-1, .cls-2, .cls-3 {
+        stroke: #231f20;
+        stroke-width: 2px;
+      }
+
+      .cls-4 {
+        fill: #00aeef;
+      }
+
+      .cls-2 {
+        fill: #d8d8d8;
+      }
+
+      .cls-5 {
+        fill: #fff200;
+      }
+
+      .cls-3 {
+        fill: #ed1c24;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+    </style>
+  </defs>
+  <g id="Propellor_Hat" data-name="Propellor Hat">
+    <path class="cls-3" d="M152.2,105.79c0-41.75-33.85-75.6-75.6-75.6S1,64.03,1,105.79h151.2Z"/>
+    <path class="cls-5" d="M115.73,104.92c-7.79-47.39-39.13-73.58-39.13-73.58v-.18s-31.34,26.19-39.13,73.58"/>
+    <path class="cls-4" d="M151.29,104.92s0-69.12-74.69-73.76c0,0,28.98,23.15,39.13,73.76h35.56Z"/>
+    <path class="cls-2" d="M98.8,1.2C107.29,0,118.28,4.23,119.7,13.62c.57,13.2-19.14,12.92-28.36,11.62-4.04-.58-8.99-.91-11.94-3.98-1.84-2.08-1.76-5.55-.87-8.47,2.28-6.73,13.57-10.76,20.08-11.58l.2-.02Z"/>
+    <rect class="cls-1" x="73.46" y="8.92" width="6.42" height="25.23" rx="3.21" ry="3.21"/>
+    <path class="cls-2" d="M54.25,1.2C45.76,0,34.77,4.23,33.36,13.62c-.57,13.2,19.14,12.92,28.36,11.62,4.04-.58,8.99-.91,11.94-3.98,1.84-2.08,1.76-5.55.87-8.47-2.28-6.73-13.57-10.76-20.08-11.58l-.2-.02Z"/>
+  </g>
+</svg>

@@ -1,0 +1,13 @@
+{
+  "bodyCount": 6,
+  "faceCount": 9,
+  "hatCount": 10,
+  "noHatOption": true,
+  "allSVGsDecode": true,
+  "stableIDs": true,
+  "shipPersistenceAcrossBrowsers": true,
+  "futureIDsPreserved": true,
+  "noAutomaticRoomSearch": true,
+  "peerAvatarPropagation": true,
+  "laptopAndPhoneFit": true
+}

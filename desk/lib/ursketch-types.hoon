@@ -5,6 +5,7 @@
 +$  line  [color=@t width=@ud x1=@ud y1=@ud x2=@ud y2=@ud kind=draw-kind opacity=@ud filled=? seed=@ud id=@t]
 +$  message-v6  [who=@t text=@t kind=@t]
 +$  message  [who=@t text=@t kind=@t audience=(unit @p) actor=(unit @p)]
++$  avatar  [body=@t face=@t hat=@t]
 +$  solve  [who=@p label=@t points=@ud]
 +$  room
   $:  title=@t

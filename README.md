@@ -383,3 +383,30 @@ Tool buttons use state-neutral icons with one pressed selection and contained
 rectangular hit areas. Selecting a tool cancels unfinished gestures, and tool
 keyboard focus follows the selected tool. Returning from Fill to Pen restores
 the pen cursor and stroke commands without keeping a second highlighted tool.
+
+## Character builder and manual discovery (0.17.0)
+
+Connect now follows the supplied character-builder reference, retaining the
+current high-resolution logo and current wording. Body, face and hat arrows
+compose the original SVG artwork, with six bodies, nine faces, ten hats and a
+no-hat option. The layout fits laptop and phone screens.
+
+Characters save under the player's Urbit identity on their ship when Connect
+succeeds; a browser draft also survives reopening the page. Stable IDs persist
+choices independently of catalog order, added parts and renamed labels. An
+older client preserves unknown IDs while previewing a fallback instead of
+silently overwriting a newer character. State 9 migrates to state 10, retaining
+rooms, scores and names and adding a separate avatar map. The authenticated
+`/apps/ursketch/character` endpoint restores the local ship's saved character
+without opening a channel on the Connect page. Peer room snapshots carry their
+chosen parts for the upcoming game-room character layout.
+
+The room browser starts idle. Global Chat still connects, but no host-room
+subscriptions or discovery requests run until Search or Rejoin is selected.
+New invite links can still join their named room directly. Known-host counts
+start loading after a deliberate search.
+
+To add character parts, keep existing IDs in `web/characters.json`, append a
+new part with its stable ID and alignment, and place its SVG under
+`desk/media/characters/{body,face,hat}/`. Never reuse IDs for different art.
+The build supplies content-addressed URLs automatically.

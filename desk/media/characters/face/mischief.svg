@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 254.61 113.96">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: none;
+      }
+
+      .cls-1, .cls-2 {
+        stroke: #231f20;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 2px;
+      }
+
+      .cls-2 {
+        fill: #fff;
+      }
+
+      .cls-3 {
+        fill: #231f20;
+      }
+    </style>
+  </defs>
+  <g id="Mischief_Face" data-name="Mischief Face">
+    <g>
+      <ellipse class="cls-2" cx="57.44" cy="54.83" rx="56.44" ry="35.53"/>
+      <ellipse class="cls-3" cx="55.29" cy="55.77" rx="43.06" ry="20"/>
+    </g>
+    <g>
+      <ellipse class="cls-2" cx="197.17" cy="54.83" rx="56.44" ry="35.53"/>
+      <ellipse class="cls-3" cx="199.32" cy="55.77" rx="43.06" ry="20"/>
+    </g>
+    <path class="cls-1" d="M118.42,73.41c10.67,21.41,29.92,28.53,53.22,34.59,9.47,2.67,21.97,7.81,35.3,2.94,7.04-2.57,12.37-7.74,17.44-13.33,5.12-5.99,9.85-9.43,17.54-10.54"/>
+    <path class="cls-1" d="M136.67,73.41c-5.28,11.45-13.1,21.93-23.52,29.04-4.3,2.93-9.21,5.54-14.42,5.55-5.2.02-10.67-3.04-12.12-8.04"/>
+    <path class="cls-1" d="M133.73,21.71c2.18,3.33,5.01,6.38,8.66,7.96,5.89,2.56,12.86.85,18.41-2.4,5.54-3.25,10.11-7.89,15.22-11.79s11.18-7.14,17.59-6.84"/>
+    <path class="cls-1" d="M75.08,15.75c3.63-6.04,9.26-10.86,15.79-13.52,3.74-1.52,8.66-2.08,11.28,1"/>
+  </g>
+</svg>

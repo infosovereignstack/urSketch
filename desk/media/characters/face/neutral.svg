@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 254.61 111.18">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: none;
+      }
+
+      .cls-1, .cls-2 {
+        stroke: #231f20;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 2px;
+      }
+
+      .cls-2 {
+        fill: #fff;
+      }
+
+      .cls-3 {
+        fill: #231f20;
+      }
+    </style>
+  </defs>
+  <g id="Neutral_Face" data-name="Neutral Face">
+    <g>
+      <ellipse class="cls-2" cx="57.44" cy="53.62" rx="56.44" ry="35.53"/>
+      <ellipse class="cls-3" cx="55.29" cy="54.56" rx="43.06" ry="20"/>
+    </g>
+    <g>
+      <ellipse class="cls-2" cx="197.17" cy="53.62" rx="56.44" ry="35.53"/>
+      <ellipse class="cls-3" cx="199.32" cy="54.56" rx="43.06" ry="20"/>
+    </g>
+    <g>
+      <path class="cls-1" d="M118.42,72.2c5.28,11.45,13.1,21.93,23.52,29.04s23.55,10.61,35.92,8.19c7.49-1.46,14.4-4.96,21.2-8.42"/>
+      <path class="cls-1" d="M136.67,72.2c-5.28,11.45-13.1,21.93-23.52,29.04-10.41,7.11-23.55,10.61-35.92,8.19-7.49-1.46-14.4-4.96-21.2-8.42"/>
+    </g>
+    <ellipse class="cls-1" cx="102.58" cy="6.66" rx="11.29" ry="5.66"/>
+    <ellipse class="cls-1" cx="153.83" cy="6.66" rx="11.29" ry="5.66"/>
+  </g>
+</svg>

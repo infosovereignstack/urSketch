@@ -1,0 +1,250 @@
+{
+  "viewBox": [
+    0,
+    0,
+    471.34,
+    435
+  ],
+  "defaults": {
+    "body": "calico",
+    "face": "sad",
+    "hat": "propellor-hat"
+  },
+  "parts": {
+    "body": [
+      {
+        "id": "black",
+        "label": "Black",
+        "asset": "characters/body/black.svg",
+        "x": 0,
+        "y": 35,
+        "width": 471.34,
+        "height": 364.92
+      },
+      {
+        "id": "calico",
+        "label": "Calico",
+        "asset": "characters/body/calico.svg",
+        "x": 0,
+        "y": 35,
+        "width": 471.34,
+        "height": 364.92
+      },
+      {
+        "id": "green",
+        "label": "Green",
+        "asset": "characters/body/green.svg",
+        "x": 0,
+        "y": 35,
+        "width": 471.34,
+        "height": 364.92
+      },
+      {
+        "id": "grey",
+        "label": "Grey",
+        "asset": "characters/body/grey.svg",
+        "x": 0,
+        "y": 35,
+        "width": 471.34,
+        "height": 364.92
+      },
+      {
+        "id": "orange",
+        "label": "Orange",
+        "asset": "characters/body/orange.svg",
+        "x": 0,
+        "y": 35,
+        "width": 471.34,
+        "height": 364.92
+      },
+      {
+        "id": "white",
+        "label": "White",
+        "asset": "characters/body/white.svg",
+        "x": 0,
+        "y": 35,
+        "width": 471.34,
+        "height": 364.92
+      }
+    ],
+    "face": [
+      {
+        "id": "alien",
+        "label": "Alien",
+        "asset": "characters/face/alien.svg",
+        "x": 92.695,
+        "y": 228.47,
+        "width": 254.61,
+        "height": 92.72
+      },
+      {
+        "id": "excited",
+        "label": "Excited",
+        "asset": "characters/face/excited.svg",
+        "x": 98.48,
+        "y": 220,
+        "width": 243.04,
+        "height": 129.9
+      },
+      {
+        "id": "mischief",
+        "label": "Mischief",
+        "asset": "characters/face/mischief.svg",
+        "x": 92.695,
+        "y": 210.17,
+        "width": 254.61,
+        "height": 113.96
+      },
+      {
+        "id": "neutral",
+        "label": "Neutral",
+        "asset": "characters/face/neutral.svg",
+        "x": 92.695,
+        "y": 211.38,
+        "width": 254.61,
+        "height": 111.18
+      },
+      {
+        "id": "raspberry",
+        "label": "Raspberry",
+        "asset": "characters/face/raspberry.svg",
+        "x": 98.48,
+        "y": 240,
+        "width": 243.04,
+        "height": 172.23
+      },
+      {
+        "id": "sad",
+        "label": "Sad",
+        "asset": "characters/face/sad.svg",
+        "x": 64.175,
+        "y": 222.28,
+        "width": 312.14,
+        "height": 145.12
+      },
+      {
+        "id": "scared",
+        "label": "Scared",
+        "asset": "characters/face/scared.svg",
+        "x": 92.695,
+        "y": 223.22,
+        "width": 254.61,
+        "height": 90.39
+      },
+      {
+        "id": "shocked",
+        "label": "Shocked",
+        "asset": "characters/face/shocked.svg",
+        "x": 92.695,
+        "y": 226.19,
+        "width": 254.61,
+        "height": 168.99
+      },
+      {
+        "id": "sleepy",
+        "label": "Sleepy",
+        "asset": "characters/face/sleepy.svg",
+        "x": 47.22,
+        "y": 157,
+        "width": 294.49,
+        "height": 209.2
+      }
+    ],
+    "hat": [
+      {
+        "id": "none",
+        "label": "None"
+      },
+      {
+        "id": "alien-ears",
+        "label": "Alien Ears",
+        "asset": "characters/hat/alien-ears.svg",
+        "x": 154.785,
+        "y": 92.55,
+        "width": 130.43,
+        "height": 87.45
+      },
+      {
+        "id": "baseball-cap",
+        "label": "Baseball Cap",
+        "asset": "characters/hat/baseball-cap.svg",
+        "x": 134.27,
+        "y": 119.58,
+        "width": 171.46,
+        "height": 80.42
+      },
+      {
+        "id": "beret",
+        "label": "Beret",
+        "asset": "characters/hat/beret.svg",
+        "x": 106.375,
+        "y": 109.84,
+        "width": 227.25,
+        "height": 90.16
+      },
+      {
+        "id": "bow",
+        "label": "Bow",
+        "asset": "characters/hat/bow.svg",
+        "x": 158.985,
+        "y": 100.62,
+        "width": 122.03,
+        "height": 99.38
+      },
+      {
+        "id": "crown",
+        "label": "Crown",
+        "asset": "characters/hat/crown.svg",
+        "x": 158.83,
+        "y": 116.1,
+        "width": 122.34,
+        "height": 83.9
+      },
+      {
+        "id": "curly-thing",
+        "label": "Curly Thing",
+        "asset": "characters/hat/curly-thing.svg",
+        "x": 193.09,
+        "y": 92.45,
+        "width": 53.82,
+        "height": 107.55
+      },
+      {
+        "id": "halo-wings",
+        "label": "Halo Wings",
+        "asset": "characters/hat/halo-wings.svg",
+        "x": 98.92,
+        "y": 60.68,
+        "width": 242.16,
+        "height": 94.32
+      },
+      {
+        "id": "party-hat",
+        "label": "Party Hat",
+        "asset": "characters/hat/party-hat.svg",
+        "x": 171.0,
+        "y": 40.69,
+        "width": 98.0,
+        "height": 159.31
+      },
+      {
+        "id": "propellor-hat",
+        "label": "Propellor Hat",
+        "asset": "characters/hat/propellor-hat.svg",
+        "x": 143.4,
+        "y": 93.21,
+        "width": 153.2,
+        "height": 106.79
+      },
+      {
+        "id": "wizard-hat",
+        "label": "Wizard Hat",
+        "asset": "characters/hat/wizard-hat.svg",
+        "x": 149.475,
+        "y": 23.2,
+        "width": 141.05,
+        "height": 176.8
+      }
+    ]
+  }
+}

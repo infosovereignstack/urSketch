@@ -23,6 +23,16 @@ with sync_playwright() as p:
     login = context.request.post('http://127.0.0.1/~/login', form={'password': code})
     assert login.ok
     code = None
+    if os.environ.get('URSKETCH_PREVIEW')!='1':
+        import hashlib
+        metadata=json.loads((artifacts/'media-manifest.json').read_text())
+        character=context.request.get('http://127.0.0.1/apps/ursketch/character');assert character.status==200
+        saved=character.json();assert saved is None or set(saved)=={'body','face','hat'}
+        for name,asset in metadata.items():
+            if not name.startswith('characters/'):continue
+            media=context.request.get('http://127.0.0.1'+asset['url']);assert media.status==200,(name,media.status)
+            assert media.headers['content-type']=='image/svg+xml'
+            assert hashlib.sha256(media.body()).hexdigest()==asset['sha256'],name
     page = context.new_page()
     errors = []
     page.on('pageerror', lambda e: errors.append(str(e)))
@@ -55,8 +65,9 @@ with sync_playwright() as p:
     page.wait_for_function("Array.from(document.querySelectorAll('#connect-logo image')).every(i=>i.href.baseVal.includes('/media/'))")
     page.wait_for_timeout(350)
     copy=page.locator('.connect-copy').bounding_box();form=page.locator('#profile-form').bounding_box()
-    assert abs(copy['x']-153)<3 and abs(copy['y']-229)<3,copy
-    assert abs(form['x']-862)<3 and abs(form['y']-313)<4,form
+    assert abs(copy['x']-665.6)<3 and abs(copy['y']-246.96)<3,copy
+    assert form['x']>copy['x'] and form['y']>=copy['y']+copy['height'],form
+    builder=page.locator('#character-builder').bounding_box();assert builder['x']+builder['width']<copy['x'],builder
     page.screenshot(path=str(artifacts/'connect-desktop.png'))
     for width,height in [(1024,600),(390,844),(320,568)]:
         page.set_viewport_size({'width':width,'height':height})
@@ -178,6 +189,7 @@ with sync_playwright() as p:
     page.evaluate("()=>{window.cachedLobbyProbe=true;window.dispatchEvent(new PageTransitionEvent('pageshow',{persisted:true}));}")
     page.wait_for_function('!window.cachedLobbyProbe && connectionReady')
     expect(page.locator('#host-search')).to_be_enabled(timeout=30000)
+    page.locator('#host').fill(page.evaluate('SELF'));page.locator('#host-search').click();expect(page.locator('#host-search')).to_be_enabled(timeout=30000)
     page.locator('#create-open').click()
     page.locator('#title').fill('Installation check')
     page.locator('#create-form button.primary').click()

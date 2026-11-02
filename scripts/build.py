@@ -30,6 +30,11 @@ for name in ('skip', 'done'):
     uri = 'data:image/svg+xml;base64,' + base64.b64encode((ROOT / f'web/hint-{name}.svg').read_bytes()).decode()
     html = html.replace(f'DEFAULT_HINT_{name.upper()}_IMAGE', uri)
 html = html.replace('<script>/* URSKETCH_DRAWING */', '<script>window.URSKETCH_SHIP=URSKETCH_SHIP_VALUE;/* URSKETCH_DRAWING */', 1)
+characters=json.loads((ROOT/'web/characters.json').read_text())
+for entries in characters['parts'].values():
+    for entry in entries:
+        if entry.get('asset'):entry['url']=assets[entry['asset']]['url']
+html=html.replace('/* URSKETCH_CHARACTERS */',(ROOT/'web/characters.js').read_text().replace('URSKETCH_CHARACTER_CATALOG',json.dumps(characters,separators=(',',':'))))
 html = html.replace('/* URSKETCH_DRAWING */', (ROOT / 'web/drawing.js').read_text())
 html = html.replace('/* URSKETCH_SETTINGS */', (ROOT / 'web/settings.js').read_text())
 cue_urls = {Path(name).stem:asset['url'] for name,asset in assets.items() if name.startswith('audio/cues/')}

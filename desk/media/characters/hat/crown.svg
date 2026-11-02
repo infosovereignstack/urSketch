@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 122.34 83.9">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #fff200;
+      }
+
+      .cls-1, .cls-2 {
+        stroke: #231f20;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 2px;
+      }
+
+      .cls-2 {
+        fill: #be1e2d;
+      }
+    </style>
+  </defs>
+  <g id="Crown">
+    <path class="cls-1" d="M121.34,76.75l-22.41-58.17-15.5,40.23L61.17,1l-22.27,57.81-15.5-40.23L1,76.75h.05c-.02.07-.05.13-.05.2,0,3.29,26.94,5.96,60.17,5.96s60.17-2.67,60.17-5.96c0-.07-.03-.13-.05-.2h.05Z"/>
+    <ellipse class="cls-2" cx="61.17" cy="53.62" rx="8" ry="18"/>
+    <ellipse class="cls-2" cx="23.45" cy="60.43" rx="5.5" ry="12.38"/>
+    <ellipse class="cls-2" cx="99.45" cy="60.43" rx="5.5" ry="12.38"/>
+  </g>
+</svg>
