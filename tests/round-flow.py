@@ -26,7 +26,7 @@ with sync_playwright() as p:
   page=context.new_page();page.on('pageerror',lambda e:errors.append(str(e)));page.add_init_script("window.heard=[];window.addEventListener('ursketch:sound',e=>heard.push(e.detail))")
   page.goto(origin+'/apps/ursketch/connect');page.locator('#player-name').fill(name);page.locator('#connect-submit').click();page.wait_for_url('**/apps/ursketch/play');expect(page.locator('#host-search')).to_be_enabled(timeout=30000)
   page.locator('#browser-settings').click();page.locator('#settings-reset').click();page.locator('#settings-close').click()
-  page.wait_for_function('gameAudio?.loaded.length===9',timeout=30000);pages.append(page)
+  page.wait_for_function('gameAudio?.loaded.length===10',timeout=30000);pages.append(page)
  h,g,b=pages
  h.locator('#create-open').click();h.locator('#title').fill(f'Round QA {time.time_ns()}');h.locator('#create-form button.primary').click();expect(h.locator('#game')).to_be_visible(timeout=30000)
  rid=h.evaluate('roomId')

@@ -5,7 +5,7 @@ function normalizeCharacter(value){
   return Object.fromEntries(characterParts.map(part=>[part,typeof value?.[part]==='string'&&/^[a-z0-9-]{1,40}$/.test(value[part])?value[part]:CHARACTER_CATALOG.defaults[part]]));
 }
 function createCharacter(value,{className='',label='Player character'}={}){
-  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox',CHARACTER_CATALOG.viewBox.join(' '));svg.classList.add('cat-character');if(className)svg.classList.add(className);svg.setAttribute('role','img');svg.setAttribute('aria-label',label);
+  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox',CHARACTER_CATALOG.viewBox.join(' '));svg.setAttribute('preserveAspectRatio','xMidYMid meet');svg.classList.add('cat-character');if(className)svg.classList.add(className);svg.setAttribute('role','img');svg.setAttribute('aria-label',label);
   const selected=normalizeCharacter(value);
   for(const part of characterParts){
     const choices=CHARACTER_CATALOG.parts[part],entry=choices.find(v=>v.id===selected[part])||choices.find(v=>v.id===CHARACTER_CATALOG.defaults[part]);

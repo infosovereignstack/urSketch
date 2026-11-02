@@ -2,7 +2,7 @@
   "nativeRounds": 10,
   "winner": "Zoe",
   "points": 20,
-  "durationSeconds": 40.032,
+  "durationSeconds": 40.036,
   "restartBlocked": true,
   "blankTimer": true,
   "boldRedFinalMessage": true,
@@ -13,5 +13,8 @@
   "automaticNewGame": true,
   "ownerRemoval": true,
   "explicitRejoinOnReload": true,
-  "singleToolSelection": true
+  "singleToolSelection": true,
+  "suppliedFireworksLoop": true,
+  "fireworksRejoinOffset": true,
+  "stableRosterAndPencil": true
 }

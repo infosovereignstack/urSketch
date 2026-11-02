@@ -29,9 +29,9 @@ with sync_playwright() as p:
         character=context.request.get('http://127.0.0.1/apps/ursketch/character');assert character.status==200
         saved=character.json();assert saved is None or set(saved)=={'body','face','hat'}
         for name,asset in metadata.items():
-            if not name.startswith('characters/'):continue
+            if not name.startswith('characters/') and name not in ('images/pencil.svg','audio/cues/Fireworks.mp3'):continue
             media=context.request.get('http://127.0.0.1'+asset['url']);assert media.status==200,(name,media.status)
-            assert media.headers['content-type']=='image/svg+xml'
+            assert media.headers['content-type']==asset['mime']
             assert hashlib.sha256(media.body()).hexdigest()==asset['sha256'],name
     page = context.new_page()
     errors = []
@@ -47,6 +47,10 @@ with sync_playwright() as p:
         html=render['html'].replace('URSKETCH_SHIP_VALUE',json.dumps(ship_name))
         for path in ('play','connect'):
             page.route('**/apps/ursketch/'+path,lambda route:route.fulfill(status=200,content_type='text/html',body=html))
+        def preview_media(route):
+            asset=next(a for a in render['assets'].values() if route.request.url.endswith(a['url']))
+            route.fulfill(status=200,content_type=asset['mime'],body=asset['data'])
+        page.route('**/apps/ursketch/media/**',preview_media)
     page.set_viewport_size({'width':1280,'height':720})
     response = page.goto('http://127.0.0.1/apps/ursketch/connect')
     expect(page.locator('#connect-page')).to_be_visible()
@@ -94,6 +98,7 @@ with sync_playwright() as p:
     page.set_viewport_size({'width':1440,'height':1000})
     assert response.status == 200
     favicon=page.locator('link[rel="icon"]').get_attribute('href')
+    assert page.locator('link[rel="icon"]').get_attribute('type')=='image/svg+xml'
     assert favicon == RELEASE['FAVICON_URL'], 'Browser tab logo is missing'
     expect(page.locator('#status')).to_contain_text('Connected as', timeout=30000)
     expect(page.locator('#host-search')).to_be_enabled(timeout=30000)
@@ -231,6 +236,25 @@ with sync_playwright() as p:
         assert page.evaluate("""()=>{const x=canvas.getContext('2d'),d=x.getImageData(450,0,100,700).data;return [0,680].every(top=>{for(let y=top;y<top+20;y++)for(let a=0;a<100;a++){const i=(y*100+a)*4;if(d[i]<50&&d[i+1]<50&&d[i+2]<50)return true;}return false;});}"""),'Edge strokes did not paint the canvas'
         assert page.evaluate('document.documentElement.scrollHeight<=innerHeight')
     page.screenshot(path=str(artifacts/'canvas-full-panel.png'))
+    # Ten-player reference roster: avatars retain native proportions; names
+    # retain the game font and only SELF is green. The pencil moves in-place.
+    page.evaluate("""()=>{window.rosterFixture=Array.from({length:10},(_,i)=>({ship:i?'~fixture-'+i:SELF,name:'Player '+(i+1),score:i?13:9,solved:i%2===0,avatar:{body:CHARACTER_CATALOG.parts.body[i%6].id,face:CHARACTER_CATALOG.parts.face[i%9].id,hat:CHARACTER_CATALOG.parts.hat[i%11].id}}));rosterOrder=rosterFixture.map(p=>p.ship);renderRoom({...state,players:[...rosterFixture.slice(4),...rosterFixture.slice(0,4)],token:state.token+1});}""")
+    for w,h in [(2048,970),(1280,720),(390,844)]:
+        page.set_viewport_size({'width':w,'height':h});page.wait_for_timeout(100)
+        assert page.locator('#players .player-avatar svg').count()==10
+        assert page.locator('#players .player-name').evaluate_all("els=>els.every((e,i)=>getComputedStyle(e).color===(i===0?'rgb(0, 128, 0)':'rgb(0, 0, 0)'))")
+        assert page.locator('#players .player-score').evaluate_all("els=>els.every(e=>getComputedStyle(e).color==='rgb(255, 0, 0)' && e.textContent.endsWith(' Points'))")
+        assert page.locator('#players .cat-character').evaluate_all("els=>els.every(e=>e.getAttribute('preserveAspectRatio')==='xMidYMid meet' && Math.abs(e.getCTM().a-e.getCTM().d)<1e-6)")
+        expect(page.locator('#players li[data-ship="~fixture-4"] .artist-pencil')).to_have_count(1)
+        assert page.evaluate('document.documentElement.scrollHeight<=innerHeight')
+        if w>=1280:assert page.locator('#players').evaluate('e=>e.scrollHeight<=e.clientHeight+2'),'Ten player rows do not fit'
+        page.screenshot(path=str(artifacts/f'roster-{w}.png'))
+    order=page.locator('#players li').evaluate_all('rows=>rows.map(r=>r.dataset.ship)')
+    page.evaluate("()=>renderRoom({...state,players:[...rosterFixture.slice(7),...rosterFixture.slice(0,7)],token:state.token+1})")
+    expect(page.locator('#players li[data-ship="~fixture-7"] .artist-pencil')).to_have_count(1)
+    assert page.locator('#players .artist-pencil').count()==1
+    assert page.locator('#players li').evaluate_all('rows=>rows.map(r=>r.dataset.ship)')==order
+    page.set_viewport_size({'width':960,'height':560})
     page.evaluate("()=>renderRoom({...state,phase:'finished',token:state.token+1,celebrating:true,remainingMs:40000,seconds:40,winner:{name:'Alice & Zoe',score:65}})")
     expect(page.locator('#game-finale')).to_be_visible();expect(page.locator('.finale-winner')).to_have_text('Alice & Zoe')
     assert page.locator('#timer-dial').get_attribute('aria-valuetext')==''

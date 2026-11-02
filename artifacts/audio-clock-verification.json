@@ -1,5 +1,7 @@
 {
-  "decodedCues": 9,
+  "decodedCues": 10,
+  "suppliedFireworksPCMAndLoop": true,
+  "fireworksMuteAndStop": true,
   "nonzeroPCM": true,
   "backgroundCue": true,
   "wholeWindowScheduledAhead": true,

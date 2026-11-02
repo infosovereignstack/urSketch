@@ -410,3 +410,17 @@ To add character parts, keep existing IDs in `web/characters.json`, append a
 new part with its stable ID and alignment, and place its SVG under
 `desk/media/characters/{body,face,hat}/`. Never reuse IDs for different art.
 The build supplies content-addressed URLs automatically.
+
+## Character roster and supplied fireworks (0.20.0)
+
+The game roster follows the supplied mockup: proportional SVG characters, the
+existing game font, local-player name in green, other names in black, red point
+totals and the supplied pencil beside the current artist. Rows keep a stable
+order while the pencil follows the native drawing turn. Ten rows fit the desktop
+and laptop panel; narrow phones stack names and points beside each portrait.
+
+The original `Fireworks.mp3` replaces synthesized bursts. Its decoded buffer
+loops continuously through the 40-second celebration, resumes at the proper
+offset after mute, audio-context suspension or rejoin, and stops at the deadline
+or on leaving. Master volume, mute and output-device preferences still apply.
+The supplied pencil SVG is also the favicon on the intro, Connect and Play pages.

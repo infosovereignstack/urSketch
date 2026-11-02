@@ -42,7 +42,7 @@ html = html.replace('/* URSKETCH_FINALE */', (ROOT/'web/finale.js').read_text())
 html = html.replace('/* URSKETCH_AUDIO */', (ROOT/'web/audio.js').read_text())
 chat_host=json.loads((ROOT/'web/chat-config.json').read_text())['host']
 if not re.fullmatch(r'~[a-z-]+',chat_host): raise ValueError('Invalid Global Chat host')
-html = html.replace('/* URSKETCH_JS */', (ROOT / 'web/app.js').read_text().replace('URSKETCH_GLOBAL_CHAT_HOST', json.dumps(chat_host)).replace('URSKETCH_CUE_URLS', json.dumps(cue_urls)))
+html = html.replace('/* URSKETCH_JS */', (ROOT / 'web/app.js').read_text().replace('URSKETCH_PENCIL_URL',assets['images/pencil.svg']['url']).replace('URSKETCH_GLOBAL_CHAT_HOST', json.dumps(chat_host)).replace('URSKETCH_CUE_URLS', json.dumps(cue_urls)))
 before, after = html.split('URSKETCH_SHIP_VALUE', 1)
 intro = (ROOT/'web/intro.html').read_text().replace('URSKETCH_FAVICON_URL', FAVICON_URL)
 settings_dialog = re.search(r'<dialog id="settings-dialog".*?</dialog>', html, re.DOTALL).group()

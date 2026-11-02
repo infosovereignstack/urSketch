@@ -8,8 +8,8 @@ audio_source=subprocess.check_output(['git','show','ursketch-v0.13.0:web/audio.j
 html='<button>Enable audio</button><script>'+audio_source+'''
 const prefs={volume:70,muted:false,output:''};window.scheduled=[];window.stopped=[];window.nodes=[];
 const start=AudioBufferSourceNode.prototype.start,stop=AudioBufferSourceNode.prototype.stop;
-AudioBufferSourceNode.prototype.start=function(when){scheduled.push({cue:this.urSketchCue,when});nodes.push(this);return start.call(this,when);};
-AudioBufferSourceNode.prototype.stop=function(){stopped.push(this.urSketchCue);return stop.call(this);};
+AudioBufferSourceNode.prototype.start=function(...args){scheduled.push({cue:this.urSketchCue,when:args[0]});nodes.push(this);return start.apply(this,args);};
+AudioBufferSourceNode.prototype.stop=function(...args){stopped.push(this.urSketchCue);return stop.apply(this,args);};
 const engine=createGameAudio({urls:URLS,getPrefs:()=>prefs,notify:message=>{throw new Error(message);}});
 </script>'''.replace('URLS',json.dumps(urls))
 with sync_playwright() as p:
@@ -18,7 +18,7 @@ with sync_playwright() as p:
   name=request.request.url.rsplit('/',1)[-1]
   if name.endswith('.mp3'):request.fulfill(status=200,content_type='audio/mpeg',body=(ROOT/'desk/media/audio/cues'/name).read_bytes())
   else:request.fulfill(status=200,content_type='text/html',body=html)
- page.route('https://audio-test.invalid/**',route);page.goto('https://audio-test.invalid/');page.locator('button').click();page.wait_for_function('engine.loaded.length===9')
+ page.route('https://audio-test.invalid/**',route);page.goto('https://audio-test.invalid/');page.locator('button').click();page.wait_for_function('(n)=>engine.loaded.length===n',arg=len(urls))
  # Verify a decoded file produces nonzero PCM at the actual gain output.
  page.evaluate("()=>{window.analyser=engine.context.createAnalyser();engine.master.connect(analyser);engine.play('JoinRoom');}")
  page.wait_for_function('()=>{const pcm=new Float32Array(analyser.fftSize);analyser.getFloatTimeDomainData(pcm);return pcm.some(x=>Math.abs(x)>.001);}')
@@ -41,6 +41,14 @@ with sync_playwright() as p:
  assert total==8,total
  page.evaluate("engine.countdown(0,'bounded');engine.countdown(2000,'bounded')");assert page.evaluate('scheduled.length')==8
  page.evaluate("()=>{engine.stop();scheduled.length=0;engine.countdown(null,'idle');}");page.wait_for_timeout(80);page.evaluate("engine.countdown(1000,'idle')");assert page.evaluate('scheduled.length')==4;page.evaluate('engine.stop()')
+ # The supplied MP3 loops once through native Web Audio, with timeline-aware
+ # resume and the same master gain/output as other game audio.
+ page.evaluate("()=>{scheduled.length=nodes.length=0;engine.fireworks({key:'finale',elapsed:7,remaining:3000});}")
+ assert page.evaluate("nodes.length===1 && nodes[0].loop && nodes[0].buffer.duration>5 && nodes[0].buffer.duration<6")
+ page.wait_for_function('()=>{const pcm=new Float32Array(analyser.fftSize);analyser.getFloatTimeDomainData(pcm);return pcm.some(x=>Math.abs(x)>.001);}')
+ page.evaluate("()=>{prefs.muted=true;engine.settings();}");page.wait_for_timeout(100)
+ before=page.evaluate('nodes.length');page.evaluate("()=>{prefs.muted=false;engine.settings();}");assert page.evaluate('nodes.length')==before+1
+ page.evaluate('engine.stopFireworks()');before=page.evaluate('scheduled.length');page.wait_for_timeout(150);assert page.evaluate('scheduled.length')==before
  assert not errors,errors
- (ROOT/'artifacts/audio-clock-verification.json').write_text(json.dumps({'decodedCues':9,'nonzeroPCM':True,'backgroundCue':True,'wholeWindowScheduledAhead':True,'twoSecondTicks':8,'intervalSeconds':.25,'muteCancelsScheduledSources':True,'leavingStopsScheduler':True,'clockDivergenceCannotReplayFinishedSlots':True,'completedRoundCannotRestart':True},indent=2)+'\n')
+ (ROOT/'artifacts/audio-clock-verification.json').write_text(json.dumps({'decodedCues':len(urls),'suppliedFireworksPCMAndLoop':True,'fireworksMuteAndStop':True,'nonzeroPCM':True,'backgroundCue':True,'wholeWindowScheduledAhead':True,'twoSecondTicks':8,'intervalSeconds':.25,'muteCancelsScheduledSources':True,'leavingStopsScheduler':True,'clockDivergenceCannotReplayFinishedSlots':True,'completedRoundCannotRestart':True},indent=2)+'\n')
  browser.close();print('PASS: real decoded PCM, background turn alerts, ahead-scheduled 4 Hz ticks, mute cancellation and stopped scheduler')

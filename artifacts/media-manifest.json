@@ -5,6 +5,12 @@
     "bytes": 19457,
     "sha256": "45ce5ea566101a31cb2017c56d3ec86cfeea2c98e2da1c4aedd28adc7f56ca41"
   },
+  "audio/cues/Fireworks.mp3": {
+    "url": "/apps/ursketch/media/6abac6841644b7d1/audio/cues/Fireworks.mp3",
+    "mime": "audio/mpeg",
+    "bytes": 136072,
+    "sha256": "6abac6841644b7d18d732274e55f259477935db94383306c6a97f312583c53c2"
+  },
   "audio/cues/HintNoise.mp3": {
     "url": "/apps/ursketch/media/29269f063d4fefaf/audio/cues/HintNoise.mp3",
     "mime": "audio/mpeg",
@@ -238,6 +244,12 @@
     "mime": "image/svg+xml",
     "bytes": 988994,
     "sha256": "f729fd4985efde0e5f3062a889bb3b5a0cdfdec445ca4eede08a819d215ffc55"
+  },
+  "images/pencil.svg": {
+    "url": "/apps/ursketch/media/0a9b5b528bc92d69/images/pencil.svg",
+    "mime": "image/svg+xml",
+    "bytes": 1991,
+    "sha256": "0a9b5b528bc92d69394dbbe671c7f00b40c3771934283886842499be417e6c89"
   },
   "images/ursketch-logo.png": {
     "url": "/apps/ursketch/media/53160c12c3b4aa4d/images/ursketch-logo.png",

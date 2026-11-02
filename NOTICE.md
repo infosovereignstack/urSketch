@@ -37,3 +37,6 @@ the reference's people, Studio and language-category controls are not included.
 Character artwork: 25 user-supplied urSketch cat SVGs (6 bodies, 9 faces and
 10 hats), copied unchanged into `desk/media/characters/`. Layer registration
 and selector controls are implemented in the application's own code.
+
+Fireworks audio and pencil SVG: user-supplied files, copied unchanged as
+`desk/media/audio/cues/Fireworks.mp3` and `desk/media/images/pencil.svg`.

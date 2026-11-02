@@ -5,6 +5,8 @@
   ^-  (unit [mime=@t etag=@t file=path])
   ?:  =(url '/apps/ursketch/media/45ce5ea566101a31/audio/cues/CloseGuess.mp3')
     `['audio/mpeg' '"45ce5ea566101a31cb2017c56d3ec86cfeea2c98e2da1c4aedd28adc7f56ca41"' /['media']/['audio']/['cues']/['CloseGuess']/['mp3']]
+  ?:  =(url '/apps/ursketch/media/6abac6841644b7d1/audio/cues/Fireworks.mp3')
+    `['audio/mpeg' '"6abac6841644b7d18d732274e55f259477935db94383306c6a97f312583c53c2"' /['media']/['audio']/['cues']/['Fireworks']/['mp3']]
   ?:  =(url '/apps/ursketch/media/29269f063d4fefaf/audio/cues/HintNoise.mp3')
     `['audio/mpeg' '"29269f063d4fefaf41af3b71ec499ab5a31f6bfc92ab44d0f6f3605d48b4c1e6"' /['media']/['audio']/['cues']/['HintNoise']/['mp3']]
   ?:  =(url '/apps/ursketch/media/f960ddde6b03f9ea/audio/cues/JoinRoom.mp3')
@@ -83,6 +85,8 @@
     `['image/png' '"77dd19bbb0051d5d2db14b11fb5fe0dd6ccee980a59fcd88488758179b8700cc"' /['media']/['images']/['intro-wordmark-v2']/['png']]
   ?:  =(url '/apps/ursketch/media/f729fd4985efde0e/images/intro-wordmark.svg')
     `['image/svg+xml' '"f729fd4985efde0e5f3062a889bb3b5a0cdfdec445ca4eede08a819d215ffc55"' /['media']/['images']/['intro-wordmark']/['svg']]
+  ?:  =(url '/apps/ursketch/media/0a9b5b528bc92d69/images/pencil.svg')
+    `['image/svg+xml' '"0a9b5b528bc92d69394dbbe671c7f00b40c3771934283886842499be417e6c89"' /['media']/['images']/['pencil']/['svg']]
   ?:  =(url '/apps/ursketch/media/53160c12c3b4aa4d/images/ursketch-logo.png')
     `['image/png' '"53160c12c3b4aa4df4fde063a80988197b8df290198734b918e1c45f56ac47e3"' /['media']/['images']/['ursketch-logo']/['png']]
   ?:  =(url '/apps/ursketch/media/03b6bde870e95c7c/video/intro.mp4')

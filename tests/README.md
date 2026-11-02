@@ -348,3 +348,26 @@ publication: all 25 native SVG responses have the expected MIME type and exact
 source hash; the authenticated character endpoint returns valid data; builder
 geometry, phone fit, native rules and existing room/game flows passed. Game-room
 character placement remains pending the user's follow-up layout reference.
+
+### 0.20.0 roster, pencil and supplied audio
+
+The comet suite uses a ten-player browser fixture to verify proportional SVG
+transforms, local-green/other-black names, red point totals, ten-row panel fit,
+stable ordering and pencil movement at desktop/laptop/phone sizes. The native
+two-ship finale test also checks stable rows and the marker after real round
+rotation, plus continuous MP3 playback beyond its first loop, mute/resume and
+rejoin offset. Audio-clock instrumentation now forwards all native start/stop
+arguments so scheduled duration and offset behavior is tested faithfully.
+
+0.20.0 preview checks passed ten-row fit, current font/colors, proportional
+character transforms, stable roster and moving pencil at 2048×970, 1280×720
+and phone size. The native ten-round two-ship suite passed continuous supplied
+MP3 playback, mute/resume, refreshed-player offset, score/canvas reset and
+automatic next game. Audio-clock tests passed decoded fireworks PCM/looping,
+master mute and cancellation alongside the existing fixed-slot countdown.
+The MP3 and pencil SVG match the supplied originals byte for byte.
+
+Installed 0.20.0 checks passed after native import and Treaty publication:
+proportional ten-player roster, moving pencil/stable order, current font and
+name/point colors, native SVG favicon decode and exact pencil/MP3 response
+hashes and MIME types, plus existing builder, room and canvas flows.

@@ -26,7 +26,7 @@ with sync_playwright() as p:
   page=context.new_page();page.on('pageerror',lambda e:errors.append(str(e)));page.add_init_script("window.heard=[];window.addEventListener('ursketch:sound',e=>heard.push(e.detail))")
   page.goto(origin+'/apps/ursketch/connect');page.locator('#player-name').fill(name);page.locator('#connect-submit').click();page.wait_for_url('**/apps/ursketch/play');expect(page.locator('#host-search')).to_be_enabled(timeout=30000)
   page.locator('#browser-settings').click();page.locator('#settings-reset').click();page.locator('#settings-close').click()
-  page.wait_for_function('gameAudio?.loaded.length===9',timeout=30000);pages.append(page)
+  page.wait_for_function('gameAudio?.loaded.length===10',timeout=30000);pages.append(page)
  h,g=pages
  h.locator('#create-open').click();h.locator('#title').fill(f'Finale QA {time.time_ns()}');h.locator('#create-form button.primary').click();expect(h.locator('#game')).to_be_visible(timeout=30000)
  rid=h.evaluate('roomId');g.evaluate("setSearchMode('invite')");g.locator('#host').fill(f'~zod/{rid}');g.locator('#host-search').click();expect(g.locator('#game')).to_be_visible(timeout=30000)
@@ -47,6 +47,11 @@ with sync_playwright() as p:
  assert h.evaluate("drawing.selected==='pen' && document.querySelectorAll('#tool-grid .selected').length===1")
  h.screenshot(path=str(ROOT/'artifacts/tools-single-selection.png'))
  h.locator('#give-hint').click();h.wait_for_function('state.hintCount===1');answer=h.evaluate('state.answer');g.locator('#guess').fill(answer);g.locator('#guess').press('Enter')
+ h.wait_for_function("state.players[0].ship==='~nec'")
+ assert h.locator('#players li').evaluate_all("rows=>rows.map(r=>r.dataset.ship).join(',')==='~zod,~nec'")
+ expect(h.locator('#players li[data-ship="~nec"] .artist-pencil')).to_have_count(1)
+ assert h.locator('#players li[data-ship="~nec"] .player-name').evaluate("e=>getComputedStyle(e).color==='rgb(0, 0, 0)'")
+ assert h.locator('#players li.me .player-name').evaluate("e=>getComputedStyle(e).color==='rgb(0, 128, 0)'")
  for turn in range(1,9):
   h.wait_for_function('(turn)=>state.turn===turn',arg=turn);g.wait_for_function('(turn)=>state.turn===turn',arg=turn)
   artist=h if turn%2==0 else g;artist.evaluate("api.poke('skip')")
@@ -63,7 +68,8 @@ with sync_playwright() as p:
   expect(page.locator('#start')).to_be_hidden();assert page.locator('#game-finale button,#game-finale a').count()==0
  assert h.evaluate("api.poke('start').then(()=>false,()=>true)"),'Host allowed restart during celebration'
  h.evaluate("()=>{window.finaleAnalyser=gameAudio.context.createAnalyser();gameAudio.master.connect(finaleAnalyser)}")
- h.wait_for_function("heard.filter(e=>e.cue==='Fireworks').length>=2",timeout=10000)
+ h.wait_for_function("heard.filter(e=>e.cue==='Fireworks').length>=1",timeout=10000)
+ h.wait_for_timeout(6000);assert h.evaluate("heard.filter(e=>e.cue==='Fireworks').length===1 && heard.find(e=>e.cue==='Fireworks').loop"), 'Fireworks track restarted instead of looping'
  h.wait_for_function("()=>{const a=new Float32Array(finaleAnalyser.fftSize);finaleAnalyser.getFloatTimeDomainData(a);return a.some(v=>Math.abs(v)>.001)}")
  assert h.locator('#game-finale>canvas').evaluate("c=>{const d=c.getContext('2d').getImageData(0,0,c.width,c.height).data;let dark=0,light=0;for(let i=0;i<d.length;i+=4){if(d[i]+d[i+1]+d[i+2]===0)dark++;else light++;}return dark>light*10 && light>0}")
  h.screenshot(path=str(ROOT/'artifacts/game-finale.png'))
@@ -72,7 +78,7 @@ with sync_playwright() as p:
  h.locator('#settings-open').click();h.locator('#sound-muted').uncheck();h.locator('#settings-close').click()
  g.reload();expect(g.locator('#lobby')).to_be_visible();expect(g.locator('#room-recovery')).to_be_visible(timeout=30000);g.wait_for_timeout(1000);assert g.evaluate('state===null'), 'Restored tab ghost-rejoined';g.locator('#rejoin-room').click();expect(g.locator('#game')).to_be_visible(timeout=30000);g.wait_for_function("state.celebrating && state.winner.name==='Zoe' && state.winner.score===20")
  assert g.evaluate('state.remainingMs<38000'), 'Refresh restarted 40 seconds'
- assert g.evaluate("heard.filter(e=>e.cue==='Fireworks').length===0"), 'Refreshed browser replayed missed fireworks'
+ g.wait_for_function("heard.some(e=>e.cue==='Fireworks')");assert g.evaluate("heard.filter(e=>e.cue==='Fireworks').every(e=>e.loop && e.offset>0)"), 'Refreshed fireworks did not resume at their offset'
  h.wait_for_function("state.phase==='drawing' && state.turn===0 && state.winner===null",timeout=42000);elapsed=time.monotonic()-began;assert 39.5<elapsed<43,elapsed
  for page in pages:expect(page.locator('#game-finale')).to_be_hidden()
  assert h.evaluate("state.started && state.lines.length===0 && state.players.every(p=>p.score===0)"),'Automatic next game did not reset scores/canvas'
@@ -83,5 +89,5 @@ with sync_playwright() as p:
  g.evaluate("setSearchMode('invite')");g.locator('#host').fill(f'~zod/{rid}');g.locator('#host-search').click();expect(g.locator('#game')).to_be_visible(timeout=30000);h.wait_for_function("state.phase==='drawing' && state.started");expect(h.locator('#start')).to_be_hidden()
  for page in (g,h):page.locator('#leave').click();expect(page.locator('#lobby')).to_be_visible()
  assert not errors,errors
- (ROOT/'artifacts/finale-verification.json').write_text(json.dumps({'nativeRounds':10,'winner':'Zoe','points':20,'durationSeconds':round(elapsed,3),'restartBlocked':True,'blankTimer':True,'boldRedFinalMessage':True,'rejoinPreservesWinnerAndDeadline':True,'fireworksPCM':True,'mute':True,'canvasClearedBeforeFinale':True,'automaticNewGame':True,'ownerRemoval':True,'explicitRejoinOnReload':True,'singleToolSelection':True},indent=2)+'\n')
+ (ROOT/'artifacts/finale-verification.json').write_text(json.dumps({'nativeRounds':10,'winner':'Zoe','points':20,'durationSeconds':round(elapsed,3),'restartBlocked':True,'blankTimer':True,'boldRedFinalMessage':True,'rejoinPreservesWinnerAndDeadline':True,'fireworksPCM':True,'mute':True,'canvasClearedBeforeFinale':True,'automaticNewGame':True,'ownerRemoval':True,'explicitRejoinOnReload':True,'singleToolSelection':True,'suppliedFireworksLoop':True,'fireworksRejoinOffset':True,'stableRosterAndPencil':True},indent=2)+'\n')
  browser.close();print('PASS: ten native rounds, final scoring, 40-second finale, blank timer, fireworks PCM/mute, exact bold red result, explicit refresh rejoin, owner removal, single tool state, cleared canvas and automatic next game')
