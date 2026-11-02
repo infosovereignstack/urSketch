@@ -11,7 +11,7 @@ function createGameAudio({urls,getPrefs,notify}) {
   function source(cue,when=context?.currentTime,index=null,buffer=buffers.get(cue),options={}){
     if(!audible()||!buffer)return;
     const voice=context.createBufferSource();voice.buffer=buffer;voice.urSketchCue=cue;
-    voice.loop=!!options.loop;voice.connect(master);voices.add(voice);voice.urSketchTickIndex=index;const sourceKey=tickKey;voice.onended=()=>{voices.delete(voice);if(index!==null&&!voice.cancelled&&sourceKey===tickKey)tickFinished.add(index);if(index!==null&&tickVoices.get(index)===voice)tickVoices.delete(index);voice.disconnect();};voice.start(when,options.offset||0);if(options.duration)voice.stop(when+options.duration);
+    voice.loop=!!options.loop;voice.urSketchGain=options.gain??1;const gain=context.createGain();gain.gain.value=voice.urSketchGain;voice.connect(gain);gain.connect(master);voices.add(voice);voice.urSketchTickIndex=index;const sourceKey=tickKey;voice.onended=()=>{voices.delete(voice);if(index!==null&&!voice.cancelled&&sourceKey===tickKey)tickFinished.add(index);if(index!==null&&tickVoices.get(index)===voice)tickVoices.delete(index);voice.disconnect();gain.disconnect();};voice.start(when,options.offset||0);if(options.duration)voice.stop(when+options.duration);
     if(index!==null)tickVoices.set(index,voice);
     window.dispatchEvent(new CustomEvent('ursketch:sound',{detail:{cue,when,index,key:tickKey,loop:voice.loop,offset:options.offset||0}}));
     return voice;
@@ -89,11 +89,11 @@ function createGameAudio({urls,getPrefs,notify}) {
     if(remaining<=0){stopFireworks();return;}
     if(fireworksVoice&&voices.has(fireworksVoice))return;
     const buffer=buffers.get('Fireworks'),offset=Math.max(0,(now-fireworksState.start)/1000)%buffer.duration;
-    fireworksVoice=source('Fireworks',context.currentTime,null,buffer,{loop:true,offset,duration:remaining});
+    fireworksVoice=source('Fireworks',context.currentTime,null,buffer,{loop:true,offset,duration:remaining,gain:.5});
   }
   function fireworks({key,elapsed,remaining}){
     const now=performance.now();
-    if(fireworksState?.key!==key){stopFireworks();fireworksState={key,start:now-elapsed*1000,end:now+remaining};}
+    if(fireworksState?.key!==key){stopFireworks();fireworksState={key,start:now-elapsed*1000,end:Math.min(now+remaining,now-elapsed*1000+20000)};}
     else fireworksState.end=Math.min(fireworksState.end,now+remaining);
     syncFireworks();
   }

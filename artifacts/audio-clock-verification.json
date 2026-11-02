@@ -1,6 +1,9 @@
 {
   "decodedCues": 10,
   "suppliedFireworksPCMAndLoop": true,
+  "fireworksHalfGain": true,
+  "fireworksTwentySecondAudioWindow": true,
+  "lateFinaleRemainsSilent": true,
   "fireworksMuteAndStop": true,
   "nonzeroPCM": true,
   "backgroundCue": true,

@@ -1,0 +1,11 @@
+/* Shared by the intro and game clients, after their theme styles. */
+#settings-dialog{box-sizing:border-box;width:85vw;height:85dvh;max-width:85vw;max-height:85dvh;padding:clamp(14px,2.3vw,32px);overflow:hidden}
+#settings-dialog[open]{display:flex;flex-direction:column;gap:16px}
+#settings-dialog .settings-heading{flex:none;display:flex;align-items:center;justify-content:space-between;gap:12px}
+#settings-dialog .settings-heading h2{margin:0}
+#settings-dialog .settings-columns{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start;gap:clamp(16px,3vw,42px);min-height:0;flex:1;overflow:auto;padding:2px 5px}
+#settings-dialog .settings-columns section{min-width:0}
+#settings-dialog .settings-columns fieldset{margin:0 0 18px;min-width:0}
+#settings-dialog .settings-footer{display:flex;align-items:center;justify-content:space-between;gap:16px;flex:none;border-top:1px solid currentColor;padding-top:10px}
+#settings-dialog .settings-footer p{margin:0}
+@media(max-width:600px){#settings-dialog .settings-columns{grid-template-columns:minmax(0,1fr);gap:0}#settings-dialog .output-controls{flex-wrap:wrap}#settings-dialog .output-controls select{flex-basis:100%}#settings-dialog[open]{gap:10px}}

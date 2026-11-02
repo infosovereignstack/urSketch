@@ -1,0 +1,18 @@
+{
+  "nativeShips": 2,
+  "settings85Percent": true,
+  "soundLeftAppearanceRight": true,
+  "introSettingsShared": true,
+  "phoneFit": true,
+  "roomRetainedDuringWatchOutage": true,
+  "twoFailedRetriesRecover": true,
+  "canvasPixelsPreserved": true,
+  "recoveryDoesNotJoin": true,
+  "slowHeartbeatDoesNotEvict": true,
+  "sseReconnectResnapshots": true,
+  "deletedEyreChannelRecovers": true,
+  "chatAndLobbyWatchesRestored": true,
+  "ownerRemovalStillAuthoritative": true,
+  "noLobbyBroadcastForChatGuessHint": true,
+  "membershipStillUpdatesLobby": true
+}

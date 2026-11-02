@@ -409,3 +409,39 @@ Woodstock, Mountain Dew and M1A1 Abrams save and restore correctly; tank
 controls use monospace text and citrus buttons retain readable dark labels.
 The installed Classic/Blingee room/profile/canvas regression and Treaty 0.22.0
 checks also passed. All six new SVG assets parse; syntax/whitespace checks pass.
+
+### 0.23.0 settings, audio and resilience
+
+`tests/stability.py` uses isolated native ~zod/~nec with the preview client.
+It checks the 85% dialog on laptop and phone screens, desktop sound-left/
+appearance-right placement across five themes, and shared intro layout. It
+injects two failed room-watch retries and an overdue heartbeat, preserving
+room/canvas pixels and recording that no `join` is sent. It deletes a real
+Eyre channel and closes its client stream, then verifies restored room, Global
+Chat and lobby watches. Owner removal must still remove the player even when
+canvas history is out of sync, and cannot trigger an automatic rejoin.
+Ordinary guesses/chat/hints must produce zero unrelated lobby broadcasts;
+membership changes must still update the restored browser subscription.
+
+`tests/audio-clock.py` checks half fireworks gain, a 20-second scheduled audio
+window, silence after a late arrival, decoded PCM, mute/resume and the existing
+4 Hz tick scheduling/cancellation regression. `tests/finale.py` retains the
+full native ten-round and 40-second visual lifecycle test. These tests do not
+establish capacity for 500 concurrent ships; see `docs/SCALING.md`.
+
+0.23.0 verification passed on two native test ships: two failed watch retries,
+overdue heartbeat, retained canvas and countdown clock, fresh room snapshots,
+no join replay, and authoritative owner removal despite out-of-sync drawing
+history. Deleting the native Eyre channel and closing its client EventSource
+recovered room/chat/lobby watches. The 85% settings layout passed five themes,
+intro, laptop and phone dimensions. Ordinary guess/chat/hint actions generated
+zero lobby events while removal still refreshed the room list. Audio-clock
+checks passed half gain, a 20-second stop deadline and no late replay. The full
+ten-round native finale regression passed the 40-second visuals, mute/resume,
+scoring, removal, refreshed winners and automatic next game.
+
+Installed 0.23.0 comet checks passed after atomic agent/UI import and Treaty
+publication: Name/profile/character media, full canvas edges, Classic/Blingee
+settings, known-host counts/filtering, native search/create/leave, tools, tile
+and version metadata. JavaScript/Python syntax and whitespace checks passed.
+The isolated test ships were shut down; the real comet remains running.

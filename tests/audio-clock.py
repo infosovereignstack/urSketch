@@ -8,8 +8,8 @@ audio_source=subprocess.check_output(['git','show','ursketch-v0.13.0:web/audio.j
 html='<button>Enable audio</button><script>'+audio_source+'''
 const prefs={volume:70,muted:false,output:''};window.scheduled=[];window.stopped=[];window.nodes=[];
 const start=AudioBufferSourceNode.prototype.start,stop=AudioBufferSourceNode.prototype.stop;
-AudioBufferSourceNode.prototype.start=function(...args){scheduled.push({cue:this.urSketchCue,when:args[0]});nodes.push(this);return start.apply(this,args);};
-AudioBufferSourceNode.prototype.stop=function(...args){stopped.push(this.urSketchCue);return stop.apply(this,args);};
+AudioBufferSourceNode.prototype.start=function(...args){scheduled.push({cue:this.urSketchCue,when:args[0],gain:this.urSketchGain});nodes.push(this);return start.apply(this,args);};
+AudioBufferSourceNode.prototype.stop=function(...args){this.testStopAt=args[0];stopped.push(this.urSketchCue);return stop.apply(this,args);};
 const engine=createGameAudio({urls:URLS,getPrefs:()=>prefs,notify:message=>{throw new Error(message);}});
 </script>'''.replace('URLS',json.dumps(urls))
 with sync_playwright() as p:
@@ -49,6 +49,11 @@ with sync_playwright() as p:
  page.evaluate("()=>{prefs.muted=true;engine.settings();}");page.wait_for_timeout(100)
  before=page.evaluate('nodes.length');page.evaluate("()=>{prefs.muted=false;engine.settings();}");assert page.evaluate('nodes.length')==before+1
  page.evaluate('engine.stopFireworks()');before=page.evaluate('scheduled.length');page.wait_for_timeout(150);assert page.evaluate('scheduled.length')==before
+ # The 40-second visuals keep running; only the first 20 seconds have audio.
+ page.evaluate("()=>{engine.stop();nodes.length=0;engine.fireworks({key:'half',elapsed:0,remaining:40000});}")
+ assert page.evaluate("nodes.length===1 && nodes[0].urSketchGain===.5 && Math.abs(nodes[0].testStopAt-scheduled.at(-1).when-20)<.05")
+ page.evaluate("()=>{engine.stopFireworks();nodes.length=0;engine.fireworks({key:'late',elapsed:21,remaining:19000});engine.settings();}")
+ assert page.evaluate('nodes.length')==0,'Late rejoin restarted fireworks after the audio window'
  assert not errors,errors
- (ROOT/'artifacts/audio-clock-verification.json').write_text(json.dumps({'decodedCues':len(urls),'suppliedFireworksPCMAndLoop':True,'fireworksMuteAndStop':True,'nonzeroPCM':True,'backgroundCue':True,'wholeWindowScheduledAhead':True,'twoSecondTicks':8,'intervalSeconds':.25,'muteCancelsScheduledSources':True,'leavingStopsScheduler':True,'clockDivergenceCannotReplayFinishedSlots':True,'completedRoundCannotRestart':True},indent=2)+'\n')
+ (ROOT/'artifacts/audio-clock-verification.json').write_text(json.dumps({'decodedCues':len(urls),'suppliedFireworksPCMAndLoop':True,'fireworksHalfGain':True,'fireworksTwentySecondAudioWindow':True,'lateFinaleRemainsSilent':True,'fireworksMuteAndStop':True,'nonzeroPCM':True,'backgroundCue':True,'wholeWindowScheduledAhead':True,'twoSecondTicks':8,'intervalSeconds':.25,'muteCancelsScheduledSources':True,'leavingStopsScheduler':True,'clockDivergenceCannotReplayFinishedSlots':True,'completedRoundCannotRestart':True},indent=2)+'\n')
  browser.close();print('PASS: real decoded PCM, background turn alerts, ahead-scheduled 4 Hz ticks, mute cancellation and stopped scheduler')

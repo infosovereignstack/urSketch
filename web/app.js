@@ -33,19 +33,32 @@ function rejectedAction(action){
   return new Error('The host could not accept this action. '+(detail[action]||'Check your room connection and try again.'));
 }
 class Eyre {
-  constructor(){this.uid=`${Date.now()}-${crypto.randomUUID()}`;this.next=1;this.handlers=new Map();this.subscriptions=new Map();this.waiters=new Map();this.requests=new Map();this.url=`/~/channel/ursketch-${this.uid}`;this.opening=null;}
+  constructor(){this.uid=`${Date.now()}-${crypto.randomUUID()}`;this.next=1;this.handlers=new Map();this.subscriptions=new Map();this.waiters=new Map();this.requests=new Map();this.url=`/~/channel/ursketch-${this.uid}`;this.opening=null;this.reconnectTimer=null;this.reconnectAttempt=0;this.closed=false;}
   async send(action){
     const id=this.next++;let response;
-    try{response=await fetch(this.url,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify([{id,...action}]),signal:AbortSignal.timeout(15000)});}
-    catch(error){if(error.name==='TimeoutError'||error.name==='AbortError')throw new Error('Your ship did not respond within 15 seconds. Check the connection and room before retrying; the action may still have arrived.');throw error;}
+    try{response=await fetch(this.url,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify([{id,...action}]),signal:AbortSignal.timeout(30000)});}
+    catch(error){if(error.name==='TimeoutError'||error.name==='AbortError')throw new Error('Your ship did not respond within 30 seconds. Check the connection and room before retrying; the action may still have arrived.');throw error;}
     if(!response.ok)throw new Error(response.status===403?'Log into your ship, then reload this page.':`Your ship returned HTTP ${response.status}.`);return id;
   }
-  ensure(){if(this.events&&this.events.readyState!==EventSource.CLOSED)return Promise.resolve();if(this.opening)return this.opening;this.opening=this.open().finally(()=>this.opening=null);return this.opening;}
+  ensure(){if(this.events&&this.events.readyState!==EventSource.CLOSED)return Promise.resolve();if(this.opening)return this.opening;if(this.events?.readyState===EventSource.CLOSED)this.url=`/~/channel/ursketch-${this.uid}-${crypto.randomUUID()}`;this.opening=this.open().finally(()=>this.opening=null);return this.opening;}
+  retryChannel(){
+    if(this.closed||this.reconnectTimer!==null||this.events?.readyState!==EventSource.CLOSED)return;
+    const delay=Math.min(30000,1000*2**Math.min(this.reconnectAttempt++,5))+Math.random()*1000;
+    this.reconnectTimer=setTimeout(()=>{this.reconnectTimer=null;if(this.closed)return;void this.ensure().then(()=>this.retryChannel()).catch(()=>this.retryChannel());},delay);
+  }
   async open(){
     await this.send({action:'poke',ship:SELF.slice(1),app:'hood',mark:'helm-hi',json:'urSketch connected'});
     this.events=new EventSource(this.url);
-    this.events.onopen=()=>connection(`Connected as ${SELF}`,true);
-    this.events.onerror=()=>connection('Reconnecting to your ship…',false);
+    this.events.onopen=()=>{
+      const restored=this.connectedOnce;this.connectedOnce=true;this.reconnectAttempt=0;clearTimeout(this.reconnectTimer);this.reconnectTimer=null;connection(`Connected as ${SELF}`,true);
+      if(restored){
+        if(state)restartRoomUpdates();
+        if(globalChatSub!==null){const old=globalChatSub;globalChatSub=null;globalChatReady=false;chatControls();void this.unsubscribe(old).catch(()=>{});}
+        void connectGlobalChat();
+        for(const [ship,entry] of knownHosts){if(entry.id===null)continue;const old=entry.id;entry.id=null;void this.unsubscribe(old).catch(()=>{});void watchHost(ship).catch(()=>{});}
+      }
+    };
+    this.events.onerror=()=>{connection('Reconnecting to your ship…',false);this.retryChannel();};
     this.events.onmessage=event=>{
       const data=JSON.parse(event.data);
       this.send({action:'ack','event-id':Number(event.lastEventId)}).catch(()=>{});
@@ -64,7 +77,8 @@ class Eyre {
         this.finish(waiter,data.err?rejectedAction(waiter.action):null);
       }
     };
-    await this.subscribe('/relay',data=>{const waiter=this.requests.get(data.request);if(waiter)this.finish(waiter,data.ok?null:rejectedAction(waiter.action));},false,SELF);
+    if(this.relaySub!=null)await this.unsubscribe(this.relaySub).catch(()=>{});
+    this.relaySub=await this.subscribe('/relay',data=>{const waiter=this.requests.get(data.request);if(waiter)this.finish(waiter,data.ok?null:rejectedAction(waiter.action));},false,SELF);
   }
   finish(waiter,error){clearTimeout(waiter.timer);this.waiters.delete(waiter.id);this.requests.delete(waiter.request);error?waiter.reject(error):waiter.resolve();}
   async poke(action,data={},target={host,room:roomId}){
@@ -73,7 +87,7 @@ class Eyre {
     const id=this.next,request=`${this.uid}-${id}`;
     const result=new Promise((resolve,reject)=>{
       const waiter={id,request,action,resolve,reject,remote:target.host!==SELF};
-      waiter.timer=setTimeout(()=>this.finish(waiter,new Error('The host did not respond. You can try again.')),20000);
+      waiter.timer=setTimeout(()=>this.finish(waiter,new Error('The host has not acknowledged this action yet. It may still arrive; check the room before repeating it.')),60000);
       this.waiters.set(id,waiter);if(waiter.remote)this.requests.set(request,waiter);
       this.send({action:'poke',ship:SELF.slice(1),app:'ursketch',mark:'json',json:{action,room:target.room,host:target.host,request,name:activeName,avatar:activeCharacter,token:turnToken,...data}}).catch(e=>this.finish(waiter,e));
     });
@@ -84,7 +98,7 @@ class Eyre {
     let resolve,reject;
     const first=initial?new Promise((yes,no)=>{resolve=yes;reject=no;}):null;
     const meta={settled:!initial,ready:()=>{if(meta.settled)return;meta.settled=true;clearTimeout(meta.timer);resolve(id);},fail:e=>{if(meta.settled)return;meta.settled=true;clearTimeout(meta.timer);this.handlers.delete(id);this.subscriptions.delete(id);this.send({action:'unsubscribe',subscription:id}).catch(()=>{});reject(e);}};
-    if(initial)meta.timer=setTimeout(()=>meta.fail(new Error('No room data arrived from the host. Please try again.')),20000);
+    if(initial)meta.timer=setTimeout(()=>meta.fail(new Error('No room data arrived from the host. Please try again.')),60000);
     this.handlers.set(id,handler);this.subscriptions.set(id,meta);
     const sent=this.send({action:'subscribe',ship:SELF.slice(1),app:'ursketch',path:localPath});
     if(initial){sent.catch(meta.fail);return first;}
@@ -98,7 +112,7 @@ const api=new Eyre();
 const recoveryKey=`ursketch.room.${SELF}`,GRACE_MS=120000;
 let savedRoom=null,browsing=false,joining=false,searchEpoch=0,roomEpoch=0;
 let heartbeatInFlight=null,hostPresenceUntil=0,heartbeatWarning=false;
-let roomStream=false,snapshotRequest=null;
+let roomStream=false,snapshotRequest=null,roomReceiver=null,roomRecovering=false,roomRecoveryTimer=null,roomRecoveryAttempt=0,roomRecoveryInFlight=null;
 let searchMode='host';
 const searchDrafts={host:SELF,invite:''};
 function setSearchMode(mode){
@@ -118,7 +132,7 @@ function saveRecovery(record){savedRoom=record;try{record?localStorage.setItem(r
 function rememberRoom(title){if(!roomId)return;saveRecovery({host,id:roomId,title:title||state?.title||savedRoom?.title||roomId,expiresAt:Date.now()+GRACE_MS});}
 function renderRecovery(){const visible=!!savedRoom&&!state;$('room-recovery').hidden=!visible;if(!visible)return;const seconds=Math.max(0,Math.ceil((savedRoom.expiresAt-Date.now())/1000));$('recovery-title').textContent=savedRoom.title;$('recovery-detail').textContent=`On ${savedRoom.host} · Rejoin available for ${Math.floor(seconds/60)}:${String(seconds%60).padStart(2,'0')}`;}
 function restoreRecovery(){savedRoom=null;try{const r=JSON.parse(localStorage.getItem(recoveryKey)||'null');if(r&&/^~[a-z-]+$/.test(r.host)&&/^[a-z0-9-]{1,40}$/.test(r.id)&&Number.isFinite(r.expiresAt))savedRoom=r;}catch{}renderRecovery();}
-function showLobby({keepRoom=true}={}){const old=roomSub;roomEpoch++;if(snapshotRequest){clearTimeout(snapshotRequest.timer);snapshotRequest=null;}roomId='';state=null;roomSub=null;rosterOrder=[];finale?.stop();gameAudio?.stop();roomTimeline=[];serverMessages=[];feedbackSeen.clear();if(old!=null)api.unsubscribe(old).catch(()=>{});drawing?.cancel();$('game').hidden=true;$('lobby').hidden=false;document.body.classList.remove('playing','is-artist','is-guesser');history.replaceState(null,'',location.pathname);if(!keepRoom)saveRecovery(null);renderRecovery();}
+function showLobby({keepRoom=true}={}){const old=roomSub;roomEpoch++;clearTimeout(roomRecoveryTimer);roomRecoveryTimer=null;roomReceiver=null;roomRecovering=false;roomRecoveryAttempt=0;roomRecoveryInFlight=null;if(snapshotRequest){clearTimeout(snapshotRequest.timer);snapshotRequest=null;}roomId='';state=null;roomSub=null;rosterOrder=[];finale?.stop();gameAudio?.stop();roomTimeline=[];serverMessages=[];feedbackSeen.clear();if(old!=null)api.unsubscribe(old).catch(()=>{});drawing?.cancel();$('game').hidden=true;$('lobby').hidden=false;document.body.classList.remove('playing','is-artist','is-guesser');history.replaceState(null,'',location.pathname);if(!keepRoom)saveRecovery(null);renderRecovery();}
 const knownHostsKey=`ursketch.hosts.${SELF}`,knownHosts=new Map();
 let hideFull=false,hideEmpty=false;
 try{const saved=JSON.parse(localStorage.getItem('ursketch.roomFilters')||'{}');hideFull=saved.full===true;hideEmpty=saved.empty===true;}catch{}
@@ -155,8 +169,29 @@ async function watchOtherHosts(){await Promise.allSettled([...knownHosts.keys()]
 
 function subscriptionLost(id,error){
   if(id===globalChatSub){globalChatSub=null;globalChatReady=false;chatStatus('Chat disconnected. Retry.',true);chatControls();}
-  if(id===roomSub){showLobby();operation('join-status',`${error.message} Use Rejoin to return.`);toast('Room connection lost. Your place is held for up to two minutes.');}
+  if(id===roomSub)restartRoomUpdates();
   for(const [ship,entry] of knownHosts){if(entry.id!==id)continue;entry.id=null;entry.data=null;renderPlayerTotal();if(ship===host)operation('browse-status','Room search disconnected. Search again to retry.');}
+}
+function restartRoomUpdates(){
+  if(!state||!roomId||!roomReceiver||roomRecovering)return;
+  const old=roomSub;roomSub=null;roomRecovering=true;
+  if(old!==null)void api.unsubscribe(old).catch(()=>{});
+  drawing?.cancel();const at=clockAt,seconds=clockSeconds;renderRoom(state);clockAt=at;clockSeconds=seconds;updateDial();toast('Room updates interrupted. Reconnecting…');scheduleRoomRecovery();
+}
+// Rewatch the existing membership; never send join during recovery.
+function scheduleRoomRecovery(){
+  if(!state||!roomId||!roomReceiver||roomRecoveryTimer!==null||roomRecoveryInFlight?.epoch===roomEpoch)return;
+  const epoch=roomEpoch,receive=roomReceiver,target=host,path=`/${roomStream?'stream':'room'}/${roomId}/${SELF}`;
+  const delay=Math.min(15000,1000*2**Math.min(roomRecoveryAttempt++,4))+Math.random()*500;
+  roomRecoveryTimer=setTimeout(async()=>{
+    roomRecoveryTimer=null;if(epoch!==roomEpoch)return;
+    const attempt={epoch};roomRecoveryInFlight=attempt;let failed=false;
+    try{
+      await api.ensure();if(epoch!==roomEpoch)return;const id=await api.subscribe(path,receive,true,target);
+      if(epoch!==roomEpoch){void api.unsubscribe(id).catch(()=>{});return;}
+      roomSub=id;roomRecovering=false;roomRecoveryAttempt=0;renderRoom(state);toast('Room updates restored.');void maintainPresence();
+    }catch{failed=true;}finally{if(roomRecoveryInFlight===attempt)roomRecoveryInFlight=null;if(failed&&epoch===roomEpoch)scheduleRoomRecovery();}
+  },delay);
 }
 async function browse(ship){
   if(!/^~[a-z-]+$/.test(ship))throw new Error('Enter an Urbit ship name beginning with ~.');
@@ -265,12 +300,13 @@ async function joinRoom(id,title=''){
     await api.unsubscribe(roomSub);roomSub=null;
     const receive=data=>{
       if(epoch!==roomEpoch)return false;
+      // Membership is authoritative even if drawing history needs repair.
+      if(data.kind==='removed'||(['state','room'].includes(data.kind)&&Array.isArray(data.players)&&!data.players.some(p=>p.ship===SELF))){if(firstView&&data.kind!=='removed')return false;const kicked=data.messages?.some(m=>m.kind==='kick'&&m.ship===SELF);saveRecovery(null);if(kicked)toast('The room owner removed you. You can join again when you choose.');if(firstView)throw new Error('That room is no longer available.');localLeave();operation('join-status','Your place in that room has ended.');return false;}
       data=roomEvent(data);if(!data)return false;
-      if(data.kind==='removed'||(data.kind==='room'&&!data.players.some(p=>p.ship===SELF))){const kicked=data.messages?.some(m=>m.kind==='kick'&&m.ship===SELF);saveRecovery(null);if(kicked)toast('The room owner removed you. You can join again when you choose.');if(firstView)throw new Error('That room is no longer available.');localLeave();operation('join-status','Your place in that room has ended.');return false;}
       if(data.kind!=='room')throw new Error('The host did not return a room.');
       firstView=false;renderRoom(data);return true;
     };
-    roomStream=true;
+    roomReceiver=receive;roomStream=true;
     try{roomSub=await api.subscribe(`/stream/${id}/${SELF}`,receive,true);}
     catch(e){
       if(!/host could not open|host stopped sending/.test(e.message))throw e;
@@ -302,16 +338,17 @@ async function maintainPresence(){
     heartbeatWarning=false;
   }catch(e){
     if(epoch!==roomEpoch)return;
-    if(Date.now()>=hostPresenceUntil){showLobby();operation('join-status',`${e.message} Use Rejoin to return.`);}
-    else if(!heartbeatWarning){heartbeatWarning=true;toast('The host is slow to respond. Retrying your room connection…');}
+    if(!heartbeatWarning){heartbeatWarning=true;toast('The host is slow to respond. Retrying your room connection…');}
+    if(Date.now()>=hostPresenceUntil)restartRoomUpdates();
   }finally{if(heartbeatInFlight?.epoch===epoch)heartbeatInFlight=null;}
 }
 setInterval(()=>{void maintainPresence();},10000);
+window.addEventListener('online',()=>{void api.ensure().then(()=>maintainPresence()).catch(()=>{});if(roomRecovering)scheduleRoomRecovery();});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)void maintainPresence();});
-window.addEventListener('pagehide',()=>{if(!api.events&&!api.opening)return;const actions=[];if(state&&roomId){saveRecovery(null);actions.push({id:api.next++,action:'poke',ship:SELF.slice(1),app:'ursketch',mark:'json',json:{action:'leave',host,room:roomId,request:`leave-${api.uid}`,name:activeName}});}actions.push({id:api.next++,action:'delete'});api.events?.close();fetch(api.url,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(actions),keepalive:true}).catch(()=>{});});
+window.addEventListener('pagehide',()=>{api.closed=true;clearTimeout(api.reconnectTimer);clearTimeout(roomRecoveryTimer);if(!api.events&&!api.opening)return;const actions=[];if(state&&roomId){saveRecovery(null);actions.push({id:api.next++,action:'poke',ship:SELF.slice(1),app:'ursketch',mark:'json',json:{action:'leave',host,room:roomId,request:`leave-${api.uid}`,name:activeName}});}actions.push({id:api.next++,action:'delete'});api.events?.close();fetch(api.url,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(actions),keepalive:true}).catch(()=>{});});
 
 function isArtist() { return state?.players[0]?.ship === SELF; }
-function canDraw() { return connectionReady && state?.phase === 'drawing' && isArtist(); }
+function canDraw() { return connectionReady && !roomRecovering && state?.phase === 'drawing' && isArtist(); }
 function appendRoomMessages(messages){
   const key=m=>JSON.stringify([m.who,m.kind,m.text]);
   let overlap=Math.min(serverMessages.length,messages.length);

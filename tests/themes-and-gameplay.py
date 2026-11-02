@@ -69,7 +69,7 @@ with sync_playwright() as p:
  h.reload();expect(h.locator('#game')).to_be_visible(timeout=30000);assert h.evaluate("preferences.values.theme==='blingee'")
  # HTTP signal timeouts are translated without retrying potentially accepted mutations.
  result=h.evaluate("""async()=>{const original=window.fetch;window.fetch=async()=>{throw new DOMException('signal timed out','TimeoutError')};try{await api.send({action:'ack'});return ''}catch(e){return e.message}finally{window.fetch=original}}""")
- assert '15 seconds' in result and 'may still have arrived' in result
+ assert '30 seconds' in result and 'may still have arrived' in result
  assert 'Only the artist' in g.evaluate("api.poke('hint').then(()=>'',e=>e.message)")
  for page in [g,h]:page.locator('#leave').click();expect(page.locator('#lobby')).to_be_visible()
  # Creating on your own ship while browsing the publisher also handles failure.

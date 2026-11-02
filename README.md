@@ -454,3 +454,19 @@ motifs), and M1A1 Abrams (riveted olive crew-compartment panels, amber controls
 and a sight emblem). These use original local SVG decoration. M1A1 uses dark
 selected/unselected chat panels and monospace controls. Canvas pixels,
 characters, tools and gameplay retain their existing behavior.
+
+## Settings, audio and resilience (0.23.0)
+
+Settings fills 85% of the viewport, with Sound/Theme song on the left and
+Appearance/accessibility on the right. Small screens stack the two sections
+inside a scrolling dialog. Intro and game clients share the same layout.
+Fireworks play at half their previous gain during the first 20 seconds of the
+40-second celebration. A late arrival or unmute cannot restart that audio
+window; the visual sequence and other cue levels are unchanged.
+
+Room watches retry automatically without rejoining, preserving the canvas.
+Closed Eyre channels restore their watches, slow heartbeat errors no longer
+locally evict members, and authoritative membership updates take priority over
+canvas repair. Ordinary guesses/chat/hints no longer rebroadcast the room
+browser. See [capacity and connection details](docs/SCALING.md) for exact limits,
+500-player planning, measured payloads and what has not been load-tested.

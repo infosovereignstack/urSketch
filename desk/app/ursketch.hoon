@@ -220,6 +220,8 @@
         [(welp presence (draw-cards rid r start batch)) state]
       =/  drawer=@p  ?~(players.r ~zod who.i.players.r)
       =/  old-token=@ud  token.r
+      =/  old-phase=@tas  phase.r
+      =/  old-members=(list @p)  (turn players.r |=(p=player who.p))
       =/  old-deadline=@da  deadline.r
       =/  is-drawer=?  =(src.bowl drawer)
       =/  guess-text=@t  ?:(!=(act 'guess') '' (crip (scag 160 (trip (text j 'text')))))
@@ -304,7 +306,12 @@
       =.  cards
         ?:  !close  cards
         (welp cards (close-cards rid src.bowl token.r (text j 'request') (cat 3 guess-text ' is close!')))
-      [(snoc cards lobby-card) state]
+      ::  Lobby summaries contain membership and phase, not guesses or chat.
+      =/  members=(list @p)  (turn players.r |=(p=player who.p))
+      =.  cards
+        ?:  ?|(!=(old-phase phase.r) !=(old-members members))  (snoc cards lobby-card)
+        cards
+      [cards state]
   ==
 ++  watch
   |=  =path

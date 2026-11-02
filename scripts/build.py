@@ -29,6 +29,7 @@ theme_css=(ROOT/'web/theme-art.css').read_text()+'\n'+(ROOT/'web/themes.css').re
 for path in sorted((ROOT/'web/theme-art').glob('*.svg')):
     theme_css=theme_css.replace('THEME_ART_'+path.stem.upper().replace('-','_'),'data:image/svg+xml;base64,'+base64.b64encode(path.read_bytes()).decode())
 html = html.replace('/* URSKETCH_CSS */', (ROOT / 'web/style.css').read_text().replace('/* URSKETCH_CLASSIC */', classic).replace('/* URSKETCH_CONNECT */', (ROOT/'web/connect.css').read_text()).replace('/* URSKETCH_BROWSER */', (ROOT/'web/browser.css').read_text()).replace('/* URSKETCH_BLINGEE */', (ROOT/'web/blingee.css').read_text()).replace('/* URSKETCH_THEMES */',theme_css))
+html=html.replace('</style>',(ROOT/'web/settings-layout.css').read_text()+'</style>',1)
 for name in ('skip', 'done'):
     uri = 'data:image/svg+xml;base64,' + base64.b64encode((ROOT / f'web/hint-{name}.svg').read_bytes()).decode()
     html = html.replace(f'DEFAULT_HINT_{name.upper()}_IMAGE', uri)
@@ -50,7 +51,7 @@ before, after = html.split('URSKETCH_SHIP_VALUE', 1)
 intro = (ROOT/'web/intro.html').read_text().replace('URSKETCH_FAVICON_URL', FAVICON_URL)
 settings_dialog = re.search(r'<dialog id="settings-dialog".*?</dialog>', html, re.DOTALL).group()
 intro = intro.replace('<!-- URSKETCH_SETTINGS_DIALOG -->', settings_dialog).replace('/* URSKETCH_SETTINGS */', (ROOT/'web/settings.js').read_text())
-intro = intro.replace('/* URSKETCH_INTRO_CSS */', (ROOT/'web/intro.css').read_text())
+intro = intro.replace('/* URSKETCH_INTRO_CSS */', (ROOT/'web/intro.css').read_text()+'\n'+(ROOT/'web/settings-layout.css').read_text())
 intro = intro.replace('/* URSKETCH_INTRO_JS */', (ROOT/'web/intro.js').read_text())
 intro = intro.replace('URSKETCH_INTRO_MOTION', (ROOT/'web/intro-motion.json').read_text().strip())
 for marker,name in [('VIDEO','video/intro.mp4'),('AUDIO','audio/music/theme_song.mp3'),('POSTER','images/intro-poster.jpg'),('MASK','images/intro-wordmark-mask.png'),('WORDMARK','images/ursketch-logo.png')]:
