@@ -430,3 +430,18 @@ The supplied pencil SVG is also the favicon on the intro, Connect and Play pages
 The approved 400 additions expand the native word bank from 100 to 500 unique
 words and phrases. Original entries remain included; the new bank is used for
 subsequent automatically assigned drawing turns.
+
+## Additional themes (0.21.0)
+
+Settings → Theme now includes Frutiger Aero, Milady, Terminal, Dark Souls,
+Kitty Cat, Pikachu and Garfield alongside Classic and Blingee. The choice
+saves locally and applies to Connect, the room browser, dialogs and game
+chrome. Classic remains the default. Terminal uses monospace fonts and dark
+green chat panels; other themes retain yellow selected and white inactive
+game chats. Drawing pixels, palette colors and character proportions stay
+unchanged across themes.
+
+Editable original badges and repeating motifs live in `web/theme-art/`;
+`web/themes.css` defines materials and palettes. The build embeds these SVGs
+without external requests. Milady takes its pastel Y2K direction from the
+[official Milady aesthetic description](https://miladymaker.net/).

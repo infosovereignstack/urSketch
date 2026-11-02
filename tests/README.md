@@ -378,3 +378,21 @@ A source audit confirms 100 retained originals plus exactly the 400 reviewed
 additions, with 500 unique entries. Native rules passed after installation.
 A read-only browser check confirmed the served version and Treaty publication
 are 0.20.1. Evidence: `artifacts/word-bank-verification.json`.
+
+### 0.21.0 additional themes
+
+`tests/new-themes.py` verifies all seven new choices, saved theme/audio prefs,
+distinct palettes, ten-player proportions and name colors, selected chat
+panels, Terminal monospace text, laptop/phone layout and actual pointer strokes
+at both canvas edges. Seeded drawing pixels must remain identical after
+resizing. Game fixtures stay in the browser and intercept writes; they never
+join a real room. Set `URSKETCH_INSTALLED=1` to exercise the installed client
+instead of the preview build. Screenshots include `artifacts/theme-gallery.png`;
+results are recorded in `artifacts/new-themes-verification.json`.
+
+All seven installed themes passed saved-selection/audio preferences, mid-drawing
+Classic/theme switches with identical pixels, full canvas edge strokes,
+proportional ten-player roster, chat selection, room-list contrast and
+laptop/phone fit. The installed Classic/Blingee comet regression also passed,
+including native create/leave, profile/character media, tile and Treaty 0.21.0.
+JavaScript/Python syntax and whitespace checks passed.

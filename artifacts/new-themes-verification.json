@@ -1,0 +1,21 @@
+{
+  "installed": true,
+  "themes": [
+    "aero",
+    "milady",
+    "terminal",
+    "dark-souls",
+    "kitty-cat",
+    "pikachu",
+    "garfield"
+  ],
+  "savedSelectionAndAudioPrefs": true,
+  "distinctPalettes": true,
+  "canvasPixelsPreserved": true,
+  "fullCanvasEdgeDrawing": true,
+  "rosterColorsAndProportions": true,
+  "chatSelection": true,
+  "terminalMonospace": true,
+  "laptopAndPhoneFit": true,
+  "browserOnlyFixtures": true
+}

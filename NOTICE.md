@@ -40,3 +40,7 @@ and selector controls are implemented in the application's own code.
 
 Fireworks audio and pencil SVG: user-supplied files, copied unchanged as
 `desk/media/audio/cues/Fireworks.mp3` and `desk/media/images/pencil.svg`.
+
+The additional theme badges and patterns under web/theme-art are original
+SVG illustrations created for urSketch. Named fan themes are unofficial;
+this project is not affiliated with the referenced games, characters or brands.

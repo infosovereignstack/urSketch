@@ -1,0 +1,8 @@
+/* Original vector motifs: theme decoration never changes drawing pixels. */
+body[data-theme=aero]{--theme-badge:url('THEME_ART_AERO_BADGE');--theme-pattern:url('THEME_ART_AERO_PATTERN')}
+body[data-theme=milady]{--theme-badge:url('THEME_ART_MILADY_BADGE');--theme-pattern:url('THEME_ART_MILADY_PATTERN')}
+body[data-theme=terminal]{--theme-badge:url('THEME_ART_TERMINAL_BADGE');--theme-pattern:url('THEME_ART_TERMINAL_PATTERN')}
+body[data-theme=dark-souls]{--theme-badge:url('THEME_ART_DARK_SOULS_BADGE');--theme-pattern:url('THEME_ART_DARK_SOULS_PATTERN')}
+body[data-theme=kitty-cat]{--theme-badge:url('THEME_ART_KITTY_CAT_BADGE');--theme-pattern:url('THEME_ART_KITTY_CAT_PATTERN')}
+body[data-theme=pikachu]{--theme-badge:url('THEME_ART_PIKACHU_BADGE');--theme-pattern:url('THEME_ART_PIKACHU_PATTERN')}
+body[data-theme=garfield]{--theme-badge:url('THEME_ART_GARFIELD_BADGE');--theme-pattern:url('THEME_ART_GARFIELD_PATTERN')}
