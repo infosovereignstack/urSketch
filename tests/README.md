@@ -371,3 +371,10 @@ Installed 0.20.0 checks passed after native import and Treaty publication:
 proportional ten-player roster, moving pencil/stable order, current font and
 name/point colors, native SVG favicon decode and exact pencil/MP3 response
 hashes and MIME types, plus existing builder, room and canvas flows.
+
+### 0.20.1 approved word bank
+
+A source audit confirms 100 retained originals plus exactly the 400 reviewed
+additions, with 500 unique entries. Native rules passed after installation.
+A read-only browser check confirmed the served version and Treaty publication
+are 0.20.1. Evidence: `artifacts/word-bank-verification.json`.

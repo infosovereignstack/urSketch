@@ -1,0 +1,11 @@
+{
+  "originalWords": 100,
+  "approvedAdditions": 400,
+  "totalWords": 500,
+  "uniqueWords": 500,
+  "allOriginalWordsRetained": true,
+  "additionsMatchApprovedList": true,
+  "wordListSha256": "9ee9f07dc7c3721c59225e9b132098c458768a4b1d1649f36f167d55a09431c1",
+  "nativeRulesPassed": true,
+  "publishedVersion": "0.20.1"
+}

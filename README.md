@@ -424,3 +424,9 @@ loops continuously through the 40-second celebration, resumes at the proper
 offset after mute, audio-context suspension or rejoin, and stops at the deadline
 or on leaving. Master volume, mute and output-device preferences still apply.
 The supplied pencil SVG is also the favicon on the intro, Connect and Play pages.
+
+## Expanded word bank (0.20.1)
+
+The approved 400 additions expand the native word bank from 100 to 500 unique
+words and phrases. Original entries remain included; the new bank is used for
+subsequent automatically assigned drawing turns.
