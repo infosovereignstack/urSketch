@@ -1,7 +1,7 @@
 /* Browser-local preferences and the audio output used by game sounds. */
 function createSettings({notify,onChange}) {
   const $=id=>document.getElementById(id),key='ursketch.settings.v1';
-  const extraThemes=['aero','milady','terminal','dark-souls','kitty-cat','pikachu','garfield','snoopy-woodstock','mountain-dew','m1a1-abrams'];
+  const extraThemes=['aero','milady','terminal','dark-souls','kitty-cat','pikachu','garfield','snoopy-woodstock','mountain-dew','m1a1-abrams','spider-man'];
   const defaults={theme:'classic',volume:70,muted:false,output:'',reduceMotion:false,largeChat:false,themeQuiet:false,themeDisabled:false};
   function readPrefs(){
     const next={...defaults};
@@ -21,6 +21,7 @@ function createSettings({notify,onChange}) {
     document.body.classList.toggle('reduce-motion',prefs.reduceMotion);
     document.body.classList.toggle('large-chat',prefs.largeChat);
     audio.volume=prefs.volume/100;audio.muted=prefs.muted;
+    if($('spider-man-preview'))$('spider-man-preview').hidden=prefs.theme!=='spider-man'||!$('lobby');
     $('theme-select').value=prefs.theme;$('sound-volume').value=prefs.volume;$('volume-value').value=prefs.volume+'%';
     $('sound-muted').checked=prefs.muted;$('reduce-motion').checked=prefs.reduceMotion;$('large-chat').checked=prefs.largeChat;
     $('theme-song-quarter').checked=prefs.themeQuiet;$('theme-song-disabled').checked=prefs.themeDisabled;

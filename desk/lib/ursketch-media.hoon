@@ -89,6 +89,12 @@
     `['image/svg+xml' '"0a9b5b528bc92d69394dbbe671c7f00b40c3771934283886842499be417e6c89"' /['media']/['images']/['pencil']/['svg']]
   ?:  =(url '/apps/ursketch/media/53160c12c3b4aa4d/images/ursketch-logo.png')
     `['image/png' '"53160c12c3b4aa4df4fde063a80988197b8df290198734b918e1c45f56ac47e3"' /['media']/['images']/['ursketch-logo']/['png']]
+  ?:  =(url '/apps/ursketch/media/00445e4a34ce8a14/themes/spider-man/goblin.png')
+    `['image/png' '"00445e4a34ce8a14f15ebeed761181385c86b4b2b00b4122bf6ce6ce7a6b3903"' /['media']/['themes']/['spider-man']/['goblin']/['png']]
+  ?:  =(url '/apps/ursketch/media/ba61150ad03c94e2/themes/spider-man/peter.png')
+    `['image/png' '"ba61150ad03c94e2be5a9b03d065fa18bc29738c4105dbad7470cafea34e4574"' /['media']/['themes']/['spider-man']/['peter']/['png']]
+  ?:  =(url '/apps/ursketch/media/f54656f6290ca880/themes/spider-man/swing.png')
+    `['image/png' '"f54656f6290ca88067dd6f2b2abcdc17fa0740cde694837a43d05766030b4838"' /['media']/['themes']/['spider-man']/['swing']/['png']]
   ?:  =(url '/apps/ursketch/media/03b6bde870e95c7c/video/intro.mp4')
     `['video/mp4' '"03b6bde870e95c7c19774f632d14fde6bb650ee33155b5fb08209c41a7979e9a"' /['media']/['video']/['intro']/['mp4']]
   ~

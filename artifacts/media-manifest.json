@@ -257,6 +257,24 @@
     "bytes": 646171,
     "sha256": "53160c12c3b4aa4df4fde063a80988197b8df290198734b918e1c45f56ac47e3"
   },
+  "themes/spider-man/goblin.png": {
+    "url": "/apps/ursketch/media/00445e4a34ce8a14/themes/spider-man/goblin.png",
+    "mime": "image/png",
+    "bytes": 486173,
+    "sha256": "00445e4a34ce8a14f15ebeed761181385c86b4b2b00b4122bf6ce6ce7a6b3903"
+  },
+  "themes/spider-man/peter.png": {
+    "url": "/apps/ursketch/media/ba61150ad03c94e2/themes/spider-man/peter.png",
+    "mime": "image/png",
+    "bytes": 191540,
+    "sha256": "ba61150ad03c94e2be5a9b03d065fa18bc29738c4105dbad7470cafea34e4574"
+  },
+  "themes/spider-man/swing.png": {
+    "url": "/apps/ursketch/media/f54656f6290ca880/themes/spider-man/swing.png",
+    "mime": "image/png",
+    "bytes": 220169,
+    "sha256": "f54656f6290ca88067dd6f2b2abcdc17fa0740cde694837a43d05766030b4838"
+  },
   "video/intro.mp4": {
     "url": "/apps/ursketch/media/03b6bde870e95c7c/video/intro.mp4",
     "mime": "video/mp4",

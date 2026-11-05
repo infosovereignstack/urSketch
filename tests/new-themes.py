@@ -3,7 +3,8 @@ import base64,json,os,re,runpy,sys,urllib.request
 from pathlib import Path
 from playwright.sync_api import sync_playwright,expect
 ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT/'scripts'));render=runpy.run_path(str(ROOT/'scripts/build.py'))
-ORIGIN='http://127.0.0.1';themes=['aero','milady','terminal','dark-souls','kitty-cat','pikachu','garfield','snoopy-woodstock','mountain-dew','m1a1-abrams']
+ORIGIN='http://127.0.0.1';themes=['aero','milady','terminal','dark-souls','kitty-cat','pikachu','garfield','snoopy-woodstock','mountain-dew','m1a1-abrams','spider-man']
+if os.environ.get('URSKETCH_THEMES'):themes=os.environ['URSKETCH_THEMES'].split(',')
 r=urllib.request.Request('http://127.0.0.1:12321',data=json.dumps({'source':{'dojo':'+code'},'sink':{'stdout':None}}).encode(),headers={'Content-Type':'application/json'})
 code=re.search(r'[a-z]{6}(?:-[a-z]{6}){3}',json.load(urllib.request.urlopen(r,timeout=30))).group()
 with sync_playwright() as p:
@@ -11,6 +12,11 @@ with sync_playwright() as p:
  current=context.request.get(ORIGIN+'/apps/ursketch/play').text();ship=re.search(r"window.URSKETCH_SHIP='([^']+)'",current).group(1)
  html=render['html'].replace('URSKETCH_SHIP_VALUE',json.dumps(ship))
  for route in (() if os.environ.get('URSKETCH_INSTALLED')=='1' else ('play','connect')):context.route('**/apps/ursketch/'+route,lambda r:r.fulfill(status=200,content_type='text/html',body=html))
+ if os.environ.get('URSKETCH_INSTALLED')!='1':
+  def preview_media(route):
+   asset=next(a for a in render['assets'].values() if route.request.url.endswith(a['url']))
+   route.fulfill(status=200,content_type=asset['mime'],body=asset['data'])
+  context.route('**/apps/ursketch/media/**',preview_media)
  page=context.new_page();errors=[];page.on('pageerror',lambda e:errors.append(str(e)));palettes=[]
  for theme in themes:
   page.goto(ORIGIN+'/apps/ursketch/play');page.wait_for_function('connectionReady')
@@ -18,6 +24,17 @@ with sync_playwright() as p:
   if theme=='mountain-dew':assert page.locator('#host-search').evaluate('e=>getComputedStyle(e).color')=='rgb(23, 51, 25)'
   page.reload();page.wait_for_function('connectionReady');assert page.evaluate('(theme)=>preferences.values.theme===theme && preferences.values.volume===25 && preferences.values.muted && document.body.classList.contains("extra-theme")',theme)
   assert page.locator('#room-list').evaluate('e=>{const probe=document.createElement("i");probe.style.background="var(--theme-sheet)";document.body.append(probe);const same=getComputedStyle(e).backgroundColor===getComputedStyle(probe).backgroundColor;probe.remove();return same;}')
+  if theme=='spider-man':
+   page.locator('#browser-settings').click();expect(page.locator('#spider-man-preview')).to_be_visible();page.wait_for_timeout(200);page.screenshot(path=str(ROOT/'artifacts/theme-spider-man-settings.png'));page.locator('#settings-close').click()
+   assert page.locator('#browser-guide').evaluate("e=>getComputedStyle(e).backgroundImage.includes('/themes/spider-man/swing.png')")
+   assert page.evaluate("""async()=>{for(const key of ['--spider-swing','--spider-peter','--spider-goblin']){const url=getComputedStyle(document.body).getPropertyValue(key).trim().replace(/^url\([\"']?|[\"']?\)$/g,'');const img=new Image();img.src=url;await img.decode();if(img.naturalWidth<200||img.naturalHeight<200)return false;}return true;}""")
+   if os.environ.get('URSKETCH_INSTALLED')=='1':
+    import hashlib
+    for name,asset in render['assets'].items():
+     if name.startswith('themes/spider-man/'):
+      media=context.request.get(ORIGIN+asset['url']);assert media.status==200;assert hashlib.sha256(media.body()).hexdigest()==asset['sha256']
+   assert page.locator('#theme-select').evaluate("e=>getComputedStyle(e).color==='rgb(20, 42, 67)'")
+   assert page.locator('.browser-empty').evaluate_all("els=>els.every(e=>getComputedStyle(e).color==='rgb(33, 54, 79)')")
   if theme=='m1a1-abrams':assert 'monospace' in page.locator('#classic-round').evaluate('e=>getComputedStyle(e).fontFamily')
   palettes.append(page.locator('body').evaluate('e=>getComputedStyle(e).getPropertyValue("--theme-bg")'))
   page.screenshot(path=str(ROOT/f'artifacts/theme-{theme}-lobby.png'))
@@ -53,12 +70,13 @@ with sync_playwright() as p:
   page.goto(ORIGIN+'/apps/ursketch/connect');page.evaluate('characterReady');assert page.evaluate('(theme)=>preferences.values.theme===theme',theme)
   for w,h in [(1280,720),(320,568)]:
    page.set_viewport_size({'width':w,'height':h});page.wait_for_timeout(60);assert page.locator('#connect-page').evaluate('e=>e.scrollHeight<=e.clientHeight+1'),theme
-  page.set_viewport_size({'width':1280,'height':720})
+  page.set_viewport_size({'width':1280,'height':720});page.wait_for_timeout(80)
+  if theme=='spider-man':page.screenshot(path=str(ROOT/'artifacts/theme-spider-man-connect.png'))
  assert len(set(palettes))==len(themes)
  assert not errors,errors
  # A standalone visual contact sheet of the actual game renders.
  gallery=browser.new_page(viewport={'width':1320,'height':1700})
  cards=''.join('<figure><figcaption>'+theme+'</figcaption><img src="data:image/png;base64,'+base64.b64encode((ROOT/f'artifacts/theme-{theme}-game.png').read_bytes()).decode()+'"></figure>' for theme in themes)
- gallery.set_content('<style>body{background:#20242b;color:white;display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:16px;font:18px Arial}figure{margin:0}figcaption{padding:8px}img{width:100%}</style>'+cards);gallery.screenshot(path=str(ROOT/'artifacts/theme-gallery.png'),full_page=True)
- (ROOT/'artifacts/new-themes-verification.json').write_text(json.dumps({'installed':os.environ.get('URSKETCH_INSTALLED')=='1','themes':themes,'savedSelectionAndAudioPrefs':True,'distinctPalettes':True,'canvasPixelsPreserved':True,'fullCanvasEdgeDrawing':True,'rosterColorsAndProportions':True,'chatSelection':True,'terminalMonospace':True,'laptopAndPhoneFit':True,'browserOnlyFixtures':True},indent=2)+'\n')
- browser.close();print('PASS: ten distinct saved themes, unchanged drawing pixels, full canvas edges, chat selection, roster colors/proportions, Terminal font and laptop/phone fit')
+ gallery.set_content('<style>body{background:#20242b;color:white;display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:16px;font:18px Arial}figure{margin:0}figcaption{padding:8px}img{width:100%}</style>'+cards);gallery.screenshot(path=str(ROOT/('artifacts/theme-gallery.png' if not os.environ.get('URSKETCH_THEMES') else 'artifacts/theme-spider-man-gallery.png')),full_page=True)
+ (ROOT/('artifacts/new-themes-verification.json' if not os.environ.get('URSKETCH_THEMES') else 'artifacts/spider-man-theme-verification.json')).write_text(json.dumps({'installed':os.environ.get('URSKETCH_INSTALLED')=='1','themes':themes,'savedSelectionAndAudioPrefs':True,'distinctPalettes':True,'canvasPixelsPreserved':True,'fullCanvasEdgeDrawing':True,'rosterColorsAndProportions':True,'chatSelection':True,'terminalMonospace':True if 'terminal' in themes else None,'spiderManArtDecoded':True if 'spider-man' in themes else None,'spiderManMediaHashes':True if 'spider-man' in themes and os.environ.get('URSKETCH_INSTALLED')=='1' else None,'laptopAndPhoneFit':True,'browserOnlyFixtures':True},indent=2)+'\n')
+ browser.close();print('PASS:',len(themes),'distinct saved themes, unchanged drawing pixels, full canvas edges, chat selection, roster colors/proportions and laptop/phone fit')

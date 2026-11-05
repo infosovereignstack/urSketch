@@ -28,6 +28,8 @@ for name in ('metal', 'metal-small'):
 theme_css=(ROOT/'web/theme-art.css').read_text()+'\n'+(ROOT/'web/themes.css').read_text()
 for path in sorted((ROOT/'web/theme-art').glob('*.svg')):
     theme_css=theme_css.replace('THEME_ART_'+path.stem.upper().replace('-','_'),'data:image/svg+xml;base64,'+base64.b64encode(path.read_bytes()).decode())
+for name in ('swing','peter','goblin'):
+    theme_css=theme_css.replace('SPIDER_MAN_'+name.upper()+'_IMAGE',assets['themes/spider-man/'+name+'.png']['url'])
 html = html.replace('/* URSKETCH_CSS */', (ROOT / 'web/style.css').read_text().replace('/* URSKETCH_CLASSIC */', classic).replace('/* URSKETCH_CONNECT */', (ROOT/'web/connect.css').read_text()).replace('/* URSKETCH_BROWSER */', (ROOT/'web/browser.css').read_text()).replace('/* URSKETCH_BLINGEE */', (ROOT/'web/blingee.css').read_text()).replace('/* URSKETCH_THEMES */',theme_css))
 html=html.replace('</style>',(ROOT/'web/settings-layout.css').read_text()+'</style>',1)
 for name in ('skip', 'done'):

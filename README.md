@@ -483,3 +483,15 @@ words outside that history, including across games and saved-state reloads.
 Skipped words count too. Upgrading an existing room seeds its history with the
 current answer; older answers cannot be reconstructed because previous versions
 did not save them. Deleting an empty room also deletes its word history.
+
+## Spider-Man theme (0.25.0)
+
+Settings → Theme adds **Spider-Man · Tobey Maguire**. The supplied film artwork,
+burgundy and midnight-blue panels, silver webbing, warm ivory fields and custom
+mask badge follow the Raimi-era suit references. Green Goblin appears only as a
+small cameo in the settings preview. Connect, the room browser, dialogs and game
+chrome share the theme; the existing logo, game font, drawing colors and player
+name colors remain intact. The selection saves with the other themes.
+
+Artwork sources and editable vector files are documented in
+[the theme notes](web/theme-art/spider-man.md). All media is served by the ship.

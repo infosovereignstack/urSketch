@@ -464,3 +464,19 @@ Treaty publication. The native 2,000-round history generator passed again on
 the comet. Installed browser checks passed the ranked character roster,
 Classic/Blingee layouts, full canvas, room lifecycle and version metadata.
 The isolated test ships were shut down; the real comet remains running.
+
+### 0.25.0 Spider-Man theme
+
+Run `URSKETCH_THEMES=spider-man` with `tests/new-themes.py` for focused checks;
+add `URSKETCH_INSTALLED=1` to verify the published client. The checks cover saved
+selection/audio preferences, artwork and readable fields, full canvas edge
+strokes, unchanged pixels through theme switching/resizing, score-ranked roster
+colors/proportions, chat selection and laptop/phone fit. Screenshots capture
+Connect, the room browser, settings and game. `tests/ranked-roster.py` also checks
+the new theme alongside all existing themes.
+
+0.25.0 preview and installed Spider-Man checks passed, including decoding all
+three supplied images and comparing installed media hashes. Ranking/color
+checks passed all 13 themes. Installed comet checks passed Connect, profiles,
+room search/create/leave, full canvas, Classic/Blingee layouts and Treaty 0.25.0
+metadata. SVG parsing, JavaScript/Python syntax and whitespace checks passed.

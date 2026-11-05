@@ -108,3 +108,70 @@ body.extra-theme[data-theme=m1a1-abrams] :is(#guess,#chat-input){background:#141
 body.extra-theme[data-theme=m1a1-abrams][data-active-chat=game] #guess,body.extra-theme[data-theme=m1a1-abrams][data-active-chat=chat] #chat-input{background:#273621;color:#f3edcc}
 body.extra-theme[data-theme=mountain-dew] :is(button,button.primary){color:#173319}
 body.extra-theme[data-theme=mountain-dew] #lobby :is(.browser-actions button,#host-search,#global-chat-send,.recovery-actions button){color:#173319}
+
+/* Raimi-era Spider-Man: raised silver webs over burgundy fabric and midnight blue. */
+body[data-theme=spider-man]{--theme-bg:radial-gradient(ellipse at 88% 0,#32465c 0,transparent 48%),linear-gradient(135deg,#152c47,#091323 65%,#3d1422);--theme-surface:#11253bf5;--theme-sheet:#fff8e9;--theme-text:#f5e8cf;--theme-heading:#f5dcaa;--theme-border:#9ca5b2;--theme-accent:#8f2330;--theme-soft:#283b55;--theme-button:linear-gradient(#bd3841,#8d1828 48%,#681626 51%,#9c2834);--theme-radius:4px;--theme-shadow:inset 0 1px #f1e0c063,inset 0 -1px #040b1799,0 3px 8px #0005;--theme-bar:linear-gradient(110deg,#6f1727,#a22e37 58%,#411729);--theme-notice:#b63135}
+body.extra-theme[data-theme=spider-man] #lobby{background:var(--theme-pattern) repeat,linear-gradient(120deg,#7c1e2d 0%,#34172b 29%,#0d233c 61%,#0a1729 100%);background-size:155px 155px,cover;border-color:#8f98a8}
+body.extra-theme[data-theme=spider-man] :is(.browser-masthead,header){background:var(--theme-pattern) repeat,var(--theme-bar);background-size:155px 155px,cover;box-shadow:inset 0 1px #eedfba88,inset 0 -1px #010814,0 3px 10px #0004}
+body.extra-theme[data-theme=spider-man] .browser-masthead{margin-inline:-3px;padding-inline:3px;border-radius:0 0 5px 5px;background-image:linear-gradient(90deg,#711a2df0 0%,#771d30b3 52%,#101b31aa 100%),var(--theme-pattern),var(--theme-bar)}
+body.extra-theme[data-theme=spider-man] .browser-masthead::after{width:49px;height:68px;left:205px;top:4px;filter:drop-shadow(1px 3px 3px #0009)}
+body.extra-theme.playing[data-theme=spider-man] header::after{width:31px;height:37px;top:1px;filter:drop-shadow(1px 2px 2px #0008)}
+body.extra-theme[data-theme=spider-man] :is(.browser-version,.browser-panel-label,.panel-label,.round-meta,.room-notice,#classic-round){color:#f7e5c5;text-shadow:0 1px 2px #000}
+body.extra-theme[data-theme=spider-man] :is(.browser-actions button,#host-search,#global-chat-send,button.primary,#connect-submit){color:#fff5e1;border-color:#c1b6ad;font-weight:700;letter-spacing:.3px}
+body.extra-theme[data-theme=spider-man] :is(button,button.primary):focus-visible{outline:2px solid #ffcf81;outline-offset:2px}
+body.extra-theme[data-theme=spider-man] #lobby :is(.browser-actions button,#host-search,#global-chat-send,.recovery-actions button){color:#fff5e1}
+body.extra-theme[data-theme=spider-man] :is(.browser-room-controls,#room-browser,dialog){background:var(--theme-pattern) repeat,var(--theme-surface);background-size:155px 155px,cover}
+body.extra-theme[data-theme=spider-man] :is(.browser-room-controls h2,#browse-status,#global-chat-status,#audio-status){color:#f6e3c1}
+body.extra-theme[data-theme=spider-man] .browser-columns{background:linear-gradient(#dfc9a7,#b99b72);color:#172b43;text-shadow:0 1px #fff9;letter-spacing:.5px}
+body.extra-theme[data-theme=spider-man] :is(.classic-scroll-shell,dialog,#room-browser){border-color:#8c96a6;box-shadow:inset 0 1px #e0e3e9,0 3px 8px #0006}
+body.extra-theme[data-theme=spider-man] :is(#host,#lobby #global-chat-input,#room-list,.room-row,.room-details){background:#fff8e9;color:#142a43}
+body.extra-theme[data-theme=spider-man] #lobby :is(.room-name,.room-occupancy){color:#142a43}
+body.extra-theme[data-theme=spider-man] .room-row:hover,body.extra-theme[data-theme=spider-man] #lobby .room-name:hover{background:#eed8b5}
+body.extra-theme[data-theme=spider-man] .browser-empty{color:#37465b}
+/* The supplied movie art is a fixed decorative panel; messages scroll above it. */
+body.extra-theme[data-theme=spider-man] #lobby #browser-guide{background:linear-gradient(90deg,#0c2036 0%,#0c2036f2 55%,#0c203666 75%,#0c203618),var(--spider-swing) right center/auto 100% no-repeat,#0c2036;color:#f2e5ce;border-color:#8c96a6}
+body.extra-theme[data-theme=spider-man] .browser-guide>p:not(.operation-status){max-width:65%;font-size:clamp(12px,1.25vw,17px);line-height:1.45;margin-bottom:18px;text-shadow:0 1px 3px #000}
+body.extra-theme[data-theme=spider-man] .browser-guide :is(b,.player-summary){color:#f7e8ce}
+body.extra-theme[data-theme=spider-man] #lobby :is(.global-chat-name,.player-summary a){color:#ffce8c}
+body.extra-theme[data-theme=spider-man] .browser-guide :is(.browser-courtesy,.browser-courtesy b){color:#ffb0a0}
+body.extra-theme[data-theme=spider-man] .browser-guide .player-summary{max-width:65%;flex-wrap:wrap;gap:5px}
+body.extra-theme[data-theme=spider-man] .browser-guide .operation-status{color:#f2dfbc}
+body.extra-theme[data-theme=spider-man] .global-message{color:#f5e8cf;background:#0c2036ef;border-left:2px solid #ac3541;padding:5px 8px;text-shadow:none}
+body.extra-theme[data-theme=spider-man] #lobby .global-chat-name{background:none;box-shadow:none;border:0}
+body.extra-theme[data-theme=spider-man] .classic-scrollbar{background:#10223b}
+body.extra-theme[data-theme=spider-man] .scroll-track{background:linear-gradient(90deg,#101e31,#263b56);border-color:#64758b}
+body.extra-theme[data-theme=spider-man] .scroll-thumb{background:repeating-linear-gradient(#aab1bb 0 2px,#68778b 2px 3px);border-color:#d7d8db}
+body.extra-theme[data-theme=spider-man] #tool-grid button{color:#f5e7cc;background:linear-gradient(#334962,#14243b);border-color:#8997a9}
+body.extra-theme[data-theme=spider-man] #tool-grid button[aria-pressed=true]{background:linear-gradient(#c4474a,#8a1d2b);color:#fff7e0;border-color:#e0b983;box-shadow:inset 0 0 0 1px #edc68e}
+body.extra-theme[data-theme=spider-man] :is(.palette-panel,#tool-grid){background-color:#11253b}
+body.extra-theme[data-theme=spider-man] #players li{border-bottom-color:#a8a3a0}
+body.extra-theme[data-theme=spider-man] #players li.me{background:#f5f0df}
+body.extra-theme[data-theme=spider-man] #artist-secret :is(#word,#word-value){color:#ffb0a0}
+/* Film art on Connect stays behind the existing logo, character and name form. */
+.connect-route body.extra-theme[data-theme=spider-man]{background:linear-gradient(90deg,#0c1c32f7 0%,#0c1c32eb 40%,#0c1c3277 75%,#0c1c3244),var(--spider-peter) right top/auto 100dvh no-repeat,var(--theme-bg);background-attachment:fixed}
+.connect-route body[data-theme=spider-man] .connect-copy{background:#fff5e9f2;color:#172b44;border:1px solid #d7c8ad;border-radius:9px;box-shadow:0 10px 30px #0006,inset 0 1px #fff}
+.connect-route body[data-theme=spider-man] #character-builder{background:radial-gradient(ellipse at 38% 65%,#f7deb822,transparent 68%);filter:drop-shadow(0 8px 10px #0005)}
+.connect-route body[data-theme=spider-man] .character-control :is(span,output){color:#f9e5c5;text-shadow:0 1px 3px #000}
+.connect-route body[data-theme=spider-man] .character-arrow path{fill:#932937;stroke:#c7b9a8}
+.connect-route body[data-theme=spider-man] .character-arrow:hover path{fill:#bd4247;stroke:#fff0cd}
+.connect-route body[data-theme=spider-man] #player-name{background:#fff8ed;color:#172b44;border:2px inset #c4baac}
+.connect-route body[data-theme=spider-man] #profile-form label{color:#f6e4c4;text-shadow:0 1px 3px #000}
+.spider-man-preview{display:none}
+body[data-theme=spider-man] .spider-man-preview{display:block;position:relative;height:clamp(170px,28dvh,270px);margin:18px 0 24px;overflow:hidden;border:1px solid #9ba6b7;border-radius:5px;background:#0d1e32;box-shadow:0 8px 18px #0006,inset 0 0 0 4px #aeb5bf22}
+.spider-man-preview-art{position:absolute;inset:0;background:linear-gradient(90deg,#101d32 5%,#111f3288 50%,#111f3200 70%),var(--spider-swing) right 33%/auto 140% no-repeat}
+.spider-man-preview figcaption{position:absolute;left:7%;top:33%;width:58%;display:flex;flex-direction:column;gap:12px;text-shadow:0 2px 5px #000}
+.spider-man-preview strong{font:italic 900 clamp(22px,2.5vw,40px)/1 Arial,Helvetica,sans-serif;letter-spacing:-1px;color:#eee4cf;transform:skewX(-7deg)}
+.spider-man-preview figcaption span{font:11px/1.5 Verdana,Arial,sans-serif;letter-spacing:1.2px;text-transform:uppercase;color:#dbb887;max-width:180px}
+.spider-man-preview .goblin-cameo{position:absolute;right:12px;bottom:12px;width:40px;height:40px;border-radius:50%;background:var(--spider-goblin) 48% 30%/auto 160%;border:1px solid #8e9c71;box-shadow:0 1px 8px #0009}
+@media(max-width:1100px){body.extra-theme[data-theme=spider-man] .browser-guide>p:not(.operation-status){max-width:62%;line-height:1.35;margin-bottom:14px}}
+@media(max-width:680px){body.extra-theme[data-theme=spider-man] .browser-masthead::after{left:141px;top:6px;width:29px;height:38px}body.extra-theme[data-theme=spider-man] .browser-actions{left:181px}body.extra-theme[data-theme=spider-man] .browser-guide{background-size:auto,auto 100%;background-position:0 0,right center}body.extra-theme[data-theme=spider-man] .browser-guide>p:not(.operation-status),body.extra-theme[data-theme=spider-man] .browser-guide .player-summary{max-width:80%}.connect-route body.extra-theme[data-theme=spider-man]{background:linear-gradient(#0c1c32b8,#0c1c32ed),var(--spider-peter) right top/auto 100dvh no-repeat,var(--theme-bg)}.spider-man-preview strong{font-size:24px}}
+
+body.extra-theme[data-theme=spider-man] :is(input,select){color:#142a43}
+/* Keep ivory fields legible against the film's darker chrome. */
+body.extra-theme[data-theme=spider-man] #lobby :is(.browser-empty,#host,#global-chat-input){color:#21364f}
+body.extra-theme[data-theme=spider-man] #lobby .browser-columns{background:linear-gradient(#dfc9a7,#b99b72);color:#172b43}
+body.extra-theme[data-theme=spider-man] #lobby #browser-guide{background-image:linear-gradient(90deg,#0c2036 0%,#0c2036 59%,#0c2036c9 69%,#0c203633 86%,#0c203618 100%),var(--spider-swing)}
+.connect-route body.extra-theme[data-theme=spider-man]{background-image:linear-gradient(90deg,#0c1c32 0%,#0c1c32 62%,#0c1c32bb 72%,#0c1c3244 88%,#0c1c3233),var(--spider-peter),var(--theme-bg)}
+body.extra-theme[data-theme=spider-man] #settings-dialog :is(input,select){color:#142a43}
+@media(max-width:680px){.connect-route body.extra-theme[data-theme=spider-man]{background-image:linear-gradient(#0c1c32b8,#0c1c32ed),var(--spider-peter),var(--theme-bg)}}
+body.extra-theme[data-theme=spider-man] .browser-masthead{background-size:cover,155px 155px,cover;background-repeat:no-repeat,repeat,no-repeat}

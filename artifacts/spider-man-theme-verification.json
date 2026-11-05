@@ -1,0 +1,17 @@
+{
+  "installed": true,
+  "themes": [
+    "spider-man"
+  ],
+  "savedSelectionAndAudioPrefs": true,
+  "distinctPalettes": true,
+  "canvasPixelsPreserved": true,
+  "fullCanvasEdgeDrawing": true,
+  "rosterColorsAndProportions": true,
+  "chatSelection": true,
+  "terminalMonospace": null,
+  "spiderManArtDecoded": true,
+  "spiderManMediaHashes": true,
+  "laptopAndPhoneFit": true,
+  "browserOnlyFixtures": true
+}
