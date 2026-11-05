@@ -495,3 +495,10 @@ name colors remain intact. The selection saves with the other themes.
 
 Artwork sources and editable vector files are documented in
 [the theme notes](web/theme-art/spider-man.md). All media is served by the ship.
+
+## Matching player colors (0.25.1)
+
+Names and scores now use the same status color across every theme: black for
+other players, green for the local player, and red for anyone who has guessed
+correctly during the round, including the local player. Round end clears the
+correct-guess red and restores black/green. Score sorting remains unchanged.

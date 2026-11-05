@@ -19,7 +19,7 @@ with sync_playwright() as p:
   # A correct guess moves that player up and highlights them, regardless of artist position.
   page.evaluate("()=>{fixture.players[3].score=30;fixture.players[3].solved=true;renderRoom(structuredClone(fixture));}")
   assert page.locator('#players li').evaluate_all('els=>els.map(e=>e.dataset.ship)')==['~zod','~bud','~nec',ship]
-  assert page.locator('#players li[data-ship="~bud"] .player-name').evaluate("e=>getComputedStyle(e).color==='rgb(0, 128, 0)'")
+  assert page.locator('#players li[data-ship="~bud"] .player-name').evaluate("e=>getComputedStyle(e).color==='rgb(255, 0, 0)'")
   assert page.locator('#players li.me .artist-pencil').count()==1
   # Backend turn rotation must not alter tied score order or move the pencil to the leader.
   page.evaluate("()=>{const r=structuredClone(fixture);r.players=[...r.players.slice(1),r.players[0]];r.token++;renderRoom(r);}")
@@ -29,6 +29,12 @@ with sync_playwright() as p:
   assert page.locator('#players li:not(.me) .player-name').evaluate_all("els=>els.every(e=>getComputedStyle(e).color==='rgb(0, 0, 0)')"),theme
   page.evaluate("()=>{fixture.players[3].score=5;fixture.players[3].solved=false;renderRoom(structuredClone(fixture));}")
   assert page.locator('#players li.solved').count()==0
+  page.evaluate("()=>{fixture.players[0].solved=true;renderRoom(structuredClone(fixture));}")
+  assert page.locator('#players li.me .player-name').evaluate("e=>getComputedStyle(e).color==='rgb(255, 0, 0)'")
+  assert page.locator('#players .player-score').evaluate_all("els=>els.every(e=>getComputedStyle(e).color===getComputedStyle(e.closest('li').querySelector('.player-name')).color)")
+  page.evaluate("()=>{renderRoom({...structuredClone(fixture),phase:'finished'});}")
+  assert page.locator('#players li.me .player-score').evaluate("e=>getComputedStyle(e).color==='rgb(0, 128, 0)'")
+  page.evaluate("()=>{fixture.players[0].solved=false;renderRoom(structuredClone(fixture));}")
   if theme=='classic':page.screenshot(path=str(ROOT/'artifacts/score-ranked-roster.png'))
  page.evaluate("()=>{state=null;roomId='';localStorage.removeItem(recoveryKey);api.poke=realPoke;}");assert not errors,errors;browser.close()
- (ROOT/'artifacts/ranked-roster-verification.json').write_text(json.dumps({'themes':themes,'descendingScores':True,'stableTies':True,'selfGreen':True,'otherNamesBlackUntilSolved':True,'correctGuessGreen':True,'greenClearsAtRoundEnd':True,'artistMarkerTracksShip':True,'browserOnlyFixture':True},indent=2)+'\n');print('PASS: ranking, stable ties, baseline/solved/end-round name colors and artist marker across',len(themes),'themes')
+ (ROOT/'artifacts/ranked-roster-verification.json').write_text(json.dumps({'themes':themes,'descendingScores':True,'stableTies':True,'selfGreen':True,'otherNamesBlackUntilSolved':True,'correctGuessRed':True,'redClearsAtRoundEnd':True,'scoresMatchNames':True,'selfCorrectGuessRed':True,'artistMarkerTracksShip':True,'browserOnlyFixture':True},indent=2)+'\n');print('PASS: ranking, stable ties, baseline/solved/end-round name colors and artist marker across',len(themes),'themes')

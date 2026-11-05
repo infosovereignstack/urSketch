@@ -480,3 +480,13 @@ three supplied images and comparing installed media hashes. Ranking/color
 checks passed all 13 themes. Installed comet checks passed Connect, profiles,
 room search/create/leave, full canvas, Classic/Blingee layouts and Treaty 0.25.0
 metadata. SVG parsing, JavaScript/Python syntax and whitespace checks passed.
+
+### 0.25.1 matching names and scores
+
+The 13-theme ranked-roster regression checks red after a correct guess,
+including the local player's own correct guess, matching name/score colors,
+and black/green restoration at round end. Installed roster checks also compare
+name and score colors rather than requiring every score to be red.
+
+0.25.1 passed the 13-theme regression and installed comet checks, including
+matching roster colors, room lifecycle and Treaty version metadata.

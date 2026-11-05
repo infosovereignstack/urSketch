@@ -18,8 +18,10 @@
   "stableTies": true,
   "selfGreen": true,
   "otherNamesBlackUntilSolved": true,
-  "correctGuessGreen": true,
-  "greenClearsAtRoundEnd": true,
+  "correctGuessRed": true,
+  "redClearsAtRoundEnd": true,
+  "scoresMatchNames": true,
+  "selfCorrectGuessRed": true,
   "artistMarkerTracksShip": true,
   "browserOnlyFixture": true
 }

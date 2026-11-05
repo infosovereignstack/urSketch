@@ -242,8 +242,8 @@ with sync_playwright() as p:
     for w,h in [(2048,970),(1280,720),(390,844)]:
         page.set_viewport_size({'width':w,'height':h});page.wait_for_timeout(100)
         assert page.locator('#players .player-avatar svg').count()==10
-        assert page.locator('#players .player-name').evaluate_all("els=>els.every((e,i)=>getComputedStyle(e).color===(e.closest('li').matches('.me,.solved')?'rgb(0, 128, 0)':'rgb(0, 0, 0)'))")
-        assert page.locator('#players .player-score').evaluate_all("els=>els.every(e=>getComputedStyle(e).color==='rgb(255, 0, 0)' && e.textContent.endsWith(' Points'))")
+        assert page.locator('#players .player-name').evaluate_all("els=>els.every((e,i)=>getComputedStyle(e).color===(e.closest('li').matches('.solved')?'rgb(255, 0, 0)':e.closest('li').matches('.me')?'rgb(0, 128, 0)':'rgb(0, 0, 0)'))")
+        assert page.locator('#players .player-score').evaluate_all("els=>els.every(e=>getComputedStyle(e).color===getComputedStyle(e.closest('li').querySelector('.player-name')).color && e.textContent.endsWith(' Points'))")
         assert page.locator('#players .cat-character').evaluate_all("els=>els.every(e=>e.getAttribute('preserveAspectRatio')==='xMidYMid meet' && Math.abs(e.getCTM().a-e.getCTM().d)<1e-6)")
         expect(page.locator('#players li[data-ship="~fixture-4"] .artist-pencil')).to_have_count(1)
         assert page.evaluate('document.documentElement.scrollHeight<=innerHeight')

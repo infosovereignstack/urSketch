@@ -49,7 +49,8 @@ with sync_playwright() as p:
   for switch in ['classic',theme]:
    page.locator('#theme-select').evaluate('(e,value)=>{e.value=value;e.dispatchEvent(new Event("change"));}',switch);page.wait_for_timeout(60)
    assert page.locator('#canvas').evaluate('c=>c.toDataURL()')==baseline,'Theme switch changed drawing pixels'
-  assert page.locator('#players .player-name').evaluate_all("els=>els.every((e,i)=>getComputedStyle(e).color===(e.closest('li').matches('.me,.solved')?'rgb(0, 128, 0)':'rgb(0, 0, 0)'))")
+  assert page.locator('#players .player-name').evaluate_all("els=>els.every((e,i)=>getComputedStyle(e).color===(e.closest('li').matches('.solved')?'rgb(255, 0, 0)':e.closest('li').matches('.me')?'rgb(0, 128, 0)':'rgb(0, 0, 0)'))")
+  assert page.locator('#players .player-score').evaluate_all("els=>els.every(e=>getComputedStyle(e).color===getComputedStyle(e.closest('li').querySelector('.player-name')).color)")
   assert page.locator('#players .player-score').evaluate_all('els=>els.every((e,i)=>i===0||parseInt(els[i-1].textContent)>=parseInt(e.textContent))')
   assert page.locator('#players .cat-character').evaluate_all('els=>els.every(e=>Math.abs(e.getCTM().a-e.getCTM().d)<1e-6)')
   selected=page.locator('#messages').evaluate('e=>getComputedStyle(e).backgroundColor');inactive=page.locator('#chat-messages').evaluate('e=>getComputedStyle(e).backgroundColor');assert selected!=inactive,(theme,selected,inactive)
