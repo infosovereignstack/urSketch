@@ -470,3 +470,16 @@ locally evict members, and authoritative membership updates take priority over
 canvas repair. Ordinary guesses/chat/hints no longer rebroadcast the room
 browser. See [capacity and connection details](docs/SCALING.md) for exact limits,
 500-player planning, measured payloads and what has not been load-tested.
+
+## Ranked players and word history (0.24.0)
+
+The roster sorts by score, highest first, retaining its previous order for ties.
+The pencil follows the current artist independently of rank. Player names are
+black except the local player, who stays green, and correct guessers, who turn
+green for the remainder of the drawing round. This applies across every theme.
+
+Each room saves its last 100 assigned words. The next word is chosen only from
+words outside that history, including across games and saved-state reloads.
+Skipped words count too. Upgrading an existing room seeds its history with the
+current answer; older answers cannot be reconstructed because previous versions
+did not save them. Deleting an empty room also deletes its word history.

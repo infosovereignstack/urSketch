@@ -65,3 +65,7 @@ body:not([data-layout=classic]) #hints-used{position:absolute;width:1px;height:1
 /* URSKETCH_BLINGEE */
 
 /* URSKETCH_THEMES */
+
+/* Score ranking and solve status apply to every theme. */
+body.playing[data-layout=classic] #players li .player-name{color:#000}
+body.playing[data-layout=classic] #players li.me .player-name,body.playing[data-layout=classic] #players li.solved .player-name{color:#008000}

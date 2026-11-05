@@ -48,7 +48,7 @@ with sync_playwright() as p:
  h.screenshot(path=str(ROOT/'artifacts/tools-single-selection.png'))
  h.locator('#give-hint').click();h.wait_for_function('state.hintCount===1');answer=h.evaluate('state.answer');g.locator('#guess').fill(answer);g.locator('#guess').press('Enter')
  h.wait_for_function("state.players[0].ship==='~nec'")
- assert h.locator('#players li').evaluate_all("rows=>rows.map(r=>r.dataset.ship).join(',')==='~zod,~nec'")
+ assert h.locator('#players li').evaluate_all("rows=>rows.map(r=>r.dataset.ship).join(',')==='~nec,~zod'")
  expect(h.locator('#players li[data-ship="~nec"] .artist-pencil')).to_have_count(1)
  assert h.locator('#players li[data-ship="~nec"] .player-name').evaluate("e=>getComputedStyle(e).color==='rgb(0, 0, 0)'")
  assert h.locator('#players li.me .player-name').evaluate("e=>getComputedStyle(e).color==='rgb(0, 128, 0)'")
@@ -89,5 +89,5 @@ with sync_playwright() as p:
  g.evaluate("setSearchMode('invite')");g.locator('#host').fill(f'~zod/{rid}');g.locator('#host-search').click();expect(g.locator('#game')).to_be_visible(timeout=30000);h.wait_for_function("state.phase==='drawing' && state.started");expect(h.locator('#start')).to_be_hidden()
  for page in (g,h):page.locator('#leave').click();expect(page.locator('#lobby')).to_be_visible()
  assert not errors,errors
- (ROOT/'artifacts/finale-verification.json').write_text(json.dumps({'nativeRounds':10,'winner':'Zoe','points':20,'durationSeconds':round(elapsed,3),'restartBlocked':True,'blankTimer':True,'boldRedFinalMessage':True,'rejoinPreservesWinnerAndDeadline':True,'fireworksPCM':True,'mute':True,'canvasClearedBeforeFinale':True,'automaticNewGame':True,'ownerRemoval':True,'explicitRejoinOnReload':True,'singleToolSelection':True,'suppliedFireworksLoop':True,'fireworksRejoinOffset':True,'stableRosterAndPencil':True},indent=2)+'\n')
+ (ROOT/'artifacts/finale-verification.json').write_text(json.dumps({'nativeRounds':10,'winner':'Zoe','points':20,'durationSeconds':round(elapsed,3),'restartBlocked':True,'blankTimer':True,'boldRedFinalMessage':True,'rejoinPreservesWinnerAndDeadline':True,'fireworksPCM':True,'mute':True,'canvasClearedBeforeFinale':True,'automaticNewGame':True,'ownerRemoval':True,'explicitRejoinOnReload':True,'singleToolSelection':True,'suppliedFireworksLoop':True,'fireworksRejoinOffset':True,'scoreRankedRosterAndPencil':True},indent=2)+'\n')
  browser.close();print('PASS: ten native rounds, final scoring, 40-second finale, blank timer, fireworks PCM/mute, exact bold red result, explicit refresh rejoin, owner removal, single tool state, cleared canvas and automatic next game')

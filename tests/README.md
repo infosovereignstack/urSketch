@@ -445,3 +445,22 @@ publication: Name/profile/character media, full canvas edges, Classic/Blingee
 settings, known-host counts/filtering, native search/create/leave, tools, tile
 and version metadata. JavaScript/Python syntax and whitespace checks passed.
 The isolated test ships were shut down; the real comet remains running.
+
+### 0.24.0 ranked roster and word history
+
+`tests/ranked-roster.py` checks descending scores, stable ties, the artist pencil,
+local/solved name colors and end-of-round resets across all 12 themes.
+`tests/finale.py` checks score ranking between two native ships after a correct
+guess while retaining the full ten-round/finale lifecycle regression.
+
+`+ursketch!ursketch-word-history` runs 2,000 native assignments across game
+boundaries, requiring each answer to be outside the preceding 100 assignments.
+It checks bounded unique history, serialized room restoration, old-state
+migration and selection when only one word remains eligible. The existing
+native rules, hints and vector tests also pass with the new room schema.
+
+0.24.0 installed comet verification passed after atomic agent/UI import and
+Treaty publication. The native 2,000-round history generator passed again on
+the comet. Installed browser checks passed the ranked character roster,
+Classic/Blingee layouts, full canvas, room lifecycle and version metadata.
+The isolated test ships were shut down; the real comet remains running.

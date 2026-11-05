@@ -237,12 +237,12 @@ with sync_playwright() as p:
         assert page.evaluate('document.documentElement.scrollHeight<=innerHeight')
     page.screenshot(path=str(artifacts/'canvas-full-panel.png'))
     # Ten-player reference roster: avatars retain native proportions; names
-    # retain the game font and only SELF is green. The pencil moves in-place.
+    # retain the game font. Scores rank the rows; the pencil follows the artist.
     page.evaluate("""()=>{window.rosterFixture=Array.from({length:10},(_,i)=>({ship:i?'~fixture-'+i:SELF,name:'Player '+(i+1),score:i?13:9,solved:i%2===0,avatar:{body:CHARACTER_CATALOG.parts.body[i%6].id,face:CHARACTER_CATALOG.parts.face[i%9].id,hat:CHARACTER_CATALOG.parts.hat[i%11].id}}));rosterOrder=rosterFixture.map(p=>p.ship);renderRoom({...state,players:[...rosterFixture.slice(4),...rosterFixture.slice(0,4)],token:state.token+1});}""")
     for w,h in [(2048,970),(1280,720),(390,844)]:
         page.set_viewport_size({'width':w,'height':h});page.wait_for_timeout(100)
         assert page.locator('#players .player-avatar svg').count()==10
-        assert page.locator('#players .player-name').evaluate_all("els=>els.every((e,i)=>getComputedStyle(e).color===(i===0?'rgb(0, 128, 0)':'rgb(0, 0, 0)'))")
+        assert page.locator('#players .player-name').evaluate_all("els=>els.every((e,i)=>getComputedStyle(e).color===(e.closest('li').matches('.me,.solved')?'rgb(0, 128, 0)':'rgb(0, 0, 0)'))")
         assert page.locator('#players .player-score').evaluate_all("els=>els.every(e=>getComputedStyle(e).color==='rgb(255, 0, 0)' && e.textContent.endsWith(' Points'))")
         assert page.locator('#players .cat-character').evaluate_all("els=>els.every(e=>e.getAttribute('preserveAspectRatio')==='xMidYMid meet' && Math.abs(e.getCTM().a-e.getCTM().d)<1e-6)")
         expect(page.locator('#players li[data-ship="~fixture-4"] .artist-pencil')).to_have_count(1)

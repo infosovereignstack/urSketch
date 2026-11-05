@@ -11,10 +11,11 @@
 +$  state-6  [%6 rooms=(map @t room-v6) proxies=(map path json) names=(map @p @t) leases=(map lease-key @da) global-chat=(list global-message)]
 +$  state-7  [%7 rooms=(map @t room-v7) proxies=(map path json) names=(map @p @t) leases=(map lease-key @da) global-chat=(list global-message)]
 +$  state-8  [%8 rooms=(map @t room-v8) proxies=(map path json) names=(map @p @t) leases=(map lease-key @da) global-chat=(list global-message)]
-+$  state-9  [%9 rooms=(map @t room) proxies=(map path json) names=(map @p @t) leases=(map lease-key @da) global-chat=(list global-message)]
-+$  state-10  [%10 rooms=(map @t room) proxies=(map path json) names=(map @p @t) leases=(map lease-key @da) global-chat=(list global-message) avatars=(map @p avatar)]
++$  state-9  [%9 rooms=(map @t room-v10) proxies=(map path json) names=(map @p @t) leases=(map lease-key @da) global-chat=(list global-message)]
++$  state-10  [%10 rooms=(map @t room-v10) proxies=(map path json) names=(map @p @t) leases=(map lease-key @da) global-chat=(list global-message) avatars=(map @p avatar)]
++$  state-11  [%11 rooms=(map @t room) proxies=(map path json) names=(map @p @t) leases=(map lease-key @da) global-chat=(list global-message) avatars=(map @p avatar)]
 --
-=|  state-10
+=|  state-11
 =*  state  -
 ^-  agent:gall
 =<
@@ -27,6 +28,7 @@
   ++  on-save  !>(state)
   ++  on-load
     |=  old=vase
+    =/  v11=(unit state-11)  (mole |.(!<(state-11 old)))
     =/  v10=(unit state-10)  (mole |.(!<(state-10 old)))
     =/  v9=(unit state-9)  (mole |.(!<(state-9 old)))
     =/  v8=(unit state-8)  (mole |.(!<(state-8 old)))
@@ -38,18 +40,19 @@
     =/  v2=(unit state-2)  (mole |.(!<(state-2 old)))
     =/  v1=(unit state-1)  (mole |.(!<(state-1 old)))
     =.  state
-      ?^  v10  u.v10
-      ?^  v9  [%10 rooms.u.v9 proxies.u.v9 names.u.v9 leases.u.v9 global-chat.u.v9 ~]
-      ?^  v8  [%10 (~(run by rooms.u.v8) migrate-v8:ursketch-game) proxies.u.v8 names.u.v8 leases.u.v8 global-chat.u.v8 ~]
-      ?^  v7  [%10 (~(run by rooms.u.v7) migrate-v7:ursketch-game) proxies.u.v7 names.u.v7 leases.u.v7 global-chat.u.v7 ~]
-      ?^  v6  [%10 (~(run by rooms.u.v6) migrate-v6:ursketch-game) proxies.u.v6 names.u.v6 leases.u.v6 global-chat.u.v6 ~]
-      ?^  v5  [%10 (~(run by rooms.u.v5) |=(r=room-v5 (migrate-v5:ursketch-game r now.bowl))) proxies.u.v5 names.u.v5 leases.u.v5 global-chat.u.v5 ~]
-      ?^  v4  [%10 (~(run by rooms.u.v4) |=(r=room-v5 (migrate-v5:ursketch-game r now.bowl))) proxies.u.v4 names.u.v4 leases.u.v4 ~ ~]
-      ?^  v3  [%10 (~(run by rooms.u.v3) migrate-v3:ursketch-game) proxies.u.v3 names.u.v3 leases.u.v3 ~ ~]
-      ?^  v2  [%10 (~(run by rooms.u.v2) migrate-room:ursketch-game) proxies.u.v2 names.u.v2 ~ ~ ~]
-      ?^  v1  [%10 (~(run by rooms.u.v1) migrate-room:ursketch-game) proxies.u.v1 ~ ~ ~ ~]
+      ?^  v11  u.v11
+      ?^  v10  [%11 (~(run by rooms.u.v10) migrate-v10:ursketch-game) proxies.u.v10 names.u.v10 leases.u.v10 global-chat.u.v10 avatars.u.v10]
+      ?^  v9  [%11 (~(run by rooms.u.v9) migrate-v10:ursketch-game) proxies.u.v9 names.u.v9 leases.u.v9 global-chat.u.v9 ~]
+      ?^  v8  [%11 (~(run by rooms.u.v8) migrate-v8:ursketch-game) proxies.u.v8 names.u.v8 leases.u.v8 global-chat.u.v8 ~]
+      ?^  v7  [%11 (~(run by rooms.u.v7) migrate-v7:ursketch-game) proxies.u.v7 names.u.v7 leases.u.v7 global-chat.u.v7 ~]
+      ?^  v6  [%11 (~(run by rooms.u.v6) migrate-v6:ursketch-game) proxies.u.v6 names.u.v6 leases.u.v6 global-chat.u.v6 ~]
+      ?^  v5  [%11 (~(run by rooms.u.v5) |=(r=room-v5 (migrate-v5:ursketch-game r now.bowl))) proxies.u.v5 names.u.v5 leases.u.v5 global-chat.u.v5 ~]
+      ?^  v4  [%11 (~(run by rooms.u.v4) |=(r=room-v5 (migrate-v5:ursketch-game r now.bowl))) proxies.u.v4 names.u.v4 leases.u.v4 ~ ~]
+      ?^  v3  [%11 (~(run by rooms.u.v3) migrate-v3:ursketch-game) proxies.u.v3 names.u.v3 leases.u.v3 ~ ~]
+      ?^  v2  [%11 (~(run by rooms.u.v2) migrate-room:ursketch-game) proxies.u.v2 names.u.v2 ~ ~ ~]
+      ?^  v1  [%11 (~(run by rooms.u.v1) migrate-room:ursketch-game) proxies.u.v1 ~ ~ ~ ~]
       =/  previous=state-0  !<(state-0 old)
-      [%10 (~(run by rooms.previous) migrate-room:ursketch-game) ~ ~ ~ ~ ~]
+      [%11 (~(run by rooms.previous) migrate-room:ursketch-game) ~ ~ ~ ~ ~]
     on-init
   ++  on-poke
     |=  [=mark =vase]
@@ -82,7 +85,7 @@
 --
 |_  =bowl:gall
 ++  init
-  ^-  (quip card state-10)
+  ^-  (quip card state-11)
   =.  rooms  (~(run by rooms) resume-turn)
   =/  keys=(list lease-key)
     %-  zing
@@ -115,7 +118,7 @@
   (welp ~[[%pass /bind %arvo %e %connect [~ /apps/ursketch] %ursketch]] (welp views (welp turns presence)))
 ++  poke
   |=  [=mark =vase]
-  ^-  (quip card state-10)
+  ^-  (quip card state-11)
   ?+  mark  ~|('unsupported mark' !!)
     %handle-http-request
       =/  req  !<([id=@ta req=inbound-request:eyre] vase)
@@ -315,7 +318,7 @@
   ==
 ++  watch
   |=  =path
-  ^-  (quip card state-10)
+  ^-  (quip card state-11)
   ?:  ?=([%http-response *] path)  [~ state]
   ?:  ?=([%proxy @ *] path)
     ?>  =(src.bowl our.bowl)
@@ -344,7 +347,7 @@
   [~[(view-card rid viewer)] state]
 ++  leave
   |=  =path
-  ^-  (quip card state-10)
+  ^-  (quip card state-11)
   ?.  ?=([%proxy @ *] path)  [~ state]
   ?:  (lien ~(tap by sup.bowl) |=([d=duct who=ship p=(list @ta)] =(p path)))
     [~ state]
@@ -357,7 +360,7 @@
   ~
 ++  agent
   |=  [=wire =sign:agent:gall]
-  ^-  (quip card state-10)
+  ^-  (quip card state-11)
   ?:  ?=([%proxy @ *] wire)
     ?+  -.sign  [~ state]
       %fact
@@ -386,7 +389,7 @@
   [~[[%give %fact ~[/relay] %json !>(payload)]] state]
 ++  arvo
   |=  [=wire =sign-arvo]
-  ^-  (quip card state-10)
+  ^-  (quip card state-11)
   ?:  ?=([%presence @ @ ~] wire)
     ?.  ?=([%behn %wake *] sign-arvo)  [~ state]
     (expire i.t.wire (slav %p i.t.t.wire))
@@ -410,7 +413,7 @@
   [cards state]
 ++  fail
   |=  [=term =tang]
-  ^-  (quip card state-10)
+  ^-  (quip card state-11)
   ~&  tang
   [~ state]
 ++  text
@@ -432,7 +435,7 @@
   p.value
 ++  touch
   |=  [rid=@t who=@p]
-  ^-  (quip card state-10)
+  ^-  (quip card state-11)
   =/  exists=?  (~(has by leases) [rid who])
   =/  until=@da  (add now.bowl ~m2)
   =.  leases  (~(put by leases) [rid who] until)
@@ -445,7 +448,7 @@
   [%pass /presence/[rid]/[(scot %p who)] %arvo %b %wait (max until (add now.bowl ~s1))]
 ++  expire
   |=  [rid=@t who=@p]
-  ^-  (quip card state-10)
+  ^-  (quip card state-11)
   =/  until=(unit @da)  (~(get by leases) [rid who])
   ?~  until  [~ state]
   ?:  (gth u.until now.bowl)
@@ -477,7 +480,7 @@
   [%pass /turn/[rid]/[(scot %ud token.r)] %arvo %b %wait deadline.r]
 ++  respond
   |=  [id=@ta code=@ud mime=@t body=@t]
-  ^-  (quip card state-10)
+  ^-  (quip card state-11)
   =/  headers=(list [@t @t])
     ~[['Content-Type' mime] ['Cache-Control' 'no-store'] ['X-Content-Type-Options' 'nosniff']]
   =.  headers
@@ -490,7 +493,7 @@
   ==
 ++  respond-media
   |=  [id=@ta mime=@t etag=@t body=octs]
-  ^-  (quip card state-10)
+  ^-  (quip card state-11)
   =/  headers=(list [@t @t])
     :~  ['Content-Type' mime]
         ['Cache-Control' 'private, max-age=31536000, immutable']

@@ -1,0 +1,16 @@
+{
+  "release": "0.24.0",
+  "nativeShip": "~nec",
+  "rounds": 2000,
+  "previousAssignmentsExcluded": 100,
+  "boundedHistory": true,
+  "uniqueHistory": true,
+  "acrossGameBoundaries": true,
+  "serializedRestoration": true,
+  "oldRoomMigration": true,
+  "oneEligibleCandidate": true,
+  "nativeRules": true,
+  "nativeHints": true,
+  "nativeVectors": true,
+  "installedCometPassed": true
+}

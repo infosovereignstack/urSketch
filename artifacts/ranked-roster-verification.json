@@ -1,0 +1,24 @@
+{
+  "themes": [
+    "classic",
+    "blingee",
+    "aero",
+    "milady",
+    "terminal",
+    "dark-souls",
+    "kitty-cat",
+    "pikachu",
+    "garfield",
+    "snoopy-woodstock",
+    "mountain-dew",
+    "m1a1-abrams"
+  ],
+  "descendingScores": true,
+  "stableTies": true,
+  "selfGreen": true,
+  "otherNamesBlackUntilSolved": true,
+  "correctGuessGreen": true,
+  "greenClearsAtRoundEnd": true,
+  "artistMarkerTracksShip": true,
+  "browserOnlyFixture": true
+}

@@ -416,9 +416,9 @@ function renderRoom(data) {
   $('player-count').textContent=`${data.players.length}/10`;
   rosterOrder=rosterOrder.filter(ship=>data.players.some(p=>p.ship===ship));
   for(const p of data.players)if(!rosterOrder.includes(p.ship))rosterOrder.push(p.ship);
-  const roster=rosterOrder.map(ship=>data.players.find(p=>p.ship===ship));
+  const roster=rosterOrder.map(ship=>data.players.find(p=>p.ship===ship)).sort((a,b)=>b.score-a.score);
   $('players').replaceChildren(...roster.map(p=>{
-    const li=element('li',[(p.ship===SELF?'me':''),(p.solved?'solved':'')].filter(Boolean).join(' '));li.dataset.ship=p.ship;
+    const li=element('li',[(p.ship===SELF?'me':''),(data.phase==='drawing'&&p.solved?'solved':'')].filter(Boolean).join(' '));li.dataset.ship=p.ship;
     const portrait=element('div','player-avatar');portrait.setAttribute('aria-hidden','true');portrait.append(createCharacter(p.avatar));
     const label=element('div','player-name',p.name||p.ship);label.title=p.ship;label.tabIndex=0;label.setAttribute('role','button');label.setAttribute('aria-label',`Inspect ${p.name||p.ship}`);label.onclick=()=>inspectPlayer(p);label.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();inspectPlayer(p);}};
     const score=element('span','player-score',`${p.score} Points`);
