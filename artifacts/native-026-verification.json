@@ -1,0 +1,24 @@
+{
+  "release": "0.26.0",
+  "nativeAgentCompiled": true,
+  "legacyRoomV11Preserved": true,
+  "banks": {
+    "default": 2000,
+    "easy": 500,
+    "hard": 500,
+    "Urbit": 500
+  },
+  "excludedDefaultEntries": [
+    "delivery van",
+    "fire engine"
+  ],
+  "historyRounds": 2000,
+  "historyWindow": 100,
+  "nativeHintsAndScoring": true,
+  "savedScoresSeatsAndSolvedState": true,
+  "newGameResetsArchivedScores": true,
+  "roomAndArtistDifficulty": true,
+  "groupedUndo": true,
+  "revealPreservesCanvasAndNextArtist": true,
+  "installedCometPassed": true
+}

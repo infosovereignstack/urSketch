@@ -2,13 +2,14 @@
 function createSettings({notify,onChange}) {
   const $=id=>document.getElementById(id),key='ursketch.settings.v1';
   const extraThemes=['aero','milady','terminal','dark-souls','kitty-cat','pikachu','garfield','snoopy-woodstock','mountain-dew','m1a1-abrams','spider-man'];
-  const defaults={theme:'classic',volume:70,muted:false,output:'',reduceMotion:false,largeChat:false,themeQuiet:false,themeDisabled:false};
+  const defaults={theme:'classic',volume:70,muted:false,output:'',reduceMotion:false,largeChat:false,themeQuiet:false,themeDisabled:false,layout:'auto'};
   function readPrefs(){
     const next={...defaults};
     try{const saved=JSON.parse(localStorage.getItem(key)||'null');if(saved){
       next.theme=['classic','blingee',...extraThemes].includes(saved.theme)?saved.theme:'classic';
       next.volume=Number.isFinite(saved.volume)?Math.max(0,Math.min(100,saved.volume)):70;
       for(const name of ['muted','reduceMotion','largeChat','themeQuiet','themeDisabled'])next[name]=saved[name]===true;
+      next.layout=['auto','desktop','mobile'].includes(saved.layout)?saved.layout:'auto';
       next.output=typeof saved.output==='string'?saved.output:'';
     }}catch{}
     return next;
@@ -20,6 +21,9 @@ function createSettings({notify,onChange}) {
     document.body.dataset.theme=prefs.theme;document.body.dataset.layout='classic';document.body.classList.toggle('extra-theme',extraThemes.includes(prefs.theme));
     document.body.classList.toggle('reduce-motion',prefs.reduceMotion);
     document.body.classList.toggle('large-chat',prefs.largeChat);
+    const mobile=navigator.userAgentData?.mobile||/Android|iPhone|iPad|Mobile/i.test(navigator.userAgent)||(navigator.maxTouchPoints>1&&matchMedia('(pointer:coarse)').matches&&screen.width<=1024);
+    document.body.dataset.mobile=String(prefs.layout==='mobile'||prefs.layout==='auto'&&mobile);
+    $('mobile-layout').value=prefs.layout;
     audio.volume=prefs.volume/100;audio.muted=prefs.muted;
     if($('spider-man-preview'))$('spider-man-preview').hidden=prefs.theme!=='spider-man'||!$('lobby');
     $('theme-select').value=prefs.theme;$('sound-volume').value=prefs.volume;$('volume-value').value=prefs.volume+'%';
@@ -48,6 +52,7 @@ function createSettings({notify,onChange}) {
   }
   $('settings-open').onclick=()=>{$('settings-dialog').showModal();void outputs();};
   $('settings-close').onclick=()=>$('settings-dialog').close();
+  $('mobile-layout').onchange=e=>{prefs.layout=e.target.value;save();};
   $('theme-select').onchange=e=>{prefs.theme=e.target.value;save();};
   $('sound-volume').oninput=e=>{prefs.volume=Number(e.target.value);save();};
   for(const [id,name] of [['sound-muted','muted'],['reduce-motion','reduceMotion'],['large-chat','largeChat'],['theme-song-quarter','themeQuiet'],['theme-song-disabled','themeDisabled']])$(id).onchange=e=>{prefs[name]=e.target.checked;save();};

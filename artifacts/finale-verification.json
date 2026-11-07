@@ -2,7 +2,7 @@
   "nativeRounds": 10,
   "winner": "Zoe",
   "points": 20,
-  "durationSeconds": 40.037,
+  "roundHoldAndFinaleSeconds": 43.044,
   "restartBlocked": true,
   "blankTimer": true,
   "boldRedFinalMessage": true,

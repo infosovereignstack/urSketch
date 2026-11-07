@@ -5,9 +5,11 @@ import base64
 import json
 import re
 from media_assets import media_assets, write_media
+from wordlists import build as build_wordlists
 from release import VERSION, LOGO_SVG, ICON_DATA_URL, FAVICON_URL
 
 ROOT = Path(__file__).resolve().parents[1]
+build_wordlists()
 (ROOT/'desk/media/images/app-tile.png').write_bytes((ROOT/'web/tile.png').read_bytes())
 assets = media_assets()
 write_media(assets)
@@ -44,6 +46,7 @@ html=html.replace('/* URSKETCH_CHARACTERS */',(ROOT/'web/characters.js').read_te
 html = html.replace('/* URSKETCH_DRAWING */', (ROOT / 'web/drawing.js').read_text())
 html = html.replace('/* URSKETCH_SETTINGS */', (ROOT / 'web/settings.js').read_text())
 cue_urls = {Path(name).stem:asset['url'] for name,asset in assets.items() if name.startswith('audio/cues/')}
+html = html.replace('/* URSKETCH_ADMIN */', (ROOT/'web/admin.js').read_text())
 html = html.replace('/* URSKETCH_FINALE */', (ROOT/'web/finale.js').read_text())
 html = html.replace('/* URSKETCH_AUDIO */', (ROOT/'web/audio.js').read_text())
 chat_host=json.loads((ROOT/'web/chat-config.json').read_text())['host']

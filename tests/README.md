@@ -490,3 +490,37 @@ name and score colors rather than requiring every score to be red.
 
 0.25.1 passed the 13-theme regression and installed comet checks, including
 matching roster colors, room lifecycle and Treaty version metadata.
+
+### 0.26.0 room controls, reconnection, banks and mobile
+
+- `+ursketch!ursketch-admin-rules` verifies the 2,000/500/500/500 bank counts,
+  excluded default entries, v11 room migration, saved seat/score/solve state,
+  difficulty overrides, durations and grouped undo. It also checks that departure
+  during the three-second reveal keeps the canvas and selects the right artist.
+- `tests/room-admin.py` uses two isolated native ships to check owner permissions,
+  timer bounds/reset, a 110-word Markdown upload, room/artist difficulty, whole
+  pen-gesture undo, undoing fills/clears with byte-identical peer canvases, the
+  three-second reveal, no-expiry reload/reconnect, live round metadata, saved
+  score/order, transferred ownership and the most-recent-room banner.
+- `tests/audio-clock.py` adds independent wall-clock cutoff, mutual exclusion
+  of ticks/fireworks and no repeated replacement of a prematurely ended finale
+  voice, alongside its existing decoded PCM and countdown scheduling checks.
+- `tests/mobile-and-performance.py` checks genuine mobile user-agent detection,
+  mobile-only Send, explicit layout selection, phone/landscape geometry and full
+  artist canvas. It compares 60 unchanged metadata renders with the previous
+  client and verifies the roster nodes are reused across four themes.
+- `tests/finale.py` includes the final three-second artwork interval before the
+  40-second finale, and checks automatic new games, scoring, sound, removal and
+  explicit refreshed rejoining. The ranked-roster regression still covers all
+  13 themes. `scripts/wordlists.py` validates the exact released Markdown banks.
+
+The notebook posting receipt records counts and source hashes, with every note
+read back. It contains no credentials or private notebook identifiers.
+
+0.26.0 passed the native agent/rules, 2,000-round history and hint checks,
+13-theme roster regression, two-ship admin/undo/reconnect/latest-room test,
+full ten-round and 43-second final-round-hold/finale lifecycle, audio clock
+regressions and mobile/performance checks. The installed comet passed native
+admin rules and browser lifecycle/layout/publication checks. Installed mobile
+checks confirm the admin icon stays outside the drawing canvas. Both isolated
+test ships are stopped; the real comet remains running.

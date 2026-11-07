@@ -1,0 +1,2002 @@
+# default
+
+- airplane
+- anchor
+- apple
+- astronaut
+- avocado
+- backpack
+- banana
+- basketball
+- bathtub
+- beach
+- bear
+- bicycle
+- bird
+- birthday
+- book
+- bridge
+- butterfly
+- cactus
+- camera
+- campfire
+- castle
+- cat
+- caterpillar
+- cheese
+- cherry
+- clock
+- cloud
+- compass
+- crab
+- crown
+- diamond
+- dinosaur
+- dog
+- dolphin
+- donut
+- dragon
+- drum
+- elephant
+- envelope
+- eye
+- fireworks
+- fish
+- flower
+- football
+- frog
+- giraffe
+- guitar
+- hamburger
+- hammer
+- helicopter
+- house
+- ice cream
+- island
+- jellyfish
+- key
+- kite
+- ladder
+- lighthouse
+- lightning
+- lion
+- lobster
+- lollipop
+- moon
+- mountain
+- mushroom
+- octopus
+- owl
+- panda
+- parachute
+- penguin
+- piano
+- pineapple
+- pirate
+- pizza
+- planet
+- popcorn
+- rainbow
+- robot
+- rocket
+- sandcastle
+- scissors
+- shark
+- skateboard
+- snail
+- snowman
+- spider
+- sunflower
+- sword
+- telescope
+- tornado
+- train
+- tree
+- turtle
+- umbrella
+- unicorn
+- volcano
+- watermelon
+- whale
+- windmill
+- wizard
+- alligator
+- ant
+- anteater
+- armadillo
+- baboon
+- badger
+- bat
+- beaver
+- beetle
+- bison
+- camel
+- chameleon
+- cheetah
+- chicken
+- chimpanzee
+- cobra
+- cockroach
+- cow
+- coyote
+- crocodile
+- deer
+- duck
+- eagle
+- ferret
+- flamingo
+- fox
+- gazelle
+- goat
+- goose
+- gorilla
+- grasshopper
+- hamster
+- hedgehog
+- hippopotamus
+- horse
+- hyena
+- iguana
+- kangaroo
+- koala
+- walrus
+- bacon
+- bagel
+- baguette
+- beans
+- beetroot
+- biscuit
+- blueberry
+- broccoli
+- brownie
+- burrito
+- cabbage
+- cake
+- carrot
+- cauliflower
+- celery
+- cereal
+- chocolate
+- coconut
+- cookie
+- corn
+- croissant
+- cucumber
+- cupcake
+- egg
+- fries
+- grape
+- honey
+- lasagna
+- lemon
+- lettuce
+- meatball
+- noodle
+- pancake
+- peach
+- pear
+- pretzel
+- pumpkin
+- sandwich
+- strawberry
+- taco
+- alarm
+- armchair
+- basket
+- bed
+- blanket
+- blender
+- bottle
+- bowl
+- broom
+- bucket
+- candle
+- carpet
+- chair
+- chimney
+- comb
+- couch
+- curtain
+- cushion
+- desk
+- dishwasher
+- door
+- drawer
+- dustpan
+- fan
+- faucet
+- fireplace
+- fork
+- freezer
+- frying pan
+- kettle
+- knife
+- lamp
+- microwave
+- mirror
+- mop
+- mug
+- oven
+- pillow
+- plate
+- refrigerator
+- apron
+- belt
+- bikini
+- blazer
+- boots
+- bracelet
+- button
+- cape
+- coat
+- dress
+- earmuffs
+- earrings
+- gloves
+- goggles
+- hairbrush
+- hairclip
+- handbag
+- hat
+- headband
+- helmet
+- high heels
+- jacket
+- jeans
+- mittens
+- necklace
+- pajamas
+- purse
+- raincoat
+- ring
+- sandals
+- scarf
+- shirt
+- shorts
+- skirt
+- slippers
+- sneakers
+- socks
+- sunglasses
+- sweater
+- tie
+- acorn
+- bamboo
+- bark
+- berry
+- blossom
+- boulder
+- branch
+- canyon
+- cave
+- cliff
+- clover
+- coral
+- creek
+- daisy
+- desert
+- dew
+- feather
+- fern
+- forest
+- glacier
+- grass
+- hail
+- iceberg
+- icicle
+- ivy
+- lake
+- leaf
+- log
+- meadow
+- meteor
+- moss
+- mud
+- ocean
+- pebble
+- pond
+- river
+- rose
+- seashell
+- waterfall
+- wave
+- airport
+- aquarium
+- attic
+- bakery
+- balcony
+- bank
+- barn
+- basement
+- bedroom
+- bookstore
+- bowling alley
+- bus stop
+- cabin
+- cafe
+- campground
+- cathedral
+- circus
+- classroom
+- courthouse
+- driveway
+- factory
+- farm
+- fence
+- garage
+- garden
+- greenhouse
+- hospital
+- hotel
+- igloo
+- kitchen
+- library
+- museum
+- playground
+- police station
+- restaurant
+- school
+- stadium
+- supermarket
+- theater
+- zoo
+- ambulance
+- bulldozer
+- bus
+- canoe
+- caravan
+- carriage
+- cart
+- chairlift
+- chariot
+- cruise ship
+- excavator
+- ferry
+- forklift
+- glider
+- gondola
+- hot air balloon
+- hovercraft
+- kayak
+- limousine
+- motorcycle
+- moving truck
+- race car
+- raft
+- roller coaster
+- sailboat
+- scooter
+- sled
+- snowmobile
+- spaceship
+- speedboat
+- steamroller
+- submarine
+- surfboard
+- taxi
+- tractor
+- tram
+- tricycle
+- unicycle
+- acrobat
+- actor
+- archer
+- astronomer
+- baker
+- barber
+- beekeeper
+- blacksmith
+- boxer
+- builder
+- carpenter
+- chef
+- clown
+- cowboy
+- dancer
+- dentist
+- detective
+- diver
+- doctor
+- farmer
+- firefighter
+- fisherman
+- gardener
+- hairdresser
+- jester
+- judge
+- knight
+- lifeguard
+- magician
+- mechanic
+- mermaid
+- mime
+- ninja
+- nurse
+- painter
+- pilot
+- plumber
+- police officer
+- scientist
+- singer
+- archery
+- badminton
+- baseball
+- bowling
+- chess
+- croquet
+- darts
+- dominoes
+- fencing
+- frisbee
+- golf
+- gymnastics
+- hockey
+- hopscotch
+- hula hoop
+- hurdle
+- ice skating
+- jigsaw puzzle
+- juggling
+- jump rope
+- karate
+- lacrosse
+- marbles
+- monkey bars
+- net
+- paddle
+- ping pong
+- pool table
+- racket
+- roller skates
+- rugby
+- seesaw
+- shuttlecock
+- ski
+- snorkeling
+- soccer
+- swing
+- tennis
+- volleyball
+- wrestling
+- accordion
+- anvil
+- arrow
+- bandage
+- binoculars
+- boomerang
+- bow
+- bubble
+- calculator
+- cannon
+- chain
+- chalk
+- chessboard
+- coffin
+- coin
+- computer
+- corkscrew
+- crayon
+- dice
+- doorknob
+- flashlight
+- handcuffs
+- horseshoe
+- hourglass
+- keyboard
+- lantern
+- magnet
+- microphone
+- paintbrush
+- pencil
+- pickaxe
+- pinwheel
+- pliers
+- rake
+- remote control
+- saw
+- stapler
+- thermometer
+- toothbrush
+- zipper
+- aardvark
+- abalone
+- albatross
+- alpaca
+- anaconda
+- anchovy
+- angelfish
+- antelope
+- aphid
+- arctic fox
+- barracuda
+- barnacle
+- basilisk
+- bass
+- bedbug
+- beluga
+- blackbird
+- blowfish
+- blue jay
+- blue whale
+- boa constrictor
+- bobcat
+- bonobo
+- buffalo
+- bull
+- bumblebee
+- buzzard
+- capybara
+- cardinal
+- caribou
+- cassowary
+- centipede
+- chick
+- chihuahua
+- chipmunk
+- cicada
+- clam
+- clownfish
+- cockatoo
+- collie
+- condor
+- coral snake
+- corgi
+- cougar
+- crane
+- crayfish
+- cricket
+- cuttlefish
+- dalmatian
+- dingo
+- doberman
+- dodo
+- dove
+- dragonfly
+- duckling
+- dung beetle
+- earthworm
+- earwig
+- eel
+- egret
+- elk
+- emu
+- falcon
+- firefly
+- fly
+- flying fish
+- flying squirrel
+- fruit bat
+- gecko
+- gerbil
+- gnat
+- golden retriever
+- goldfinch
+- goldfish
+- great dane
+- greyhound
+- grizzly bear
+- grouse
+- guinea pig
+- gull
+- halibut
+- hamster wheel
+- hare
+- hawk
+- hermit crab
+- heron
+- herring
+- hornbill
+- hornet
+- horsefly
+- hummingbird
+- husky
+- ibis
+- jackal
+- jaguar
+- jellyfish tank
+- kingfisher
+- kiwi bird
+- koi
+- komodo dragon
+- krill
+- ladybug
+- lamb
+- leech
+- lemur
+- leopard
+- lice
+- lionfish
+- llama
+- loon
+- lynx
+- macaw
+- magpie
+- mammoth
+- manatee
+- mandrill
+- manta ray
+- marmot
+- mayfly
+- meerkat
+- millipede
+- mink
+- mole
+- mongoose
+- monkey
+- moose
+- mosquito
+- moth
+- mouse
+- mule
+- narwhal
+- newt
+- nightingale
+- ocelot
+- orangutan
+- orca
+- osprey
+- ostrich
+- otter
+- oyster
+- parakeet
+- parrot
+- partridge
+- peacock
+- pelican
+- perch
+- pheasant
+- pig
+- pigeon
+- piranha
+- platypus
+- polar bear
+- pony
+- poodle
+- porcupine
+- porpoise
+- possum
+- prawn
+- praying mantis
+- puffin
+- pug
+- puma
+- quail
+- rabbit
+- raccoon
+- ram
+- rat
+- rattlesnake
+- raven
+- red panda
+- reindeer
+- rhinoceros
+- robin
+- rooster
+- salamander
+- salmon
+- sardine
+- scallop
+- scorpion
+- seahorse
+- seal
+- sea lion
+- sea otter
+- sea urchin
+- sheep
+- shrew
+- shrimp
+- silkworm
+- skunk
+- sloth
+- slug
+- sparrow
+- squid
+- squirrel
+- starfish
+- starling
+- stingray
+- stork
+- swan
+- swordfish
+- tadpole
+- tapir
+- tarantula
+- termite
+- tern
+- tick
+- tiger
+- toad
+- toucan
+- trout
+- tuna
+- turkey
+- vulture
+- wallaby
+- warthog
+- wasp
+- weasel
+- weevil
+- wildebeest
+- wolf
+- wolverine
+- wombat
+- woodpecker
+- yak
+- zebra
+- artichoke
+- arugula
+- asparagus
+- baked potato
+- barbecue
+- beef stew
+- bell pepper
+- blackberry
+- bread
+- breadstick
+- brussels sprout
+- butter
+- butternut squash
+- cantaloupe
+- cashew
+- cherry pie
+- chestnut
+- chili pepper
+- chili bowl
+- chives
+- cinnamon roll
+- coleslaw
+- corndog
+- cottage cheese
+- cranberry
+- cream cheese
+- crepe
+- curry
+- custard
+- date fruit
+- deviled egg
+- dough
+- dumpling
+- eggplant
+- enchilada
+- fig
+- fish stick
+- fondue
+- fortune cookie
+- fruit salad
+- garlic
+- gingerbread
+- gingerbread house
+- granola
+- grapefruit
+- gravy boat
+- green bean
+- guacamole
+- gumdrop
+- gummy bear
+- hard candy
+- hazelnut
+- hot dog
+- hot sauce
+- ice pop
+- jam jar
+- jellybean
+- kebab
+- kidney bean
+- kiwi fruit
+- leek
+- lentil
+- lime fruit
+- macaroni
+- mango
+- marshmallow
+- mashed potatoes
+- melon
+- milkshake
+- muffin
+- nachos
+- nectarine
+- oatmeal
+- olive
+- omelet
+- onion
+- onion ring
+- orange
+- oyster mushroom
+- papaya
+- pasta
+- pastry
+- pea
+- peanut
+- peanut butter
+- pecan
+- pepperoni
+- pickle
+- pistachio
+- plum
+- pomegranate
+- potato
+- potato chip
+- potpie
+- prawn cracker
+- pudding
+- quesadilla
+- radish
+- raisin
+- raspberry
+- ravioli
+- rhubarb
+- rice
+- rice cake
+- roast chicken
+- salad
+- salami
+- salsa
+- sausage
+- scrambled eggs
+- sesame seed
+- shrimp cocktail
+- smoothie
+- snow cone
+- soup
+- sourdough
+- soybean
+- spaghetti
+- spinach
+- sprinkles
+- steak
+- stuffing
+- sugar cube
+- sunflower seed
+- sushi
+- sweet potato
+- syrup
+- tangerine
+- toast
+- toffee
+- tomato
+- tortilla
+- truffle
+- turnip
+- waffle
+- walnut
+- whipped cream
+- yogurt
+- zucchini
+- apple pie
+- apple juice
+- banana split
+- bread pudding
+- candy cane
+- caramel apple
+- cheeseburger
+- cheesecake
+- chicken nugget
+- chocolate bar
+- chocolate fountain
+- chocolate milk
+- coffee
+- coffee bean
+- coffee cup
+- cotton candy
+- cup of tea
+- espresso
+- fried chicken
+- fruit basket
+- grilled cheese
+- hot chocolate
+- iced tea
+- lemonade
+- maple syrup
+- mint leaf
+- mozzarella
+- orange juice
+- pita bread
+- pizza slice
+- pork chop
+- root beer
+- spaghetti sauce
+- strawberry jam
+- sugar cookie
+- tea bag
+- tea kettle
+- trail mix
+- water bottle
+- anchor chain
+- antenna
+- ashtray
+- backrest
+- bar stool
+- bath mat
+- bathrobe
+- bathtub plug
+- beanbag
+- bed frame
+- bedpost
+- bedspread
+- birdcage
+- bookcase
+- bunk bed
+- cabinet
+- can opener
+- ceiling fan
+- chandelier
+- clothes hanger
+- coat rack
+- coffee table
+- colander
+- corkscrew bottle
+- countertop
+- crib
+- cutting board
+- deck chair
+- dining table
+- dish rack
+- doormat
+- drain
+- dresser
+- drying rack
+- duvet
+- electric blanket
+- extension cord
+- feather duster
+- filing cabinet
+- fire extinguisher
+- floor lamp
+- flowerpot
+- folding chair
+- footstool
+- fruit bowl
+- garbage bag
+- garbage can
+- garden hose
+- grandfather clock
+- hammock
+- hand towel
+- headboard
+- heating pad
+- ironing board
+- laundry basket
+- light bulb
+- light switch
+- mailbox
+- mattress
+- measuring cup
+- medicine cabinet
+- mixing bowl
+- nightstand
+- paper towel
+- pepper shaker
+- picture frame
+- placemat
+- plunger
+- potholder
+- pressure cooker
+- radiator
+- remote
+- rocking chair
+- rolling pin
+- room divider
+- rug
+- salt shaker
+- saucepan
+- screen door
+- shower
+- shower curtain
+- shower head
+- sink
+- soap
+- soap dispenser
+- sofa bed
+- sponge
+- spray bottle
+- step ladder
+- stereo
+- stool
+- storage box
+- stove
+- strainer
+- tea strainer
+- teapot
+- television
+- thermostat
+- tissue box
+- toaster
+- toilet
+- toilet brush
+- toilet paper
+- toothpaste
+- towel
+- towel rack
+- trash can
+- trophy cabinet
+- tumble dryer
+- vacuum cleaner
+- vase
+- venetian blind
+- washing machine
+- watering can
+- welcome mat
+- window
+- window sill
+- wood stove
+- wreath
+- zip bag
+- alloy wheel
+- airbag
+- airship
+- amphibious car
+- baby carriage
+- baggage cart
+- battleship
+- bicycle basket
+- bicycle bell
+- bicycle lock
+- biplane
+- blimp
+- brake pedal
+- bumper car
+- cable car
+- camper
+- car
+- cargo ship
+- catamaran
+- cement mixer
+- chopper motorcycle
+- convertible
+- covered wagon
+- dashboard
+- diesel engine
+- dirt bike
+- double decker bus
+- dump truck
+- engine
+- exhaust pipe
+- fighter jet
+- fishing boat
+- flat tire
+- freight train
+- fuel pump
+- garbage truck
+- go kart
+- golf cart
+- handbrake
+- handlebar
+- headlight
+- horse trailer
+- hubcap
+- ice cream truck
+- jet engine
+- jet ski
+- landing gear
+- lifeboat
+- lifebuoy
+- locomotive
+- luggage rack
+- minibus
+- minivan
+- monorail
+- moped
+- motorboat
+- oil tanker
+- oar
+- outboard motor
+- paddleboat
+- paraglider
+- parking meter
+- passenger jet
+- pedal boat
+- pickup truck
+- propeller
+- quad bike
+- rickshaw
+- road roller
+- rowboat
+- rudder
+- seat belt
+- semi truck
+- shopping cart
+- sidecar
+- snowplow
+- spare tire
+- space shuttle
+- speedometer
+- steamboat
+- steering wheel
+- streetcar
+- stretch limousine
+- tandem bicycle
+- tank
+- tow truck
+- traffic cone
+- traffic light
+- trailer
+- train station
+- trolleybus
+- tugboat
+- wheelbarrow
+- windshield
+- windshield wiper
+- yacht
+- zeppelin
+- traffic jam
+- crosswalk
+- highway
+- roundabout
+- speed bump
+- stop sign
+- toll booth
+- train track
+- runway
+- helipad
+- bus shelter
+- parking garage
+- pedestrian bridge
+- railroad crossing
+- ankle
+- arm
+- armpit
+- backbone
+- beard
+- belly button
+- bicep
+- blush
+- bone
+- brain
+- cheek
+- chin
+- ear
+- elbow
+- eyebrow
+- eyelash
+- eyelid
+- face
+- fang
+- finger
+- fingernail
+- fist
+- foot
+- forehead
+- freckle
+- hair
+- hand
+- heel
+- hip
+- jaw
+- knee
+- knuckle
+- leg
+- lip
+- lung
+- molar
+- mouth
+- mustache
+- neck
+- nose
+- nostril
+- palm
+- rib
+- shin
+- shoulder
+- skeleton
+- skull
+- smile
+- spine
+- stomach
+- teardrop
+- teeth
+- thumb
+- toe
+- tongue
+- tooth
+- torso
+- vein
+- wrinkle
+- wrist
+- anklet
+- ball gown
+- baseball cap
+- bath slippers
+- beanie
+- bib
+- blouse
+- bow tie
+- boxing glove
+- bra
+- breastplate
+- brooch
+- cardigan
+- chef hat
+- cleats
+- cloak
+- clogs
+- cufflink
+- diaper
+- diving suit
+- dressing gown
+- earplug
+- eye patch
+- face mask
+- fedora
+- fishing vest
+- flip flops
+- fur coat
+- gaiter
+- gas mask
+- graduation cap
+- hair ribbon
+- hard hat
+- headphones
+- hearing aid
+- hoodie
+- kimono
+- kilt
+- knee pad
+- lab coat
+- leotard
+- life jacket
+- mask
+- moccasin
+- nightgown
+- overalls
+- poncho
+- prom dress
+- rain boots
+- sari
+- school uniform
+- shin guard
+- ski mask
+- sleeping cap
+- sombrero
+- space suit
+- suspenders
+- swimsuit
+- top hat
+- tracksuit
+- tutu
+- underwear
+- veil
+- waistcoat
+- wedding dress
+- wetsuit
+- wig
+- wristwatch
+- anemone
+- autumn leaf
+- avalanche
+- bay
+- beach ball
+- beehive
+- beech tree
+- birch tree
+- blizzard
+- bloom
+- bonsai
+- brook
+- bud
+- bulrush
+- bush
+- buttercup
+- butte
+- cattail
+- cedar
+- cherry blossom
+- cobweb
+- conifer
+- constellation
+- crater
+- crescent moon
+- daffodil
+- dandelion
+- dawn
+- delta
+- driftwood
+- dune
+- earthquake
+- eclipse
+- elm tree
+- estuary
+- evergreen
+- falling star
+- field
+- fir tree
+- fire
+- fjord
+- flood
+- fog
+- fossil
+- frost
+- geyser
+- ginkgo
+- gorge
+- granite
+- gravel
+- haystack
+- hedge
+- hibiscus
+- hill
+- horizon
+- hot spring
+- hurricane
+- iris flower
+- isthmus
+- juniper
+- kelp
+- lagoon
+- landslide
+- lavender
+- lichen
+- lilac
+- lily
+- lotus
+- magnolia
+- mangrove
+- maple leaf
+- marigold
+- marsh
+- mesa
+- mineral
+- mist
+- morning glory
+- mountain pass
+- mountain range
+- night sky
+- oak tree
+- orchid
+- palm tree
+- pampas grass
+- pansy
+- petal
+- pine cone
+- pine tree
+- pollen
+- poppy
+- prairie
+- quartz
+- quicksand
+- rain
+- rain cloud
+- rainforest
+- rapids
+- reed
+- reef
+- reservoir
+- sand dune
+- sapling
+- savanna
+- seaweed
+- shrub
+- snowflake
+- snowstorm
+- soil
+- stalactite
+- stalagmite
+- stream
+- succulent
+- sun
+- sunbeam
+- sunrise
+- sunset
+- swamp
+- thistle
+- thundercloud
+- tide pool
+- tulip
+- valley
+- vine
+- violet flower
+- weeping willow
+- wetland
+- whirlpool
+- whitecap
+- willow
+- wisteria
+- woodland
+- yew tree
+- abbey
+- alley
+- amphitheater
+- apartment
+- arcade
+- archway
+- arena
+- art gallery
+- auditorium
+- awning
+- baggage claim
+- ballroom
+- bandstand
+- barbershop
+- bell tower
+- billboard
+- boat house
+- bookstall
+- border crossing
+- brewery
+- brick wall
+- bus depot
+- butcher shop
+- cafeteria
+- canal
+- candy store
+- car park
+- casino
+- cemetery
+- chalet
+- chapel
+- church
+- cinema
+- clock tower
+- community center
+- concert hall
+- construction site
+- cottage
+- dairy farm
+- dam
+- dance floor
+- deli
+- diner
+- dock
+- drawbridge
+- elevator
+- embassy
+- escalator
+- fairground
+- fire escape
+- fire station
+- fishing pier
+- flea market
+- food court
+- fort
+- fountain
+- front porch
+- funhouse
+- gazebo
+- gift shop
+- grocery store
+- gym
+- harbor
+- hedge maze
+- hot dog stand
+- ice rink
+- jail
+- jetty
+- kennel
+- landfill
+- lighthouse keeper
+- lobby
+- lumberyard
+- mansion
+- market stall
+- metro station
+- mill
+- mineshaft
+- moat
+- mosque
+- motel
+- mountain lodge
+- music store
+- observatory
+- office
+- opera house
+- orchard
+- pagoda
+- palace
+- pavilion
+- pet shop
+- pharmacy
+- picnic area
+- planetarium
+- plaza
+- pool
+- post office
+- power plant
+- prison
+- pyramid
+- quarry
+- ranch
+- record store
+- refinery
+- repair shop
+- rest stop
+- rooftop
+- ruins
+- sauna
+- scaffold
+- shed
+- shipping container
+- shopping mall
+- sidewalk
+- skyscraper
+- skylight
+- smokestack
+- stable
+- staircase
+- subway
+- swimming pool
+- synagogue
+- temple
+- tent
+- terrace
+- ticket booth
+- toll road
+- tower
+- town hall
+- treehouse
+- tunnel
+- turret
+- university
+- veterinary clinic
+- warehouse
+- water tower
+- well
+- wind farm
+- workshop
+- abacus
+- address book
+- air conditioner
+- alarm bell
+- amplifier
+- arc lamp
+- arcade machine
+- audio cassette
+- balance scale
+- ballpoint pen
+- battery
+- beaker
+- bell
+- blackboard
+- bluetooth speaker
+- bookmark
+- bottle cap
+- briefcase
+- broomstick
+- bulletin board
+- business card
+- button battery
+- calendar
+- camera lens
+- camera tripod
+- candle holder
+- cash register
+- cassette player
+- cd player
+- chalkboard
+- charging cable
+- clipboard
+- clothes peg
+- coat hanger
+- colored pencil
+- compass rose
+- computer mouse
+- computer screen
+- contact lens
+- crane hook
+- credit card
+- desk lamp
+- desktop computer
+- digital clock
+- doorbell
+- drone
+- dvd
+- earbuds
+- electric guitar
+- electric motor
+- eraser
+- ethernet cable
+- eyeglasses
+- fan blade
+- fax machine
+- film reel
+- fishing net
+- fishing rod
+- floppy disk
+- funnel
+- game console
+- globe
+- glue
+- glue stick
+- gramophone
+- graph paper
+- hair dryer
+- hand drill
+- hand mirror
+- harmonica
+- headset
+- hole punch
+- ink bottle
+- ink pad
+- joystick
+- key ring
+- keyhole
+- label maker
+- laptop
+- laser pointer
+- letter opener
+- light meter
+- loudspeaker
+- magnifying glass
+- megaphone
+- memory card
+- metal detector
+- microscope
+- mobile phone
+- modem
+- money box
+- mousetrap
+- music box
+- name tag
+- neon sign
+- notebook
+- paint can
+- paint roller
+- paper bag
+- paper clip
+- pencil case
+- pencil sharpener
+- perfume bottle
+- photo album
+- photocopier
+- pipe wrench
+- plug
+- postcard
+- power socket
+- printer
+- projector
+- pushpin
+- radio
+- record player
+- rubber band
+- ruler
+- safety pin
+- satellite dish
+- scissors case
+- screw
+- screwdriver
+- security camera
+- sewing machine
+- shopping bag
+- shredder
+- soldering iron
+- speaker
+- spiral notebook
+- stamp
+- staple
+- stethoscope
+- sticker
+- stopwatch
+- suitcase
+- tablet
+- tape dispenser
+- telephone
+- test tube
+- thumbtack
+- ticket
+- toolbox
+- tuning fork
+- typewriter
+- umbrella stand
+- usb stick
+- video camera
+- walkie talkie
+- webcam
+- weighing scale
+- wire
+- wrench
+- backflip
+- ballet
+- ballet shoe
+- baseball bat
+- baseball glove
+- basketball hoop
+- baton
+- bobsled
+- bocce
+- boomerang throw
+- boxing ring
+- bowling pin
+- bowling shoe
+- canoeing
+- catcher's mitt
+- checkers
+- climbing wall
+- cricket bat
+- curling stone
+- cycling
+- dartboard
+- diving board
+- fishing
+- football helmet
+- football goal
+- goalkeeper
+- golf ball
+- golf club
+- goalpost
+- handstand
+- hang gliding
+- high jump
+- hockey puck
+- hockey stick
+- hopscotch court
+- horse race
+- horseshoe game
+- hula dancer
+- ice hockey
+- inline skates
+- javelin
+- kayaking
+- kendo
+- kickball
+- kickboxing
+- kite surfing
+- long jump
+- luge
+- martial arts
+- medal
+- miniature golf
+- obstacle course
+- paddleboard
+- parasailing
+- pole vault
+- polo
+- pool cue
+- punching bag
+- race track
+- relay race
+- rock climbing
+- rowing
+- running shoe
+- sack race
+- scoreboard
+- scuba diver
+- shuffleboard
+- skate park
+- ski boot
+- ski jump
+- slalom
+- sledding
+- snowboard
+- softball
+- sports whistle
+- squash racket
+- stadium light
+- starting block
+- sumo wrestler
+- surfing
+- swimming
+- table football
+- target
+- tennis ball
+- tennis court
+- tennis racket
+- trampoline
+- treadmill
+- tug of war
+- volleyball net
+- water polo
+- water ski
+- weightlifting
+- wicket
+- windsurfing
+- wrestling mat
+- yoga mat
+- angel
+- alien
+- amulet
+- armor
+- battle axe
+- cauldron
+- centaur
+- chariot wheel
+- crystal ball
+- cyclops
+- demon
+- devil
+- elf
+- enchanted forest
+- fairy
+- fairy wand
+- flying carpet
+- ghost
+- giant
+- goblin
+- griffin
+- haunted house
+- hydra
+- invisibility cloak
+- jack-o-lantern
+- leprechaun
+- magic carpet
+- magic lamp
+- magic wand
+- medusa
+- minotaur
+- monster
+- mummy
+- ogre
+- pegasus
+- phoenix
+- pixie
+- prince
+- princess
+- queen
+- scepter
+- sea monster
+- siren
+- snow queen
+- sorcerer
+- spell book
+- sphinx
+- troll
+- vampire
+- werewolf
+- witch
+- wizard hat
+- zombie
+- dragon egg
+- treasure chest
+- pirate flag
+- pirate ship
+- eye of the storm
+- knight shield
+- castle gate
+- drawbridge chain
+- crown jewels
+- royal throne
+- glass slipper
+- seven dwarfs
+- fairy godmother
+- enchanted rose
+- pumpkin carriage
+- beast
+- magic mirror
+- dragonfly wing
+- unicorn horn
+- mermaid tail
+- robot arm
+- flying saucer
+- ray gun
+- space station
+- space helmet
+- astronaut boot
+- moon rover
+- meteor shower
+- alien planet
+- shooting star
+- time machine
+- wormhole
+- laser sword
+- robot dog
+- spacesuit glove
+- rocket launch
+- satellite
+- space capsule
+- actress
+- accountant
+- air traffic controller
+- archaeologist
+- architect
+- artist
+- astronaut helmet
+- auctioneer
+- author
+- babysitter
+- ballerina
+- banker
+- bartender
+- bellhop
+- bodyguard
+- bus driver
+- butcher
+- cameraman
+- captain
+- cashier
+- cave explorer
+- chess player
+- chimney sweep
+- coach
+- comedian
+- conductor
+- construction worker
+- cook
+- court reporter
+- crossing guard
+- curator
+- delivery cyclist
+- disc jockey
+- dog walker
+- electrician
+- engineer
+- explorer
+- fashion designer
+- fencer
+- flight attendant
+- florist
+- football player
+- fortune teller
+- funeral director
+- game show host
+- glassblower
+- goldsmith
+- gondolier
+- groundskeeper
+- gymnast
+- historian
+- hockey player
+- hotel porter
+- illustrator
+- interpreter
+- inventor
+- jockey
+- journalist
+- karate instructor
+- kayaker
+- landscaper
+- librarian
+- locksmith
+- lumberjack
+- mail carrier
+- matador
+- meteorologist
+- miner
+- model
+- mountaineer
+- movie director
+- musician
+- news anchor
+- opera singer
+- optician
+- paleontologist
+- paramedic
+- park ranger
+- pediatrician
+- pharmacist
+- photographer
+- pianist
+- potter
+- president
+- puppeteer
+- referee
+- reporter
+- sailor
+- sculptor
+- security guard
+- shoemaker
+- skater
+- ski instructor
+- soldier
+- stunt performer
+- surgeon
+- surveyor
+- tailor
+- taxi driver
+- teacher
+- tour guide
+- train driver
+- translator
+- truck driver
+- veterinarian
+- violinist
+- waiter
+- waitress
+- weaver
+- window cleaner
+- zookeeper
+- advent calendar
+- baby bottle
+- baby monitor
+- balloon
+- bandana
+- banner
+- birthday cake
+- birthday candle
+- birthday card
+- bonnet
+- bouquet
+- bride
+- bridesmaid
+- broadsword
+- bubble bath
+- bubble gum
+- bubble wand
+- bunting
+- camping stove

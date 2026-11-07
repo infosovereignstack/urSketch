@@ -1,0 +1,18 @@
+{
+  "nativeShips": 2,
+  "ownerOnlyAdmin": true,
+  "timerResetAndBounds": true,
+  "markdownUpload": 110,
+  "globalAndArtistDifficulty": true,
+  "wholeGestureUndo": true,
+  "fillAndClearUndo": true,
+  "peerCanvasIdentity": true,
+  "artworkHoldSeconds": 3.056,
+  "noExpiryReconnect": true,
+  "restoredScore": 10,
+  "restoredDrawingSeat": true,
+  "liveRecoveryRound": true,
+  "noGhostRejoin": true,
+  "ownerTransfer": true,
+  "mostRecentRoomOnly": true
+}

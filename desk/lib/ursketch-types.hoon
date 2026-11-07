@@ -7,7 +7,33 @@
 +$  message  [who=@t text=@t kind=@t audience=(unit @p) actor=(unit @p)]
 +$  avatar  [body=@t face=@t hat=@t]
 +$  solve  [who=@p label=@t points=@ud]
++$  room-settings  [seconds=@ud difficulty=@t individual=(map @p @t) enabled=(list @t) custom=(map @t (list @t))]
 +$  room
+  $:  title=@t
+      owner=@p
+      players=(list player)
+      phase=?(%waiting %choosing %drawing %reveal %finished)
+      turn=@ud
+      token=@ud
+      deadline=@da
+      answer=@t
+      choices=(list @t)
+      lines=(list line)
+      chat=(list message)
+      hints=@ud
+      revealed=(set @ud)
+      solves=@ud
+      solvers=(list solve)
+      outcome=(unit [label=@t score=@ud])
+      started=?
+      recent=(list @t)
+      settings=room-settings
+      absent=(map @p player)
+      order=(list @p)
+      finish-clock=?
+      artist=@p
+  ==
++$  room-v11
   $:  title=@t
       owner=@p
       players=(list player)

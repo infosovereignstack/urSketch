@@ -1,0 +1,38 @@
+{
+  "automaticMobileDetection": true,
+  "mobileOnlySend": true,
+  "manualLayoutChoice": true,
+  "playersAndGuessesAboveCanvas": true,
+  "noMobileChat": true,
+  "phoneAndLandscapeFit": true,
+  "fullCanvas": true,
+  "adminIconOutsideCanvas": true,
+  "installed": true,
+  "metadataUpdates": 60,
+  "themeDOMReuse": {
+    "classic": {
+      "optimizedMs": 4.900000035762787,
+      "previousMs": 13.699999988079071,
+      "rosterReused": true,
+      "previousRebuilt": true
+    },
+    "blingee": {
+      "optimizedMs": 2.599999964237213,
+      "previousMs": 14.200000047683716,
+      "rosterReused": true,
+      "previousRebuilt": true
+    },
+    "aero": {
+      "optimizedMs": 2.699999988079071,
+      "previousMs": 14,
+      "rosterReused": true,
+      "previousRebuilt": true
+    },
+    "spider-man": {
+      "optimizedMs": 3.899999976158142,
+      "previousMs": 14.400000035762787,
+      "rosterReused": true,
+      "previousRebuilt": true
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "default": {
+    "count": 2000,
+    "sha256": "165fed333a733203e489ce8fd92b43b7d98bb4a40f1e55c4f149b26a3ff95182"
+  },
+  "easy": {
+    "count": 500,
+    "sha256": "b5eb78bc4c1283744f281c9cc5f064c0ef2cbdb1590d2b3c973e416ce00cd413"
+  },
+  "hard": {
+    "count": 500,
+    "sha256": "8266cdb11a2644b3fa8e660c08f1f9231a0ed6317c05cd95222fdb5c419ee3e0"
+  },
+  "urbit": {
+    "count": 500,
+    "sha256": "2f0003214e45ea8d5fc9e6347418d8886118edf9fb2a4aae9feff35f9b89ef2c"
+  }
+}

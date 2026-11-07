@@ -1,0 +1,51 @@
+/+  *ursketch-types, ursketch-game, ursketch-words
+:-  %say
+|=  *
+=/  now=@da  ~2026.11.6
+?>  =(2.000 (lent default:ursketch-words))
+?>  =(500 (lent easy:ursketch-words))
+?>  =(500 (lent hard:ursketch-words))
+?>  =(500 (lent urbit:ursketch-words))
+?>  !(lien default:ursketch-words |=(w=@t ?|(=(w 'delivery van') =(w 'fire engine'))))
+=/  fresh=room  (fresh:ursketch-game 'Admin QA' ~zod)
+=/  r=room  (rejoin:ursketch-game (rejoin:ursketch-game fresh ~nec) ~bud)
+=.  r  (choose:ursketch-game r now)
+=/  old=room-v11
+  [title.r owner.r players.r phase.r turn.r token.r deadline.r answer.r choices.r lines.r chat.r hints.r revealed.r solves.r solvers.r outcome.r started.r recent.r]
+=/  upgraded=room  (upgrade-v11:ursketch-game old)
+?>  ?&(=(answer.r answer.upgraded) =(players.r players.upgraded) =(recent.r recent.upgraded) =(120 seconds.settings.upgraded) =(order.r order.upgraded))
+=/  colored=room  r(players ~[[~zod 8 %.n] [~nec 57 %.y] [~bud 3 %.n]])
+=/  left=room  (depart:ursketch-game colored ~nec now)
+?>  ?&(!(member:ursketch-game left ~nec) =(57 score:(~(got by absent.left) ~nec)))
+=/  returned=room  (rejoin:ursketch-game left ~nec)
+?>  ?&  =((turn players.returned |=(p=player who.p)) ~[~zod ~nec ~bud])
+        =(57 score:(need (seat:ursketch-game players.returned ~nec)))
+        solved:(need (seat:ursketch-game players.returned ~nec))
+        =(answer.returned answer.colored)
+        =(turn.returned turn.colored)
+    ==
+=/  next=room  (advance:ursketch-game left now)
+=/  returned-next=room  (rejoin:ursketch-game next ~nec)
+?>  =((turn players.returned-next |=(p=player who.p)) ~[~bud ~zod ~nec])
+?>  =(%.n solved:(need (seat:ursketch-game players.returned-next ~nec)))
+=/  restarted=room  (new-game:ursketch-game left now)
+?>  =(0 score:(~(got by absent.restarted) ~nec))
+=/  hard=room  (choose:ursketch-game r(settings settings.r(difficulty 'hard', seconds 180)) now)
+?>  ?&((lien hard:ursketch-words |=(w=@t =(w answer.hard))) =(deadline.hard (add now ~s180)))
+=/  per-player=room  (choose:ursketch-game r(settings settings.r(difficulty 'hard', individual (~(put by individual.settings.r) ~zod 'easy'))) now)
+?>  (lien easy:ursketch-words |=(w=@t =(w answer.per-player)))
+=/  a=line  ['#000000' 6 10 10 20 20 %stroke 100 %.n 0 'gesture-a:1']
+=/  b=line  a(id 'gesture-a:2')
+=/  c=line  a(id 'gesture-b:3', kind %clear)
+=/  undone=room  (undo:ursketch-game r(lines ~[c b a]))
+?>  =(lines.undone ~[b a])
+=.  undone  (undo:ursketch-game undone)
+?>  ?=(~ lines.undone)
+=/  hold=room  r(phase %reveal, deadline (add now ~s3), lines ~[a])
+=/  departed=room  (depart:ursketch-game hold ~zod now)
+?>  ?&(?=(%reveal phase.departed) =(lines.departed ~[a]) =(deadline.departed (add now ~s3)))
+=/  following=room  (advance:ursketch-game departed (add now ~s3))
+?>  ?&(?=(%drawing phase.following) =(~nec artist.following) =(turn.following 1))
+=/  serialized=vase  !>(returned)
+?>  =(returned !<(room [p.serialized (cue (jam q.serialized))]))
+[%noun 'PASS: 2000/500/500/500 banks, removed words, v11 migration, reconnect score/seat/solve retention, new-game reset, global and artist difficulty, configurable duration, whole-action undo and preserved reveal canvas']

@@ -1,8 +1,74 @@
-/+  *ursketch-types
+/+  *ursketch-types, ursketch-words
 |%
-++  words
+++  words  default:ursketch-words
+++  defaults
+  ^-  room-settings
+  [120 'default' ~ ~['default'] ~]
+++  upgrade-v11
+  |=  r=room-v11
+  ^-  room
+  [title.r owner.r players.r phase.r turn.r token.r deadline.r answer.r choices.r lines.r chat.r hints.r revealed.r solves.r solvers.r outcome.r started.r recent.r defaults ~ (turn players.r |=(p=player who.p)) (lien players.r |=(p=player solved.p)) ?~(players.r owner.r who.i.players.r)]
+++  bank
+  |=  [r=room id=@t]
   ^-  (list @t)
-  ~['airplane' 'anchor' 'apple' 'astronaut' 'avocado' 'backpack' 'banana' 'basketball' 'bathtub' 'beach' 'bear' 'bicycle' 'bird' 'birthday' 'book' 'bridge' 'butterfly' 'cactus' 'camera' 'campfire' 'castle' 'cat' 'caterpillar' 'cheese' 'cherry' 'clock' 'cloud' 'compass' 'crab' 'crown' 'diamond' 'dinosaur' 'dog' 'dolphin' 'donut' 'dragon' 'drum' 'elephant' 'envelope' 'eye' 'fireworks' 'fish' 'flower' 'football' 'frog' 'giraffe' 'guitar' 'hamburger' 'hammer' 'helicopter' 'house' 'ice cream' 'island' 'jellyfish' 'key' 'kite' 'ladder' 'lighthouse' 'lightning' 'lion' 'lobster' 'lollipop' 'moon' 'mountain' 'mushroom' 'octopus' 'owl' 'panda' 'parachute' 'penguin' 'piano' 'pineapple' 'pirate' 'pizza' 'planet' 'popcorn' 'rainbow' 'robot' 'rocket' 'sandcastle' 'scissors' 'shark' 'skateboard' 'snail' 'snowman' 'spider' 'sunflower' 'sword' 'telescope' 'tornado' 'train' 'tree' 'turtle' 'umbrella' 'unicorn' 'volcano' 'watermelon' 'whale' 'windmill' 'wizard' 'alligator' 'ant' 'anteater' 'armadillo' 'baboon' 'badger' 'bat' 'beaver' 'beetle' 'bison' 'camel' 'chameleon' 'cheetah' 'chicken' 'chimpanzee' 'cobra' 'cockroach' 'cow' 'coyote' 'crocodile' 'deer' 'duck' 'eagle' 'ferret' 'flamingo' 'fox' 'gazelle' 'goat' 'goose' 'gorilla' 'grasshopper' 'hamster' 'hedgehog' 'hippopotamus' 'horse' 'hyena' 'iguana' 'kangaroo' 'koala' 'walrus' 'bacon' 'bagel' 'baguette' 'beans' 'beetroot' 'biscuit' 'blueberry' 'broccoli' 'brownie' 'burrito' 'cabbage' 'cake' 'carrot' 'cauliflower' 'celery' 'cereal' 'chocolate' 'coconut' 'cookie' 'corn' 'croissant' 'cucumber' 'cupcake' 'egg' 'fries' 'grape' 'honey' 'lasagna' 'lemon' 'lettuce' 'meatball' 'noodle' 'pancake' 'peach' 'pear' 'pretzel' 'pumpkin' 'sandwich' 'strawberry' 'taco' 'alarm' 'armchair' 'basket' 'bed' 'blanket' 'blender' 'bottle' 'bowl' 'broom' 'bucket' 'candle' 'carpet' 'chair' 'chimney' 'comb' 'couch' 'curtain' 'cushion' 'desk' 'dishwasher' 'door' 'drawer' 'dustpan' 'fan' 'faucet' 'fireplace' 'fork' 'freezer' 'frying pan' 'kettle' 'knife' 'lamp' 'microwave' 'mirror' 'mop' 'mug' 'oven' 'pillow' 'plate' 'refrigerator' 'apron' 'belt' 'bikini' 'blazer' 'boots' 'bracelet' 'button' 'cape' 'coat' 'dress' 'earmuffs' 'earrings' 'gloves' 'goggles' 'hairbrush' 'hairclip' 'handbag' 'hat' 'headband' 'helmet' 'high heels' 'jacket' 'jeans' 'mittens' 'necklace' 'pajamas' 'purse' 'raincoat' 'ring' 'sandals' 'scarf' 'shirt' 'shorts' 'skirt' 'slippers' 'sneakers' 'socks' 'sunglasses' 'sweater' 'tie' 'acorn' 'bamboo' 'bark' 'berry' 'blossom' 'boulder' 'branch' 'canyon' 'cave' 'cliff' 'clover' 'coral' 'creek' 'daisy' 'desert' 'dew' 'feather' 'fern' 'forest' 'glacier' 'grass' 'hail' 'iceberg' 'icicle' 'ivy' 'lake' 'leaf' 'log' 'meadow' 'meteor' 'moss' 'mud' 'ocean' 'pebble' 'pond' 'river' 'rose' 'seashell' 'waterfall' 'wave' 'airport' 'aquarium' 'attic' 'bakery' 'balcony' 'bank' 'barn' 'basement' 'bedroom' 'bookstore' 'bowling alley' 'bus stop' 'cabin' 'cafe' 'campground' 'cathedral' 'circus' 'classroom' 'courthouse' 'driveway' 'factory' 'farm' 'fence' 'garage' 'garden' 'greenhouse' 'hospital' 'hotel' 'igloo' 'kitchen' 'library' 'museum' 'playground' 'police station' 'restaurant' 'school' 'stadium' 'supermarket' 'theater' 'zoo' 'ambulance' 'bulldozer' 'bus' 'canoe' 'caravan' 'carriage' 'cart' 'chairlift' 'chariot' 'cruise ship' 'delivery van' 'excavator' 'ferry' 'fire engine' 'forklift' 'glider' 'gondola' 'hot air balloon' 'hovercraft' 'kayak' 'limousine' 'motorcycle' 'moving truck' 'race car' 'raft' 'roller coaster' 'sailboat' 'scooter' 'sled' 'snowmobile' 'spaceship' 'speedboat' 'steamroller' 'submarine' 'surfboard' 'taxi' 'tractor' 'tram' 'tricycle' 'unicycle' 'acrobat' 'actor' 'archer' 'astronomer' 'baker' 'barber' 'beekeeper' 'blacksmith' 'boxer' 'builder' 'carpenter' 'chef' 'clown' 'cowboy' 'dancer' 'dentist' 'detective' 'diver' 'doctor' 'farmer' 'firefighter' 'fisherman' 'gardener' 'hairdresser' 'jester' 'judge' 'knight' 'lifeguard' 'magician' 'mechanic' 'mermaid' 'mime' 'ninja' 'nurse' 'painter' 'pilot' 'plumber' 'police officer' 'scientist' 'singer' 'archery' 'badminton' 'baseball' 'bowling' 'chess' 'croquet' 'darts' 'dominoes' 'fencing' 'frisbee' 'golf' 'gymnastics' 'hockey' 'hopscotch' 'hula hoop' 'hurdle' 'ice skating' 'jigsaw puzzle' 'juggling' 'jump rope' 'karate' 'lacrosse' 'marbles' 'monkey bars' 'net' 'paddle' 'ping pong' 'pool table' 'racket' 'roller skates' 'rugby' 'seesaw' 'shuttlecock' 'ski' 'snorkeling' 'soccer' 'swing' 'tennis' 'volleyball' 'wrestling' 'accordion' 'anvil' 'arrow' 'bandage' 'binoculars' 'boomerang' 'bow' 'bubble' 'calculator' 'cannon' 'chain' 'chalk' 'chessboard' 'coffin' 'coin' 'computer' 'corkscrew' 'crayon' 'dice' 'doorknob' 'flashlight' 'handcuffs' 'horseshoe' 'hourglass' 'keyboard' 'lantern' 'magnet' 'microphone' 'paintbrush' 'pencil' 'pickaxe' 'pinwheel' 'pliers' 'rake' 'remote control' 'saw' 'stapler' 'thermometer' 'toothbrush' 'zipper']
+  ?:  =(id 'default')  default:ursketch-words
+  ?:  =(id 'easy')  easy:ursketch-words
+  ?:  =(id 'hard')  hard:ursketch-words
+  ?:  =(id 'urbit')  urbit:ursketch-words
+  ?~  (~(get by custom.settings.r) id)  ~
+  (~(got by custom.settings.r) id)
+++  word-pool
+  |=  r=room
+  ^-  (list @t)
+  =/  artist=@p  who:(head players.r)
+  =/  preference=(unit @t)  (~(get by individual.settings.r) artist)
+  =/  level=@t  ?~(preference difficulty.settings.r u.preference)
+  ?:  =(level 'easy')  easy:ursketch-words
+  ?:  =(level 'hard')  hard:ursketch-words
+  ?:  =(1 (lent enabled.settings.r))  (bank r (head enabled.settings.r))
+  =/  all=(list @t)  (zing (turn enabled.settings.r |=(id=@t (bank r id))))
+  ~(tap in (silt all))
+++  seat
+  |=  [ps=(list player) who=@p]
+  ^-  (unit player)
+  ?~  ps  ~
+  ?:  =(who who.i.ps)  `i.ps
+  $(ps t.ps)
+++  rotate-order
+  |=  [order=(list @p) artist=@p]
+  ^-  (list @p)
+  =/  rest=(list @p)  order
+  =/  before=(list @p)  ~
+  |-  ^-  (list @p)
+  ?~  rest  order
+  ?:  =(artist i.rest)  (welp rest (flop before))
+  $(rest t.rest, before [i.rest before])
+++  rejoin
+  |=  [r=room who=@p]
+  ^-  room
+  ?:  (member r who)  r
+  ?>  !(full r)
+  =/  saved=(unit player)  (~(get by absent.r) who)
+  =/  restored=player  ?~(saved [who 0 %.n] u.saved)
+  =/  people=(list player)  (snoc players.r restored)
+  =/  order=(list @p)  ?:((lien order.r |=(ship=@p =(ship who))) order.r (snoc order.r who))
+  r(players (murn order |=(ship=@p (seat people ship))), order order, absent (~(del by absent.r) who))
+++  action-key
+  |=  id=@t
+  ^-  @t
+  =/  rest=tape  (trip id)
+  =/  prefix=tape  ~
+  |-  ^-  @t
+  ?~  rest  (crip (flop prefix))
+  ?:  =(i.rest ':')  (crip (flop prefix))
+  $(rest t.rest, prefix [i.rest prefix])
+++  undo
+  |=  r=room
+  ^-  room
+  ?~  lines.r  r
+  =/  r=room  r
+  =/  key=@t  (action-key id:(head lines.r))
+  r(lines (skip lines.r |=(l=line =((action-key id.l) key))))
 ++  history-seed
   |=  answer=@t
   ^-  (list @t)
@@ -11,7 +77,7 @@
 ++  migrate-v10
   |=  r=room-v10
   ^-  room
-  [title.r owner.r players.r phase.r turn.r token.r deadline.r answer.r choices.r lines.r chat.r hints.r revealed.r solves.r solvers.r outcome.r started.r (history-seed answer.r)]
+  [title.r owner.r players.r phase.r turn.r token.r deadline.r answer.r choices.r lines.r chat.r hints.r revealed.r solves.r solvers.r outcome.r started.r (history-seed answer.r) defaults ~ (turn players.r |=(p=player who.p)) (lien players.r |=(p=player solved.p)) ?~(players.r owner.r who.i.players.r)]
 ++  migrate-room
   |=  r=old-room
   ^-  room
@@ -33,18 +99,23 @@
       ~
       !=(%waiting phase.r)
       (history-seed answer.r)
+      defaults
+      ~
+      (turn players.r |=(p=player who.p))
+      %.n
+      ?~(players.r owner.r who.i.players.r)
   ==
 ++  migrate-v3
   |=  r=room-v3
   ^-  room
-  [title.r owner.r players.r phase.r turn.r token.r deadline.r answer.r choices.r lines.r (upgrade-chat chat.r) 0 ~ 0 ~ ~ !=(%waiting phase.r) (history-seed answer.r)]
+  [title.r owner.r players.r phase.r turn.r token.r deadline.r answer.r choices.r lines.r (upgrade-chat chat.r) 0 ~ 0 ~ ~ !=(%waiting phase.r) (history-seed answer.r) defaults ~ (turn players.r |=(p=player who.p)) (lien players.r |=(p=player solved.p)) ?~(players.r owner.r who.i.players.r)]
 ++  migrate-v5
   |=  [r=room-v5 now=@da]
   ^-  room
   =/  solves=@ud  (lent (skim players.r |=(p=player solved.p)))
   =/  finishing=?  ?&(?=(%drawing phase.r) (gth solves 0))
   =/  deadline=@da  ?:(finishing (min deadline.r (add now ~s20)) deadline.r)
-  [title.r owner.r players.r phase.r turn.r token.r deadline answer.r choices.r lines.r (upgrade-chat chat.r) hints.r revealed.r solves ~ ~ !=(%waiting phase.r) (history-seed answer.r)]
+  [title.r owner.r players.r phase.r turn.r token.r deadline answer.r choices.r lines.r (upgrade-chat chat.r) hints.r revealed.r solves ~ ~ !=(%waiting phase.r) (history-seed answer.r) defaults ~ (turn players.r |=(p=player who.p)) (lien players.r |=(p=player solved.p)) ?~(players.r owner.r who.i.players.r)]
 ++  upgrade-chat
   |=  old=(list message-v6)
   ^-  (list message)
@@ -54,26 +125,28 @@
   ^-  room
   =/  records=(list solve)
     (turn (skim players.r |=(p=player solved.p)) |=(p=player [who.p (scot %p who.p) 0]))
-  [title.r owner.r players.r phase.r turn.r token.r deadline.r answer.r choices.r lines.r (upgrade-chat chat.r) hints.r revealed.r solves.r records ~ !=(%waiting phase.r) (history-seed answer.r)]
+  [title.r owner.r players.r phase.r turn.r token.r deadline.r answer.r choices.r lines.r (upgrade-chat chat.r) hints.r revealed.r solves.r records ~ !=(%waiting phase.r) (history-seed answer.r) defaults ~ (turn players.r |=(p=player who.p)) (lien players.r |=(p=player solved.p)) ?~(players.r owner.r who.i.players.r)]
 ++  migrate-v7
   |=  r=room-v7
   ^-  room
-  [title.r owner.r players.r phase.r turn.r token.r deadline.r answer.r choices.r lines.r chat.r hints.r revealed.r solves.r solvers.r ~ ?|(!=(%waiting phase.r) (gth turn.r 0) (lien chat.r |=(m=message =(kind.m 'round')))) (history-seed answer.r)]
+  [title.r owner.r players.r phase.r turn.r token.r deadline.r answer.r choices.r lines.r chat.r hints.r revealed.r solves.r solvers.r ~ ?|(!=(%waiting phase.r) (gth turn.r 0) (lien chat.r |=(m=message =(kind.m 'round')))) (history-seed answer.r) defaults ~ (turn players.r |=(p=player who.p)) (lien players.r |=(p=player solved.p)) ?~(players.r owner.r who.i.players.r)]
 ++  migrate-v8
   |=  r=room-v8
   ^-  room
-  [title.r owner.r players.r phase.r turn.r token.r deadline.r answer.r choices.r lines.r chat.r hints.r revealed.r solves.r solvers.r outcome.r ?|(!=(%waiting phase.r) (gth turn.r 0) ?=(^ outcome.r) (lien chat.r |=(m=message =(kind.m 'round')))) (history-seed answer.r)]
+  [title.r owner.r players.r phase.r turn.r token.r deadline.r answer.r choices.r lines.r chat.r hints.r revealed.r solves.r solvers.r outcome.r ?|(!=(%waiting phase.r) (gth turn.r 0) ?=(^ outcome.r) (lien chat.r |=(m=message =(kind.m 'round')))) (history-seed answer.r) defaults ~ (turn players.r |=(p=player who.p)) (lien players.r |=(p=player solved.p)) ?~(players.r owner.r who.i.players.r)]
 ++  new-game
   |=  [r=room now=@da]
   ^-  room
   ?:  (lth (lent players.r) 2)
     r(phase %waiting, deadline ~2000.1.1, token +(token.r), lines ~, started %.y)
-  (choose r(turn 0, players (turn players.r |=(p=player p(score 0, solved %.n)))) now)
+  (choose r(turn 0, players (turn players.r |=(p=player p(score 0, solved %.n))), absent (~(run by absent.r) |=(p=player p(score 0, solved %.n)))) now)
 ++  resume
   |=  [r=room now=@da]
   ^-  room
   ?.  ?&(?=(%waiting phase.r) started.r (gte (lent players.r) 2))  r
   ?^  outcome.r  (new-game r now)
+  ?:  ?&(!=(answer.r '') (gth (lent recent.r) 0) ?=(^ order.r) =(i.order.r who:(head players.r)))
+    r(phase %drawing, deadline (add now (mul seconds.settings.r ~s1)))
   (choose r now)
 ++  winners
   |=  ps=(list player)
@@ -110,15 +183,17 @@
 ++  depart
   |=  [r=room who=@p now=@da]
   ^-  room
+  =/  saved=(unit player)  (seat players.r who)
+  =.  r  ?~(saved r r(absent (~(put by absent.r) who u.saved)))
   =/  artist=?  ?&(?=(^ players.r) =(who who.i.players.r))
   =/  remaining=(list player)  (skip players.r |=(p=player =(who who.p)))
   ?~  remaining
     r(players ~, phase %waiting, deadline ~2000.1.1, token +(token.r), lines ~, answer '', choices ~, hints 0, revealed ~, solves 0)
   =.  r  r(players remaining, owner ?:(=(who owner.r) who.i.remaining owner.r))
-  ?:  ?=(%finished phase.r)  r
+  ?:  ?|(?=(%finished phase.r) ?=(%reveal phase.r))  r
   ?:  (lth (lent remaining) 2)
-    r(phase %waiting, deadline ~2000.1.1, token +(token.r), answer '', choices ~, hints 0, revealed ~, solves 0)
-  ?:  ?&(artist ?|(?=(%choosing phase.r) ?=(%drawing phase.r) ?=(%reveal phase.r)))
+    r(phase %waiting, deadline ~2000.1.1)
+  ?:  ?&(artist ?|(?=(%choosing phase.r) ?=(%drawing phase.r)))
     ?:  (gte +(turn.r) 10)
       r(phase %finished, deadline (add now ~s40), token +(token.r), lines ~)
     (choose r(turn +(turn.r)) now)
@@ -126,7 +201,7 @@
 ++  fresh
   |=  [title=@t owner=@p]
   ^-  room
-  [title owner ~[[owner 0 %.n]] %waiting 0 0 ~2000.1.1 '' ~ ~ ~ 0 ~ 0 ~ ~ %.n ~]
+  [title owner ~[[owner 0 %.n]] %waiting 0 0 ~2000.1.1 '' ~ ~ ~ 0 ~ 0 ~ ~ %.n ~ defaults ~ ~[owner] %.n owner]
 ++  log
   |=  [r=room who=@t text=@t kind=@t audience=(unit @p) actor=(unit @p)]
   ^-  room
@@ -209,7 +284,7 @@
   ^-  room
   =/  first=?  =(solves.r 0)
   =.  r  (award r solver)
-  ?:(first r(deadline (add now ~s20)) r)
+  ?:(first r(deadline (add now ~s20), finish-clock %.y) r)
 ++  guess-points
   |=  previous=@ud
   ^-  @ud
@@ -255,7 +330,7 @@
   ::  Exclude the previous 100 assigned words; randomness only picks
   ::  among eligible words. History survives new games in this room.
   =/  used=(set @t)  (silt recent.r)
-  =/  available=(list @t)  (skip words |=(word=@t (~(has in used) word)))
+  =/  available=(list @t)  (skip (word-pool r) |=(word=@t (~(has in used) word)))
   ?>  (gth (lent available) 0)
   =/  seed=@ud  (mod (mug [now token.r turn.r recent.r]) (lent available))
   (begin r(players (turn players.r |=(p=player p(solved %.n)))) (snag seed available) now)
@@ -263,7 +338,7 @@
   |=  [r=room word=@t now=@da]
   ^-  room
   =/  history=(list @t)  [word recent.r]
-  r(phase %drawing, answer word, choices ~, lines ~, token +(token.r), deadline (add now ~s120), hints 0, revealed ~, solves 0, solvers ~, outcome ~, started %.y, recent (scag 100 history))
+  r(phase %drawing, answer word, choices ~, lines ~, token +(token.r), deadline (add now (mul seconds.settings.r ~s1)), hints 0, revealed ~, solves 0, solvers ~, outcome ~, started %.y, recent (scag 100 history), finish-clock %.n, absent (~(run by absent.r) |=(p=player p(solved %.n))), order (rotate-order order.r who:(head players.r)), artist who:(head players.r))
 ++  reveal
   |=  [r=room now=@da]
   ^-  room
@@ -274,5 +349,13 @@
   ?:  ?=(%choosing phase.r)  (choose r now)
   ?:  (gte +(turn.r) 10)
     r(phase %finished, deadline (add now ~s40), token +(token.r), lines ~)
-  (choose r(turn +(turn.r), players (welp (slag 1 players.r) (scag 1 players.r))) now)
+  =.  r  r(turn +(turn.r))
+  ?:  (lth (lent players.r) 2)
+    =/  rotated=(list @p)  (rotate-order order.r artist.r)
+    r(phase %waiting, deadline ~2000.1.1, token +(token.r), answer '', finish-clock %.n, order (welp (slag 1 rotated) (scag 1 rotated)))
+  =/  people=(list player)
+    ?:  =(artist.r who:(head players.r))
+      (welp (slag 1 players.r) (scag 1 players.r))
+    players.r
+  (choose r(players people) now)
 --

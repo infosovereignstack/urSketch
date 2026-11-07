@@ -1,0 +1,502 @@
+# hard
+
+- archaeology
+- architecture
+- astronomy
+- astrophysics
+- alchemy
+- aerodynamics
+- agriculture
+- amphibian
+- anatomy
+- anthropology
+- antigravity
+- antimatter
+- apprenticeship
+- archipelago
+- artificial intelligence
+- asteroid belt
+- asymmetry
+- atmospheric pressure
+- aurora borealis
+- avalanche rescue
+- biodiversity
+- bioluminescence
+- black hole
+- boiling point
+- botanical garden
+- butterfly effect
+- carbon footprint
+- cartography
+- centrifugal force
+- chain reaction
+- chemical reaction
+- chromosome
+- circadian rhythm
+- circuit board
+- climate change
+- cloning
+- combustion engine
+- communications satellite
+- compass needle
+- conservation
+- continental drift
+- coral bleaching
+- cosmic rays
+- cryogenics
+- crystal formation
+- cybersecurity
+- dark matter
+- data center
+- decomposition
+- deforestation
+- desalination
+- desertification
+- diffraction
+- digestion
+- double helix
+- drought
+- earth orbit
+- earthquake fault
+- echolocation
+- ecosystem
+- electromagnet
+- electromagnetic field
+- electron microscope
+- electroplating
+- embryo
+- endangered species
+- entropy
+- erosion
+- evaporation
+- evolution
+- excavation
+- exoskeleton
+- experiment
+- extinction
+- fibonacci spiral
+- fluid dynamics
+- food chain
+- fossil fuel
+- freezing point
+- friction
+- galaxy collision
+- genetic engineering
+- geothermal energy
+- germination
+- glacial movement
+- global warming
+- gravitational pull
+- greenhouse effect
+- habitat loss
+- half life
+- hibernation
+- hydroelectric dam
+- hydraulic press
+- hydroponics
+- ice age
+- immunity
+- inertia
+- infrared camera
+- insulation
+- interference
+- irrigation
+- isotope
+- kinetic energy
+- laboratory
+- land reclamation
+- lava flow
+- light spectrum
+- lunar eclipse
+- magnetic field
+- magnification
+- metamorphosis
+- meteorite
+- microorganism
+- migration
+- molecular structure
+- momentum
+- mutation
+- natural selection
+- nebula
+- neuron
+- nuclear reactor
+- ocean current
+- oil spill
+- optical illusion
+- osmosis
+- ozone layer
+- paleontology
+- parallel universe
+- parasitism
+- periodic table
+- permafrost
+- photosynthesis
+- planetary alignment
+- plate tectonics
+- pollination
+- potential energy
+- prism refraction
+- quantum mechanics
+- radiation
+- radio telescope
+- rain shadow
+- recycling plant
+- renewable energy
+- resonance
+- robotics
+- rusting
+- satellite navigation
+- scientific method
+- sedimentation
+- seismic wave
+- solar eclipse
+- solar flare
+- solar sail
+- sound barrier
+- space elevator
+- spectrometer
+- stalactite formation
+- static electricity
+- steam turbine
+- stem cell
+- sublimation
+- superconductor
+- supernova
+- sustainable farming
+- symbiosis
+- tidal power
+- time dilation
+- transistor
+- tsunami
+- ultraviolet light
+- vacuum chamber
+- vaccine
+- ventilation
+- volcanic ash
+- water cycle
+- water table
+- wave energy
+- weather balloon
+- weightlessness
+- wind turbine
+- zero gravity
+- absurdity
+- accountability
+- adaptation
+- adventure
+- affection
+- ambition
+- anticipation
+- anxiety
+- apathy
+- appreciation
+- arrogance
+- astonishment
+- authority
+- balance
+- betrayal
+- bravery
+- bureaucracy
+- chaos
+- charity
+- coincidence
+- collaboration
+- compassion
+- competition
+- compromise
+- concentration
+- confidence
+- conformity
+- confusion
+- conscience
+- conspiracy
+- contradiction
+- courage
+- creativity
+- curiosity
+- deception
+- dedication
+- democracy
+- determination
+- diplomacy
+- discipline
+- discovery
+- discrimination
+- disguise
+- distraction
+- diversity
+- doubt
+- dreaming
+- efficiency
+- embarrassment
+- empathy
+- endurance
+- envy
+- equality
+- eternity
+- exaggeration
+- exhaustion
+- expectation
+- fairness
+- fate
+- fear of heights
+- forgiveness
+- freedom
+- friendship
+- frustration
+- generosity
+- gratitude
+- greed
+- guilt
+- harmony
+- hesitation
+- homesickness
+- honesty
+- hope
+- humility
+- hypocrisy
+- imagination
+- impatience
+- independence
+- indifference
+- infinity
+- injustice
+- innovation
+- inspiration
+- intuition
+- irony
+- isolation
+- jealousy
+- justice
+- kindness
+- knowledge
+- leadership
+- loneliness
+- loyalty
+- luck
+- meditation
+- melancholy
+- memory
+- mercy
+- miscommunication
+- mystery
+- negotiation
+- nostalgia
+- obedience
+- optimism
+- overconfidence
+- panic
+- paradox
+- patience
+- peace
+- perfection
+- perseverance
+- perspective
+- pessimism
+- philosophy
+- politeness
+- prejudice
+- pride
+- privacy
+- procrastination
+- prosperity
+- punctuality
+- reconciliation
+- regret
+- reliability
+- resentment
+- resilience
+- responsibility
+- revenge
+- rivalry
+- sacrifice
+- sarcasm
+- self control
+- serendipity
+- skepticism
+- solidarity
+- solitude
+- sophistication
+- stubbornness
+- success
+- superstition
+- surprise
+- suspense
+- symmetry
+- sympathy
+- teamwork
+- temptation
+- tradition
+- transformation
+- trust
+- uncertainty
+- understanding
+- vanity
+- vigilance
+- wisdom
+- achilles heel
+- ace up your sleeve
+- against the clock
+- all ears
+- apple of my eye
+- back to square one
+- barking up the wrong tree
+- beat around the bush
+- bed of roses
+- between a rock and a hard place
+- bite off more than you can chew
+- bite the bullet
+- blessing in disguise
+- blind leading the blind
+- break the ice
+- burning bridges
+- burning the midnight oil
+- butterflies in your stomach
+- by the skin of your teeth
+- call it a day
+- caught red handed
+- chasing rainbows
+- cherry on top
+- chip on your shoulder
+- cloud nine
+- cold feet
+- couch potato
+- cry over spilled milk
+- curiosity killed the cat
+- cut corners
+- dark horse
+- dead end
+- diamond in the rough
+- double edged sword
+- down the rabbit hole
+- drawing a blank
+- elephant in the room
+- every cloud has a silver lining
+- eye of the beholder
+- face the music
+- feather in your cap
+- fish out of water
+- fly on the wall
+- food for thought
+- frog in your throat
+- full of hot air
+- get your ducks in a row
+- glass half full
+- go the extra mile
+- grasping at straws
+- green thumb
+- head in the clouds
+- heart of gold
+- hit the nail on the head
+- hold your horses
+- icing on the cake
+- in a nutshell
+- in hot water
+- in the same boat
+- iron out the wrinkles
+- it takes two to tango
+- jump on the bandwagon
+- jumping through hoops
+- keep your eyes peeled
+- kicking the bucket
+- kill two birds with one stone
+- last straw
+- let sleeping dogs lie
+- let the cat out of the bag
+- light at the end of the tunnel
+- like a moth to a flame
+- long shot
+- looking for a needle in a haystack
+- lost in translation
+- making a mountain out of a molehill
+- method to the madness
+- miss the boat
+- money does not grow on trees
+- more than meets the eye
+- moving the goalposts
+- music to my ears
+- no strings attached
+- not my cup of tea
+- off the beaten path
+- on thin ice
+- once in a blue moon
+- out of the frying pan
+- over the moon
+- paint the town red
+- piece of cake
+- playing with fire
+- pulling your leg
+- put all your eggs in one basket
+- raining cats and dogs
+- read between the lines
+- red herring
+- reinvent the wheel
+- ride the wave
+- ring a bell
+- rock the boat
+- rolling stone
+- salt of the earth
+- skeleton in the closet
+- slow and steady wins the race
+- snowball effect
+- spill the beans
+- steal the spotlight
+- storm in a teacup
+- straight from the horse's mouth
+- stuck in a rut
+- take it with a grain of salt
+- the ball is in your court
+- the early bird catches the worm
+- the tip of the iceberg
+- throw in the towel
+- time flies
+- under the weather
+- up in the air
+- walking on eggshells
+- water under the bridge
+- wear your heart on your sleeve
+- wild goose chase
+- wolf in sheep's clothing
+- wooden spoon award
+- you reap what you sow
+- astrolabe
+- automaton
+- barometer
+- bathysphere
+- bellows
+- binnacle
+- biplane engine
+- breakwater
+- bunsen burner
+- camshaft
+- candelabrum
+- capstan
+- carburetor
+- catacomb
+- cathedral organ
+- centrifuge
+- chiaroscuro
+- chrysalis
+- coffer
+- colonnade
+- concave mirror
+- convex lens
+- counterweight
+- drawloom
+- drawknife
+- electrocardiogram
+- electroscope
+- escapement
+- flying buttress
+- fractal
+- fulcrum
+- galvanometer
+- gargoyle
+- gimbal
+- gyroscope
+- harmonograph
+- harpsichord
+- heliostat
+- hologram
+- hourglass mechanism

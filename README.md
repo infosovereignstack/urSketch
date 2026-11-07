@@ -502,3 +502,11 @@ Names and scores now use the same status color across every theme: black for
 other players, green for the local player, and red for anyone who has guessed
 correctly during the round, including the local player. Round end clears the
 correct-guess red and restores black/green. Score sorting remains unchanged.
+
+## Room admin, undo, reconnect and mobile (0.26.0)
+
+See the [release behavior](docs/releases/0.26.0.md) for owner controls, whole-action
+undo, the three-second artwork hold, saved scores/turn positions on reconnect,
+mobile Send/layout settings, theme rendering improvements and bounded finale
+audio. [Word-bank notes](docs/WORDLISTS.md) link the 2,000 default words and the
+500-entry Easy, Hard and Urbit lists, also posted to Notebook2.

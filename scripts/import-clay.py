@@ -12,6 +12,8 @@ from pathlib import Path
 from release import VERSION_PARTS, ICON_DATA_URL, TILE_COLOR_HOON
 
 ROOT = Path(__file__).resolve().parents[1] / 'desk'
+DESK = os.environ.get('URSKETCH_DESK','ursketch')
+if not re.fullmatch(r'[a-z][a-z0-9-]*',DESK):raise ValueError('Invalid destination desk')
 
 def cord(text):
     return "'" + ''.join('\\%02x' % b if b in (10, 13, 39, 92) or b < 32 or b > 126 else chr(b) for b in text.encode()) + "'"
@@ -22,7 +24,7 @@ def change(name):
     path = ROOT / name
     mark = path.suffix[1:]
     parts = path.relative_to(ROOT).with_suffix('').parts
-    destination = '/=ursketch=/' + '/'.join(part if re.fullmatch(r'[a-z][a-z0-9-]*',part) else '['+cord(part)+']' for part in parts) + '/' + mark
+    destination = '/='+DESK+'=/' + '/'.join(part if re.fullmatch(r'[a-z][a-z0-9-]*',part) else '['+cord(part)+']' for part in parts) + '/' + mark
     if remove:
         return f'(fray:space:userlib {destination})'
     if mark == 'hoon':

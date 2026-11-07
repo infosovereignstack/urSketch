@@ -79,7 +79,7 @@ with sync_playwright() as p:
  g.reload();expect(g.locator('#lobby')).to_be_visible();expect(g.locator('#room-recovery')).to_be_visible(timeout=30000);g.wait_for_timeout(1000);assert g.evaluate('state===null'), 'Restored tab ghost-rejoined';g.locator('#rejoin-room').click();expect(g.locator('#game')).to_be_visible(timeout=30000);g.wait_for_function("state.celebrating && state.winner.name==='Zoe' && state.winner.score===20")
  assert g.evaluate('state.remainingMs<38000'), 'Refresh restarted 40 seconds'
  g.wait_for_function("heard.some(e=>e.cue==='Fireworks')");assert g.evaluate("heard.filter(e=>e.cue==='Fireworks').every(e=>e.loop && e.offset>0)"), 'Refreshed fireworks did not resume at their offset'
- h.wait_for_function("state.phase==='drawing' && state.turn===0 && state.winner===null",timeout=42000);elapsed=time.monotonic()-began;assert 39.5<elapsed<43,elapsed
+ h.wait_for_function("state.phase==='drawing' && state.turn===0 && state.winner===null",timeout=42000);elapsed=time.monotonic()-began;assert 42.5<elapsed<46,elapsed
  for page in pages:expect(page.locator('#game-finale')).to_be_hidden()
  assert h.evaluate("state.started && state.lines.length===0 && state.players.every(p=>p.score===0)"),'Automatic next game did not reset scores/canvas'
  assert h.locator('#messages .game-result').count()==1
@@ -89,5 +89,5 @@ with sync_playwright() as p:
  g.evaluate("setSearchMode('invite')");g.locator('#host').fill(f'~zod/{rid}');g.locator('#host-search').click();expect(g.locator('#game')).to_be_visible(timeout=30000);h.wait_for_function("state.phase==='drawing' && state.started");expect(h.locator('#start')).to_be_hidden()
  for page in (g,h):page.locator('#leave').click();expect(page.locator('#lobby')).to_be_visible()
  assert not errors,errors
- (ROOT/'artifacts/finale-verification.json').write_text(json.dumps({'nativeRounds':10,'winner':'Zoe','points':20,'durationSeconds':round(elapsed,3),'restartBlocked':True,'blankTimer':True,'boldRedFinalMessage':True,'rejoinPreservesWinnerAndDeadline':True,'fireworksPCM':True,'mute':True,'canvasClearedBeforeFinale':True,'automaticNewGame':True,'ownerRemoval':True,'explicitRejoinOnReload':True,'singleToolSelection':True,'suppliedFireworksLoop':True,'fireworksRejoinOffset':True,'scoreRankedRosterAndPencil':True},indent=2)+'\n')
+ (ROOT/'artifacts/finale-verification.json').write_text(json.dumps({'nativeRounds':10,'winner':'Zoe','points':20,'roundHoldAndFinaleSeconds':round(elapsed,3),'restartBlocked':True,'blankTimer':True,'boldRedFinalMessage':True,'rejoinPreservesWinnerAndDeadline':True,'fireworksPCM':True,'mute':True,'canvasClearedBeforeFinale':True,'automaticNewGame':True,'ownerRemoval':True,'explicitRejoinOnReload':True,'singleToolSelection':True,'suppliedFireworksLoop':True,'fireworksRejoinOffset':True,'scoreRankedRosterAndPencil':True},indent=2)+'\n')
  browser.close();print('PASS: ten native rounds, final scoring, 40-second finale, blank timer, fireworks PCM/mute, exact bold red result, explicit refresh rejoin, owner removal, single tool state, cleared canvas and automatic next game')

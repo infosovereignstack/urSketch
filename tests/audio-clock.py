@@ -54,6 +54,14 @@ with sync_playwright() as p:
  assert page.evaluate("nodes.length===1 && nodes[0].urSketchGain===.5 && Math.abs(nodes[0].testStopAt-scheduled.at(-1).when-20)<.05")
  page.evaluate("()=>{engine.stopFireworks();nodes.length=0;engine.fireworks({key:'late',elapsed:21,remaining:19000});engine.settings();}")
  assert page.evaluate('nodes.length')==0,'Late rejoin restarted fireworks after the audio window'
+ # A stalled device audio clock cannot keep fireworks alive past wall time.
+ page.evaluate("""()=>{engine.stop();nodes.length=0;engine.countdown(1000,'finishing');engine.fireworks({key:'wall-bound',elapsed:0,remaining:350});window.fireworksTest=nodes.find(n=>n.urSketchCue==='Fireworks');window.ticksBefore=scheduled.filter(s=>s.cue==='TickingNoise').length;engine.countdown(1000,'illegal-during-finale');}""")
+ assert page.evaluate("nodes.filter(n=>n.urSketchCue==='TickingNoise').every(n=>n.cancelled) && scheduled.filter(s=>s.cue==='TickingNoise').length===ticksBefore")
+ page.wait_for_timeout(500);assert page.evaluate('fireworksTest.cancelled'),'Fireworks survived its wall-clock deadline'
+ # An early ended notification is final; do not create rapid replacement loops.
+ page.evaluate("""()=>{engine.stop();nodes.length=0;engine.fireworks({key:'ended-once',elapsed:0,remaining:2000});const v=nodes[0];v.onended?.();stop.call(v);}""")
+ page.wait_for_timeout(150);assert page.evaluate('nodes.length')==1,'Ended fireworks were restarted repeatedly'
+ page.evaluate('engine.stop()')
  assert not errors,errors
- (ROOT/'artifacts/audio-clock-verification.json').write_text(json.dumps({'decodedCues':len(urls),'suppliedFireworksPCMAndLoop':True,'fireworksHalfGain':True,'fireworksTwentySecondAudioWindow':True,'lateFinaleRemainsSilent':True,'fireworksMuteAndStop':True,'nonzeroPCM':True,'backgroundCue':True,'wholeWindowScheduledAhead':True,'twoSecondTicks':8,'intervalSeconds':.25,'muteCancelsScheduledSources':True,'leavingStopsScheduler':True,'clockDivergenceCannotReplayFinishedSlots':True,'completedRoundCannotRestart':True},indent=2)+'\n')
+ (ROOT/'artifacts/audio-clock-verification.json').write_text(json.dumps({'decodedCues':len(urls),'suppliedFireworksPCMAndLoop':True,'fireworksHalfGain':True,'fireworksTwentySecondAudioWindow':True,'lateFinaleRemainsSilent':True,'wallClockCutsOffFireworks':True,'ticksCannotOverlapFinale':True,'earlyEndedFireworksCannotRestart':True,'fireworksMuteAndStop':True,'nonzeroPCM':True,'backgroundCue':True,'wholeWindowScheduledAhead':True,'twoSecondTicks':8,'intervalSeconds':.25,'muteCancelsScheduledSources':True,'leavingStopsScheduler':True,'clockDivergenceCannotReplayFinishedSlots':True,'completedRoundCannotRestart':True},indent=2)+'\n')
  browser.close();print('PASS: real decoded PCM, background turn alerts, ahead-scheduled 4 Hz ticks, mute cancellation and stopped scheduler')

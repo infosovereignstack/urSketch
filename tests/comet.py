@@ -105,7 +105,7 @@ with sync_playwright() as p:
     expect(page.locator('#host-search')).to_have_text('Search →')
     assert 'Draw a little closer.' not in page.locator('body').inner_text()
     assert page.evaluate('document.documentElement.scrollWidth <= innerWidth')
-    assert page.locator('#tool-grid button').count() == 10
+    assert page.locator('#tool-grid button').count() == 11
     assert page.locator('#pen').get_attribute('title') == 'Pen (P)'
     assert page.locator('#brush').get_attribute('title') == 'Brush (B)'
     assert page.locator('#host-form').count() == 1
