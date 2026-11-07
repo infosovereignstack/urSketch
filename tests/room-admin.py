@@ -22,7 +22,7 @@ with sync_playwright() as p:
   page=context.new_page();page.on('pageerror',lambda e:errors.append(str(e)));page.goto(origin+'/apps/ursketch/connect');page.locator('#player-name').fill(name);page.locator('#connect-submit').click();page.wait_for_url('**/apps/ursketch/play');page.wait_for_function('connectionReady');pages.append(page)
  h,g=pages
  h.locator('#create-open').click();h.locator('#title').fill('Admin QA '+str(time.time_ns()));h.locator('#create-form button.primary').click();expect(h.locator('#game')).to_be_visible(timeout=30000);rid=h.evaluate('roomId')
- g.evaluate("setSearchMode('invite')");g.locator('#host').fill('~zod/'+rid);g.locator('#host-search').click();expect(g.locator('#game')).to_be_visible(timeout=30000);h.wait_for_function('state.players.length===2')
+ g.evaluate("async room=>{await browse('~zod');await joinRoom(room)}",arg=rid);expect(g.locator('#game')).to_be_visible(timeout=30000);h.wait_for_function('state.players.length===2')
  expect(h.locator('#admin-open')).to_be_visible();expect(g.locator('#admin-open')).to_be_hidden()
  valid={'seconds':120,'difficulty':'default','enabled':['default'],'individual':[]}
  assert g.evaluate("data=>api.poke('admin',data).then(()=>false,()=>true)",valid),'Non-owner configured room'
@@ -56,7 +56,7 @@ with sync_playwright() as p:
  expect(h.locator('#admin-open')).to_be_hidden();expect(g.locator('#admin-open')).to_be_visible()
  # Only the most recently joined room may populate recovery.
  h.locator('#leave').click();expect(h.locator('#lobby')).to_be_visible();h.locator('#create-open').click();second='Most recent '+str(time.time_ns());h.locator('#title').fill(second);h.locator('#create-form button.primary').click();expect(h.locator('#game')).to_be_visible(timeout=30000);second_id=h.evaluate('roomId')
- g.locator('#leave').click();expect(g.locator('#lobby')).to_be_visible();g.evaluate("setSearchMode('invite')");g.locator('#host').fill('~zod/'+second_id);g.locator('#host-search').click();expect(g.locator('#game')).to_be_visible(timeout=30000);h.wait_for_function('state.players.length===2')
+ g.locator('#leave').click();expect(g.locator('#lobby')).to_be_visible();g.evaluate("async room=>{await browse('~zod');await joinRoom(room)}",arg=second_id);expect(g.locator('#game')).to_be_visible(timeout=30000);h.wait_for_function('state.players.length===2')
  h.locator('#leave').click();expect(h.locator('#lobby')).to_be_visible();expect(h.locator('#room-recovery')).to_be_visible();h.wait_for_function('(id)=>savedRoom?.id===id',arg=second_id);assert second in h.locator('#recovery-detail').inner_text() and title not in h.locator('#recovery-detail').inner_text()
  g.locator('#leave').click();expect(g.locator('#lobby')).to_be_visible()
  assert not errors,errors

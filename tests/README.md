@@ -524,3 +524,16 @@ regressions and mobile/performance checks. The installed comet passed native
 admin rules and browser lifecycle/layout/publication checks. Installed mobile
 checks confirm the admin icon stays outside the drawing canvas. Both isolated
 test ships are stopped; the real comet remains running.
+
+## 0.26.1 lobby and canvas prompts
+
+`comet.py` checks that invite controls and code parsing are absent and old invite
+URLs remain in an unsearched lobby. It checks the yellow host banner's canvas
+placement, disabled state with one player, enabled Start action with two,
+owner-only visibility, and replacement by the artist prompt. Multiword hint
+fixtures check blank word separators both before and after letter reveals.
+Multiplayer suites now set up rooms through host search and room selection.
+
+Preview and installed-comet checks passed for 0.26.1 on November 7, 2026,
+including the published Treaty version. `artifacts/host-start-banner.png`
+records the first-game banner on the installed comet.

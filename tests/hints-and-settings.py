@@ -13,7 +13,7 @@ with sync_playwright() as p:
         page=context.new_page();page.on('pageerror',lambda e:errors.append(str(e)));page.goto(origin+'/apps/ursketch/play');expect(page.locator('#host-search')).to_be_enabled(timeout=30000);pages.append(page)
     h,g=pages
     h.locator('#create-open').click();h.locator('#title').fill(f'Hints {time.time_ns()}');h.locator('#create-form button.primary').click();expect(h.locator('#game')).to_be_visible(timeout=30000)
-    room=h.evaluate('roomId');g.evaluate("setSearchMode(\'invite\')");g.locator('#host').fill(f'~zod/{room}');g.locator('#host-search').click();expect(g.locator('#game')).to_be_visible(timeout=30000)
+    room=h.evaluate('roomId');g.evaluate("async room=>{await browse('~zod');await joinRoom(room)}",arg=room);expect(g.locator('#game')).to_be_visible(timeout=30000)
     h.locator('#start').click();expect(h.locator('#choices button')).to_have_count(3);h.locator('#choices button').first.click()
     for page in pages:page.wait_for_function("state.phase==='drawing'")
     answer=h.evaluate('state.answer')

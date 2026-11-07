@@ -34,7 +34,7 @@ with sync_playwright() as p:
  h,g=pages
  h.locator('#create-open').click();assert h.locator('#create-dialog').evaluate("e=>getComputedStyle(e).borderRadius")=='0px'
  h.screenshot(path=str(ROOT/'artifacts/classic-create-room.png'));h.locator('#title').fill('Theme QA '+str(time.time_ns()));h.locator('#create-form button.primary').click();expect(h.locator('#game')).to_be_visible(timeout=30000)
- rid=h.evaluate('roomId');g.evaluate("setSearchMode('invite')");g.locator('#host').fill('~zod/'+rid);g.locator('#host-search').click();expect(g.locator('#game')).to_be_visible(timeout=30000)
+ rid=h.evaluate('roomId');g.evaluate("async room=>{await browse('~zod');await joinRoom(room)}",arg=rid);expect(g.locator('#game')).to_be_visible(timeout=30000)
  assert h.locator('.game-logo').evaluate('e=>e.complete&&e.naturalWidth>0')
  h.locator('#start').click();expect(h.locator('#choices button')).to_have_count(3);expect(h.locator('#classic-round')).to_contain_text('Round 1 of 10')
  assert h.locator('#choices button').first.evaluate('e=>getComputedStyle(e).borderRadius')=='0px'

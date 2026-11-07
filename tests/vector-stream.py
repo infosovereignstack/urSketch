@@ -28,7 +28,7 @@ with sync_playwright() as p:
     h,g=pages
     h.locator('#create-open').click();h.locator('#title').fill(f'Vector load {time.time_ns()}');h.locator('#create-form button.primary').click()
     expect(h.locator('#game')).to_be_visible(timeout=30000);room=h.evaluate('roomId')
-    g.evaluate("setSearchMode(\'invite\')");g.locator('#host').fill(f'~zod/{room}');g.locator('#host-search').click()
+    g.evaluate("async room=>{await browse('~zod');await joinRoom(room)}",arg=room)
     expect(g.locator('#game')).to_be_visible(timeout=30000)
     assert h.evaluate('roomStream') and g.evaluate('roomStream')
     h.locator('#start').click();expect(h.locator('#choices button')).to_have_count(3);h.locator('#choices button').first.click()
@@ -78,7 +78,7 @@ with sync_playwright() as p:
     legacy=legacy_context.new_page()
     legacy.goto(G+'/apps/ursketch/play');expect(legacy.locator('#host-search')).to_be_enabled(timeout=30000)
     legacy.evaluate("""()=>{const subscribe=api.subscribe.bind(api);api.subscribe=(path,...args)=>path.startsWith('/stream/')?Promise.reject(new Error('The host could not open that room or room list.')):subscribe(path,...args);}""")
-    legacy.evaluate("setSearchMode(\'invite\')");legacy.locator('#host').fill(f'~zod/{room}');legacy.locator('#host-search').click()
+    legacy.evaluate("async room=>{await browse('~zod');await joinRoom(room)}",arg=room)
     expect(legacy.locator('#game')).to_be_visible(timeout=30000)
     legacy.wait_for_function('state.lines.length===1680');same_board(h,legacy)
     send_lines(h,1680,10);legacy.wait_for_function('state.lines.length===1690');g.wait_for_function('state.lines.length===1690')
@@ -97,7 +97,7 @@ with sync_playwright() as p:
     # New clients fall back cleanly when a host rejects the stream subscription.
     fallback=contexts[1].new_page();fallback.goto(G+'/apps/ursketch/play');expect(fallback.locator('#host-search')).to_be_enabled(timeout=30000)
     fallback.evaluate("""()=>{const subscribe=api.subscribe.bind(api);api.subscribe=(path,...args)=>path.startsWith('/stream/')?Promise.reject(new Error('The host could not open that room or room list.')):subscribe(path,...args);}""")
-    fallback.evaluate("setSearchMode(\'invite\')");fallback.locator('#host').fill(f'~zod/{room}');fallback.locator('#host-search').click()
+    fallback.evaluate("async room=>{await browse('~zod');await joinRoom(room)}",arg=room)
     expect(fallback.locator('#game')).to_be_visible(timeout=30000);assert not fallback.evaluate('roomStream');same_board(h,fallback)
     for page in [legacy,fallback]:page.evaluate('api.unsubscribe(roomSub)')
     legacy_context.close();fallback.close()

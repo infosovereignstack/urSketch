@@ -22,7 +22,7 @@ body.playing[data-layout=classic] #classic-round{white-space:nowrap;overflow:hid
 body.playing[data-layout=classic] #artist-secret{display:flex;flex-direction:column;gap:0;font-size:11px;line-height:17px;font-weight:bold}
 body.playing[data-layout=classic] #word,body.playing[data-layout=classic] #word-value{color:#f00}
 body.playing[data-layout=classic] .room-actions{position:fixed;left:118px;top:6px;display:flex;flex-direction:column;gap:3px;align-items:stretch;margin:0;pointer-events:auto}
-body.playing[data-layout=classic] .room-actions #invite,body.playing[data-layout=classic] .room-actions #leave{height:14px;width:43px;padding:0;font:8px/9px Verdana,Arial,sans-serif;background:#ccc;border:2px outset #eee}
+body.playing[data-layout=classic] .room-actions #leave{height:14px;width:43px;padding:0;font:8px/9px Verdana,Arial,sans-serif;background:#ccc;border:2px outset #eee}
 body.playing[data-layout=classic] #timer-dial{position:fixed;right:9px;top:22px;width:42px;height:42px;margin:0;border:1.5px solid #777;box-shadow:inset 0 0 0 1px #eee}
 body.playing[data-layout=classic] .game-grid{display:grid;grid-template-columns:48% minmax(0,1fr);grid-template-rows:56% 40px minmax(0,1fr);gap:4px 6px;min-height:0}
 body.playing[data-layout=classic] .left-top{grid-area:1/1;grid-template-columns:35% minmax(0,1fr);gap:8px;height:auto;min-height:0}
@@ -214,9 +214,11 @@ body.playing[data-layout=classic] #canvas{background:#fff;outline:1px solid #999
 
 body[data-layout=classic] #create-form #create-error{color:#b00020}
 body.playing[data-layout=classic] .room-notice{display:flex;align-items:center;justify-content:space-between;gap:10px;flex:none;padding:3px 6px;min-height:25px;font:11px/16px Verdana,Arial,sans-serif;color:#000}
-body.playing[data-layout=classic] .room-notice button{padding:2px 12px;font:11px Verdana,Arial,sans-serif}
 body.playing[data-theme=blingee] .room-notice{color:#fff}
 #artist-banner{position:absolute;left:var(--board-left,0);top:var(--board-top,0);width:var(--board-width,100%);background:#ffffa0;color:#000;text-align:center;font:bold clamp(10px,1.3vw,18px)/1.35 Verdana,Arial,sans-serif;padding:4px 8px;pointer-events:none;z-index:2}
+#artist-banner #start{display:block;width:100%;padding:4px;border:0;border-radius:0;background:transparent;color:inherit;font:inherit;text-align:center;pointer-events:auto}
+#artist-banner #start span{text-decoration:underline}
+#artist-banner #start:not(:disabled):hover{background:#ffffc8}
 body.playing[data-layout=classic] .message:is(.announcement,.found-word,.reward,.artist-word,.round,.round-result){color:#f00}
 body.playing[data-layout=classic] .message strong{font-weight:bold}
 body.playing[data-layout=classic]:not(.is-artist) #guess-form{display:flex}

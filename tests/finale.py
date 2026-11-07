@@ -29,14 +29,14 @@ with sync_playwright() as p:
   page.wait_for_function('gameAudio?.loaded.length===10',timeout=30000);pages.append(page)
  h,g=pages
  h.locator('#create-open').click();h.locator('#title').fill(f'Finale QA {time.time_ns()}');h.locator('#create-form button.primary').click();expect(h.locator('#game')).to_be_visible(timeout=30000)
- rid=h.evaluate('roomId');g.evaluate("setSearchMode('invite')");g.locator('#host').fill(f'~zod/{rid}');g.locator('#host-search').click();expect(g.locator('#game')).to_be_visible(timeout=30000)
+ rid=h.evaluate('roomId');g.evaluate("async room=>{await browse('~zod');await joinRoom(room)}",arg=rid);expect(g.locator('#game')).to_be_visible(timeout=30000)
  h.wait_for_function('state.players.length===2')
  # Removing players is owner-only; the removed client must stay out until it chooses to join.
  g.locator('#players .player-name').filter(has_text='Alice').click();expect(g.locator('#remove-player')).to_be_hidden();g.locator('#player-profile-dialog form button').click()
  assert g.evaluate("api.poke('kick',{player:'~zod'}).then(()=>false,()=>true)")
  h.locator('#players .player-name').filter(has_text='Zoe').click();expect(h.locator('#remove-player')).to_be_visible();h.locator('#remove-player').click()
  expect(g.locator('#lobby')).to_be_visible();h.wait_for_function('state.players.length===1');g.wait_for_timeout(1500);assert h.evaluate('state.players.length===1')
- g.evaluate("setSearchMode('invite')");g.locator('#host').fill(f'~zod/{rid}');g.locator('#host-search').click();expect(g.locator('#game')).to_be_visible(timeout=30000)
+ g.evaluate("async room=>{await browse('~zod');await joinRoom(room)}",arg=rid);expect(g.locator('#game')).to_be_visible(timeout=30000)
  h.wait_for_function('state.players.length===2');h.locator('#start').click();h.wait_for_function("state.phase==='drawing'")
  # Every tool has one selected button, with icon and hit box contained inside its rectangle.
  h.locator('#fill').click();assert h.evaluate("drawing.selected==='fill' && document.querySelectorAll('#tool-grid [aria-pressed=true]').length===1")
@@ -86,7 +86,7 @@ with sync_playwright() as p:
  expect(h.locator('#start')).to_be_hidden()
  # A started room waits/resumes automatically after a removal drops it below two players.
  h.locator('#players .player-name').filter(has_text='Zoe').click();h.locator('#remove-player').click();expect(g.locator('#lobby')).to_be_visible();h.wait_for_function("state.phase==='waiting' && state.started");expect(h.locator('#start')).to_be_hidden()
- g.evaluate("setSearchMode('invite')");g.locator('#host').fill(f'~zod/{rid}');g.locator('#host-search').click();expect(g.locator('#game')).to_be_visible(timeout=30000);h.wait_for_function("state.phase==='drawing' && state.started");expect(h.locator('#start')).to_be_hidden()
+ g.evaluate("async room=>{await browse('~zod');await joinRoom(room)}",arg=rid);expect(g.locator('#game')).to_be_visible(timeout=30000);h.wait_for_function("state.phase==='drawing' && state.started");expect(h.locator('#start')).to_be_hidden()
  for page in (g,h):page.locator('#leave').click();expect(page.locator('#lobby')).to_be_visible()
  assert not errors,errors
  (ROOT/'artifacts/finale-verification.json').write_text(json.dumps({'nativeRounds':10,'winner':'Zoe','points':20,'roundHoldAndFinaleSeconds':round(elapsed,3),'restartBlocked':True,'blankTimer':True,'boldRedFinalMessage':True,'rejoinPreservesWinnerAndDeadline':True,'fireworksPCM':True,'mute':True,'canvasClearedBeforeFinale':True,'automaticNewGame':True,'ownerRemoval':True,'explicitRejoinOnReload':True,'singleToolSelection':True,'suppliedFireworksLoop':True,'fireworksRejoinOffset':True,'scoreRankedRosterAndPencil':True},indent=2)+'\n')

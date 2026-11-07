@@ -114,21 +114,8 @@ const recoveryKey=`ursketch.room.${SELF}`,GRACE_MS=120000;
 let savedRoom=null,browsing=false,joining=false,searchEpoch=0,roomEpoch=0;
 let heartbeatInFlight=null,hostPresenceUntil=0,heartbeatWarning=false;
 let roomStream=false,snapshotRequest=null,roomReceiver=null,roomRecovering=false,roomRecoveryTimer=null,roomRecoveryAttempt=0,roomRecoveryInFlight=null;
-let searchMode='host';
-const searchDrafts={host:SELF,invite:''};
-function setSearchMode(mode){
-  searchDrafts[searchMode]=$('host').value;searchMode=mode;
-  const invite=mode==='invite';
-  for(const [id,active] of [['search-host-mode',!invite],['search-invite-mode',invite]]){const tab=$(id);tab.setAttribute('aria-selected',String(active));tab.tabIndex=active?0:-1;}
-  $('host-form').setAttribute('aria-labelledby',invite?'search-invite-mode':'search-host-mode');
-  $('search-label').textContent=invite?'Room invite code':'Browse a host ship';
-  $('host').placeholder=invite?'Paste your room invite code or link':'Search a ship…';
-  $('host').value=searchDrafts[mode];
-}
-$('search-host-mode').onclick=()=>setSearchMode('host');$('search-invite-mode').onclick=()=>setSearchMode('invite');
-for(const id of ['search-host-mode','search-invite-mode'])$(id).onkeydown=event=>{if(['ArrowLeft','ArrowRight','Home','End'].includes(event.key)){event.preventDefault();const mode=event.key==='Home'?'host':event.key==='End'?'invite':searchMode==='host'?'invite':'host';setSearchMode(mode);$(mode==='host'?'search-host-mode':'search-invite-mode').focus();}};
 function operation(id,text,busy=false){const el=$(id);el.textContent=text;el.classList.toggle('is-busy',busy);el.setAttribute('aria-label',text+(busy?'…':''));}
-function busyControls(){const busy=browsing||joining;$('host-search').disabled=busy;$('host').disabled=joining;$('search-host-mode').disabled=busy;$('search-invite-mode').disabled=busy;$('create-open').disabled=busy;for(const b of $('room-list').querySelectorAll('button'))b.disabled=busy||b.dataset.full==='true';$('rejoin-room').disabled=busy;$('leave-saved-room').disabled=busy;}
+function busyControls(){const busy=browsing||joining;$('host-search').disabled=busy;$('host').disabled=joining;$('create-open').disabled=busy;for(const b of $('room-list').querySelectorAll('button'))b.disabled=busy||b.dataset.full==='true';$('rejoin-room').disabled=busy;$('leave-saved-room').disabled=busy;}
 function saveRecovery(record){savedRoom=record;try{record?localStorage.setItem(recoveryKey,JSON.stringify(record)):localStorage.removeItem(recoveryKey);}catch{}renderRecovery();}
 let recoverySub=null,recoveryTarget='';
 function rememberRoom(title){if(!roomId)return;saveRecovery({host,id:roomId,title:title||state?.title||savedRoom?.title||roomId,round:state?Math.min(10,state.turn+1):savedRoom?.host===host&&savedRoom?.id===roomId?savedRoom.round||1:1});}
@@ -203,11 +190,11 @@ function scheduleRoomRecovery(){
 async function browse(ship){
   if(!/^~[a-z-]+$/.test(ship))throw new Error('Enter an Urbit ship name beginning with ~.');
   if(roomId)throw new Error('Leave your current room before searching another host.');
-  const epoch=++searchEpoch;browsing=true;host=ship;searchDrafts.host=ship;
+  const epoch=++searchEpoch;browsing=true;host=ship;
   operation('browse-status','Searching',true);operation('join-status','');listedRooms=[];renderRoomList();busyControls();
   try{
     await api.ensure();const id=await watchHost(ship);
-    if(epoch!==searchEpoch)return;lobbySub=id;renderLobby(knownHosts.get(ship).data);void watchOtherHosts();if(searchMode==='host')$('host').value='';
+    if(epoch!==searchEpoch)return;lobbySub=id;renderLobby(knownHosts.get(ship).data);void watchOtherHosts();$('host').value='';
   }catch(e){if(epoch===searchEpoch)operation('browse-status','Search failed. Please try again.');throw e;}
   finally{if(epoch===searchEpoch){browsing=false;busyControls();renderRoomList();}}
 }
@@ -440,9 +427,12 @@ function renderRoom(data) {
   const waiting=['waiting','finished'].includes(data.phase)&&!data.celebrating;
   $('room-notice').hidden=!waiting;
   $('room-notice-text').textContent=data.started?'Waiting for another player. The next round starts automatically.':'Waiting for players. At least two players are needed.';
-  $('start').hidden=!(data.owner===SELF&&waiting&&!data.started);$('start').disabled=data.players.length<2;
+  const hostStart=data.owner===SELF&&waiting&&!data.started;
+  const artistPrompt=isArtist()&&data.phase==='drawing'&&bannerDismissed!==data.token&&!data.lines.some(l=>l.kind!=='clear');
+  $('host-start').hidden=!hostStart;$('start').disabled=data.players.length<2;
+  $('artist-instructions').hidden=!artistPrompt;
   $('banner-word').textContent=isArtist()?data.answer:'';
-  $('artist-banner').hidden=!(isArtist()&&data.phase==='drawing'&&bannerDismissed!==data.token&&!data.lines.some(l=>l.kind!=='clear'));
+  $('artist-banner').hidden=!(hostStart||artistPrompt);
   $('tools').hidden=!(isArtist()&&data.phase==='drawing');
   $('round-controls').hidden=!(isArtist()&&data.phase==='drawing');
   const hintCount=data.hintCount||0,solved=data.finishing||data.players.some(p=>p.solved);
@@ -450,7 +440,7 @@ function renderRoom(data) {
   $('give-hint').disabled=!canDraw()||hintCount>=3||solved||data.hintCount==null;
   $('give-hint').title=solved?'Hints close after the first correct guess':hintCount>=3?'All three hints have been used':`Give hint — artist reward becomes ${hintCount===0?5:hintCount===1?4:3} points`;
   const mask=data.hint||'';$('hint-display').hidden=!mask||data.phase!=='drawing';
-  $('hint-letters').textContent=mask.split(' ').map(word=>Array.from(word).join(' ')).join('  /  ');
+  $('hint-letters').textContent=mask.split(' ').map(word=>Array.from(word).join(' ')).join('   ');
   $('studio-toolbar').hidden=data.phase!=='drawing'||(!isArtist()&&!mask);
   $('hint-length').textContent=mask?`${Array.from(mask).filter(c=>c!==' ').length} letters`:'';
   for(const control of $('tools').querySelectorAll('button,input'))control.disabled=!canDraw();
@@ -501,16 +491,7 @@ $('give-hint').onclick=()=>run(async()=>{const button=$('give-hint');button.disa
 $('skip').onclick=()=>run(async()=>{await drawing.flushAll();await api.poke('skip');});
 $('guess-form').onsubmit=event=>{event.preventDefault();const text=$('guess').value.trim();if(!text||state?.phase!=='drawing')return;const token=state.token;run(async()=>{await api.poke('guess',{text});if(state?.token===token&&$('guess').value.trim()===text)$('guess').value='';});};
 $('chat-form').onsubmit=event=>{event.preventDefault();const text=$('chat-input').value.trim();if(!text)return;run(async()=>{await api.poke('chat',{text});$('chat-input').value='';});};
-$('host-form').onsubmit=event=>{event.preventDefault();run(async()=>{
-  const value=$('host').value.trim();searchDrafts[searchMode]=value;
-  if(searchMode==='host'){await browse(value.toLowerCase());return;}
-  let ship,id;
-  const compact=value.match(/^(~[a-z-]+)\/(room-[a-z0-9-]+)$/i);
-  if(compact){ship=compact[1].toLowerCase();id=compact[2].toLowerCase();}
-  else{const invite=new URL(value,location.origin);ship=invite.searchParams.get('host')?.toLowerCase();id=invite.searchParams.get('room');}
-  if(!ship||!id||!/^[a-z0-9-]{1,40}$/.test(id))throw new Error('Paste a room invite link or a code like ~sampel-palnet/room-abcd1234.');
-  await browse(ship);await joinRoom(id);
-});};
+$('host-form').onsubmit=event=>{event.preventDefault();run(()=>browse($('host').value.trim().toLowerCase()));};
 $('create-open').onclick=()=>{$('create-error').hidden=true;$('create-dialog').showModal();};$('cancel-create').onclick=()=>$('create-dialog').close();
 $('create-form').onsubmit=event=>{event.preventDefault();run(async()=>{
   const previous=host,id=`room-${crypto.randomUUID().slice(0,8)}`,button=$('create-form').querySelector('button.primary');button.disabled=true;$('create-error').hidden=true;
@@ -520,7 +501,6 @@ $('create-form').onsubmit=event=>{event.preventDefault();run(async()=>{
 });};
 function localLeave(){showLobby({keepRoom:true});}
 $('leave').onclick=()=>run(async()=>{await api.poke('leave');await api.unsubscribe(roomSub);localLeave();});
-$('invite').onclick=()=>run(async()=>{const invite=`${location.origin}/apps/ursketch/play?host=${encodeURIComponent(host)}&room=${roomId}`;await navigator.clipboard.writeText(invite);toast('Invite copied. Friends can paste it into urSketch on their own ship.');});
 $('browser-help').onclick=()=>$('help-dialog').showModal();$('browser-settings').onclick=()=>$('settings-open').click();
 $('help').onclick=()=>$('help-dialog').showModal();$('close-help').onclick=()=>$('help-dialog').close();
 function renderProfiles(){$('profile-current').textContent=`Playing as ${activeName}`;}
@@ -595,4 +575,4 @@ if(!connectPage)gameAudio=createGameAudio({urls:URSKETCH_CUE_URLS,getPrefs:()=>p
 if(!connectPage)finale=createFinale({surface:$('canvas').parentElement,layer:$('game-finale'),getAudio:()=>gameAudio,getPrefs:()=>preferences.values,onEnd:()=>{if(state?.phase==='finished'){state={...state,celebrating:false,remainingMs:0,seconds:0};renderRoom(state);}}});
 roomAdmin=createRoomAdmin({getState:()=>state,perform:(action,data)=>api.poke(action,data),notify:toast});
 renderProfiles();drawing=createDrawing({canvas:$('canvas'),colors,canDraw,send:(action,data)=>api.poke(action,action==='draw'&&roomStream?{encoding:1,lines:data.lines.map(l=>UrSketchWire.pack(l))}:data),error:e=>toast(e.message||String(e)),onDraw:dismissBanner,storageKey:`ursketch.palettes.${SELF}`});restoreRecovery();
-if(!connectPage)run(async()=>{if(!SELF)throw new Error('Open urSketch through your Urbit ship at /apps/ursketch.');const query=new URLSearchParams(location.search);restoreKnownHosts();void connectGlobalChat();await api.ensure();host=query.get('host')||SELF;$('host').value=query.get('host')||'';operation('browse-status','Search a ship to view its rooms.');$('room-list').replaceChildren(element('p','browser-empty','Search a ship to view rooms.'));busyControls();const id=query.get('room');if(id){if(!savedRoom)saveRecovery({host,id,title:id,round:1});const restored=['reload','back_forward'].includes(performance.getEntriesByType('navigation')[0]?.type);if(restored){history.replaceState(null,'',location.pathname);operation('join-status','Your room tab was restored. Select Rejoin to return.');}else await joinRoom(id);}});
+if(!connectPage)run(async()=>{if(!SELF)throw new Error('Open urSketch through your Urbit ship at /apps/ursketch.');restoreKnownHosts();void connectGlobalChat();await api.ensure();host=SELF;$('host').value='';history.replaceState(null,'',location.pathname);operation('browse-status','Search a ship to view its rooms.');$('room-list').replaceChildren(element('p','browser-empty','Search a ship to view rooms.'));busyControls();});

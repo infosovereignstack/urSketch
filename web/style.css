@@ -19,9 +19,9 @@ dialog{background:var(--white);color:var(--ink);border:1px solid var(--line);bor
 @media(max-width:760px){#drawing-palettes{justify-content:center}.room-recovery{flex-direction:column;align-items:stretch}.recovery-actions{justify-content:flex-end}.tool-grid{grid-template-columns:repeat(5,23px);grid-template-rows:repeat(2,23px)}#tools{justify-content:center}.stroke-panel .stroke-control{grid-template-columns:22px 65px}.stroke-panel .stroke-control input{width:65px}.palette-panel{padding:2px;gap:2px}}
 @media(prefers-reduced-motion:reduce){.operation-status.is-busy::before,.operation-status.is-busy::after{animation:none}}
 
-/* One search field with host and invite modes. */
-.room-search{gap:18px}.search-modes{display:flex;gap:3px;flex-wrap:wrap}.search-modes button{border-color:transparent;background:transparent;padding:8px 10px;color:var(--muted);font-size:12px}.search-modes button[aria-selected=true]{background:var(--white);border-color:var(--line);color:var(--green)}.room-search form{min-width:0}.room-search input{width:320px}
-@media(max-width:900px){.room-search{align-items:stretch;flex-direction:column;gap:9px}.room-search form{display:flex}.room-search input{flex:1;width:100%}.search-modes button{font-size:11px}}
+/* Host ship search field. */
+.room-search{gap:18px}.room-search form{min-width:0}.room-search input{width:320px}
+@media(max-width:900px){.room-search{align-items:stretch;flex-direction:column;gap:9px}.room-search form{display:flex}.room-search input{flex:1;width:100%}}
 /* Round controls, persistent hints, and zoom recovery. */
 .brand-logo{display:block;width:43px;height:43px;flex:none}body.playing .brand-logo{width:33px;height:33px}
 .header-actions .settings-button{font-size:20px;line-height:1;padding:6px;width:31px}

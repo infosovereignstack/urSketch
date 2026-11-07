@@ -46,7 +46,7 @@ with sync_playwright() as p:
         render=runpy.run_path(str(root/'scripts/build.py'))
         html=render['html'].replace('URSKETCH_SHIP_VALUE',json.dumps(ship_name))
         for path in ('play','connect'):
-            page.route('**/apps/ursketch/'+path,lambda route:route.fulfill(status=200,content_type='text/html',body=html))
+            page.route('**/apps/ursketch/'+path+'**',lambda route:route.fulfill(status=200,content_type='text/html',body=html))
         def preview_media(route):
             asset=next(a for a in render['assets'].values() if route.request.url.endswith(a['url']))
             route.fulfill(status=200,content_type=asset['mime'],body=asset['data'])
@@ -110,8 +110,8 @@ with sync_playwright() as p:
     assert page.locator('#brush').get_attribute('title') == 'Brush (B)'
     assert page.locator('#host-form').count() == 1
     assert page.locator('#invite-form').count() == 0
-    assert page.locator('#search-invite-mode').is_hidden()
-    assert page.locator('#search-host-mode').is_hidden()
+    assert page.locator('#search-invite-mode').count() == 0
+    assert page.locator('#search-host-mode').count() == 0
     assert page.locator('#app-version').inner_text()==VERSION
     expect(page.locator('.browser-version')).to_have_text('v '+VERSION)
     expect(page.locator('.browser-panel-label>span').first).to_have_text('Global Chat')
@@ -132,14 +132,15 @@ with sync_playwright() as p:
     assert page.locator('.browser-version').evaluate('el=>getComputedStyle(el).color')=='rgb(0, 0, 0)'
     page.locator('#browser-settings').click();page.locator('#theme-select').select_option('classic');page.locator('#settings-close').click()
     page.locator('#browser-help').click();expect(page.locator('#help-dialog')).to_be_visible();page.locator('#close-help').click()
-    host_draft = page.locator('#host').input_value()
-    page.evaluate("setSearchMode(\'invite\')")
-    expect(page.locator('#host')).to_have_attribute('placeholder','Paste your room invite code or link')
-    page.locator('#host').fill('invalid invite')
+    page.goto('http://127.0.0.1/apps/ursketch/play?host=~zod&room=room-old-invite')
+    page.wait_for_function("connectionReady && location.search===''")
+    expect(page.locator('#lobby')).to_be_visible()
+    assert page.evaluate("roomId==='' && savedRoom===null && listedRooms.length===0")
+    expect(page.locator('#host')).to_have_value('')
+    assert page.locator('#invite').count() == 0
+    page.locator('#host').fill('~zod/room-old-invite')
     page.locator('#host-search').click()
-    expect(page.locator('#toast')).to_contain_text('Paste a room invite link')
-    page.evaluate("setSearchMode(\'host\')")
-    expect(page.locator('#host')).to_have_value(host_draft)
+    expect(page.locator('#toast')).to_contain_text('Enter an Urbit ship name')
     page.locator('#host').fill(page.evaluate('SELF'))
     page.locator('#host-search').click()
     expect(page.locator('#host-search')).to_be_enabled(timeout=30000)
@@ -207,6 +208,25 @@ with sync_playwright() as p:
     assert page.locator('#timer-dial').is_visible()
     assert page.locator('#chat-form').bounding_box()['y'] < 720
     expect(page.locator('#player-count')).to_have_text('1/10')
+    expect(page.locator('#artist-banner')).to_be_visible()
+    expect(page.locator('#host-start')).to_be_visible()
+    expect(page.locator('#artist-instructions')).to_be_hidden()
+    expect(page.locator('#start')).to_be_disabled()
+    assert page.locator('#start').evaluate('el=>!!el.closest(".canvas-wrap #artist-banner")')
+    assert page.locator('#start').inner_text()=='You are the host. Click here to start the game when you and everyone else are ready to start the game.'
+    # Local UI fixtures exercise the host/guest and waiting/started transitions
+    # without starting a real game or sending fixture actions to the comet.
+    page.evaluate("""()=>{window.startSnapshot=structuredClone(state);window.startPoke=api.poke;window.startActions=[];api.poke=async action=>startActions.push(action);renderRoom({...state,players:[...state.players,{ship:'~zod',name:'Guest',score:0,solved:false}]});}""")
+    expect(page.locator('#start')).to_be_enabled()
+    page.locator('#start').click()
+    assert page.evaluate('startActions')==['start']
+    page.evaluate("renderRoom({...state,owner:'~zod'})")
+    expect(page.locator('#artist-banner')).to_be_hidden()
+    page.evaluate("renderRoom({...state,owner:SELF,started:true})")
+    expect(page.locator('#artist-banner')).to_be_hidden()
+    page.evaluate("()=>{api.poke=startPoke;renderRoom(startSnapshot)}")
+    page.screenshot(path=str(artifacts/'host-start-banner.png'))
+
     if not preview:
         page.wait_for_function('knownHosts.get(SELF)?.data?.rooms.find(r=>r.id===roomId)?.players?.some(p=>p.ship===SELF)')
         roster=page.evaluate('knownHosts.get(SELF).data.rooms.find(r=>r.id===roomId).players')
@@ -220,6 +240,13 @@ with sync_playwright() as p:
     # former letterbox areas. Draw commands stay in this browser and never poke
     # the live room; the native waiting-room snapshot is restored afterwards.
     page.evaluate("""()=>{window.waitingSnapshot=structuredClone(state);window.savedPoke=api.poke;window.edgeCommands=[];api.poke=(action,data,...args)=>action==='draw'?(edgeCommands.push(...data.lines.map(l=>UrSketchWire.unpack(l))),Promise.resolve()):savedPoke.call(api,action,data,...args);renderRoom({...state,phase:'drawing',token:state.token+1000,answer:'edge test',duration:120,remainingMs:120000,players:[{...state.players[0],ship:SELF,solved:false},{ship:'~zod',name:'Canvas fixture',score:0,solved:false}],lines:[]});}""")
+    page.evaluate("renderRoom({...state,hint:'_ _',hintCount:1})")
+    expect(page.locator('#host-start')).to_be_hidden()
+    expect(page.locator('#artist-instructions')).to_be_visible()
+    assert page.locator('#hint-letters').text_content()=='_   _'
+    page.evaluate("renderRoom({...state,hint:'c_t _at',hintCount:2})")
+    assert page.locator('#hint-letters').text_content()=='c _ t   _ a t'
+    assert '/' not in page.locator('#hint-letters').text_content()
     for theme,width,height in [('classic',1280,720),('classic',1024,600),('blingee',1280,720),('classic',960,560)]:
         page.locator('#settings-open').click();page.locator('#theme-select').select_option(theme);page.locator('#settings-close').click()
         page.set_viewport_size({'width':width,'height':height});page.wait_for_timeout(100)
@@ -293,5 +320,5 @@ with sync_playwright() as p:
     assert treaty['href']['site'] == '/apps/ursketch'
     (artifacts / 'comet-publication.json').write_text(json.dumps(treaty, indent=2) + '\n')
     assert not errors, errors
-    print(f'PASS on {ship}: Name screen wording, full-ship/custom profiles, profile inspection, full-panel edge drawing across themes/laptop sizes, reference room-browser layout, distinct known-host player counts, filters, hidden invite compatibility, search, tools, room lifecycle, room create/leave, Landscape tile, and Treaty publication')
+    print(f'PASS on {ship}: Name screen wording, full-ship/custom profiles, profile inspection, full-panel edge drawing across themes/laptop sizes, reference room-browser layout, distinct known-host player counts, filters, invitation removal, host start banner, space-separated hints, search, tools, room lifecycle, room create/leave, Landscape tile, and Treaty publication')
     browser.close()

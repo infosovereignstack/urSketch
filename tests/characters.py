@@ -59,7 +59,7 @@ with sync_playwright() as p:
  page.locator('#host').fill('~zod');page.locator('#host-search').click();page.wait_for_function('roomQueries.length===1')
  guest,g,go=prepare('~nec',18081,12323);g.goto(go+'/apps/ursketch/connect');g.evaluate('characterReady');g.locator('#player-name').fill('Guest Cat');g.locator('#connect-submit').click();g.wait_for_url('**/apps/ursketch/play');g.wait_for_function('connectionReady')
  page.locator('#create-open').click();page.locator('#title').fill('Character QA');page.locator('#create-form button.primary').click();expect(page.locator('#game')).to_be_visible(timeout=30000);rid=page.evaluate('roomId')
- g.evaluate("setSearchMode('invite')");g.locator('#host').fill(f'~zod/{rid}');g.locator('#host-search').click();expect(g.locator('#game')).to_be_visible(timeout=30000);g.wait_for_function("(avatar)=>state.players.some(p=>p.name==='Cat Tester' && JSON.stringify(p.avatar)===JSON.stringify(avatar))",arg=expected)
+ g.evaluate("async room=>{await browse('~zod');await joinRoom(room)}",arg=rid);expect(g.locator('#game')).to_be_visible(timeout=30000);g.wait_for_function("(avatar)=>state.players.some(p=>p.name==='Cat Tester' && JSON.stringify(p.avatar)===JSON.stringify(avatar))",arg=expected)
  for q in (g,page):q.locator('#leave').click();expect(q.locator('#lobby')).to_be_visible()
  assert not errors,errors
  (ROOT/'artifacts/character-verification.json').write_text(json.dumps({'bodyCount':6,'faceCount':9,'hatCount':10,'noHatOption':True,'allSVGsDecode':True,'stableIDs':True,'shipPersistenceAcrossBrowsers':True,'futureIDsPreserved':True,'noAutomaticRoomSearch':True,'peerAvatarPropagation':True,'laptopAndPhoneFit':True},indent=2)+'\n')

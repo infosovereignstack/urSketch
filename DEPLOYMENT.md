@@ -327,3 +327,12 @@ profile/room/rejoin/invite flows, known-host counts and filters, publication,
 and three audible intro passes. Live chat was read without posting test messages.
 The isolated fake ships were shut down after native delivery/migration checks.
 JavaScript/Python syntax and whitespace checks passed.
+
+## 0.26.1 — November 7, 2026
+
+Installed the generated interface and Docket 0.26.1 together through native
+Clay import. The live comet browser suite passed, including public Treaty
+version/image/route, host Start banner, artist prompt, space-separated hints,
+removed invitation entry/URLs, room search, create/leave, and canvas edge drawing
+across laptop sizes and themes. JavaScript/Python syntax, build and whitespace
+checks passed. The core room protocol and saved state schema are unchanged.

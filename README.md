@@ -7,7 +7,7 @@ services. All browser assets are embedded and served by the ship.
 
 ## Install from the publisher
 
-urSketch 0.13.0 is published from
+urSketch 0.26.1 is published from
 `~livbec-pitsyd-botryp-hoshec--faltec-lavtel-firrup-marzod`.
 On another ship, run:
 
@@ -55,13 +55,11 @@ To update source later, rerun the two Python commands and `|commit %ursketch`.
 The desk and agent are both `%ursketch`. `/apps/ursketch` is the animated intro;
 `/apps/ursketch/play` opens the lobby directly.
 Install this desk on every participating ship. Existing rooms and browser
-preferences from another app are separate; create new rooms and invitations.
+preferences from another app are separate; create new rooms.
 
 ## Play
 
-- The room search box switches between **Browse a host ship** and
-  **Room invite code**, using one input and **Search →** button. Each mode
-  remembers its input when you switch.
+- Search a host ship with the **Search →** button, then select a room.
 - Save or select a display name in **Who’s playing?** on the landing page.
   Profiles stay in your browser, while names in a room are synchronized by its
   host. Urbit ship identity still authenticates actions.
@@ -71,11 +69,8 @@ preferences from another app are separate; create new rooms and invitations.
 - Friends install urSketch on their ships, open their own `/apps/ursketch/play`, and
   enter your ship in the search box above the room list.
   Search and join each show progress until the host responds.
-- Invite URLs carry `host` and `room` and still open the game directly on the
-  player’s own ship. The invite-code parser and compact codes such as
-  `~sampel-palnet/room-abcd1234` are retained; invite-entry controls are currently
-  hidden from the browser. No one needs to log into another player’s ship.
-- The owner starts the game. Each artist is assigned a word and immediately has 120 seconds to draw. The first correct guess starts a full 20-second finish window. Guessers use the input under the Game log.
+- Invitations are currently disabled. Players join from the room browser on their own ship.
+- The owner starts the first game by clicking the yellow banner above the canvas. At least two players must be present. Each artist is assigned a word and immediately has 120 seconds to draw. The first correct guess starts a full 20-second finish window. Guessers use the input under the Game log.
 - Correct guesses earn 10, 9, 8, 7, 6, then 5 points each. The drawer earns
   10 points for the first solve and 1 for each additional solve. Hints reduce
   that initial artist reward to 5, then 4, then 3 points. No solves means
@@ -510,3 +505,11 @@ undo, the three-second artwork hold, saved scores/turn positions on reconnect,
 mobile Send/layout settings, theme rendering improvements and bounded finale
 audio. [Word-bank notes](docs/WORDLISTS.md) link the 2,000 default words and the
 500-entry Easy, Hard and Urbit lists, also posted to Notebook2.
+
+## Lobby and canvas prompts (0.26.1)
+
+Invitation buttons, code entry and automatic joining from invite URLs are
+removed for now. Ship search, room selection and the most-recent-room reconnect
+banner remain available. The host starts the first game from the same yellow
+canvas banner used for the artist's word prompt. Multiword hints use blank
+spaces between words, without slash separators.

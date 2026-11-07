@@ -31,7 +31,7 @@ with sync_playwright() as p:
  h.locator('#create-open').click();h.locator('#title').fill(f'Round QA {time.time_ns()}');h.locator('#create-form button.primary').click();expect(h.locator('#game')).to_be_visible(timeout=30000)
  rid=h.evaluate('roomId')
  for page in (g,b):
-  page.evaluate("setSearchMode('invite')");page.locator('#host').fill(f'~zod/{rid}');page.locator('#host-search').click();expect(page.locator('#game')).to_be_visible(timeout=30000);expect(page.locator('#guess')).to_be_focused()
+  page.evaluate("async room=>{await browse('~zod');await joinRoom(room)}",arg=rid);expect(page.locator('#game')).to_be_visible(timeout=30000);expect(page.locator('#guess')).to_be_focused()
  h.wait_for_function('state.players.length===3');h.locator('#start').click()
  for page in pages:page.wait_for_function("state.phase==='drawing' && state.players[0].name==='Alice'")
  answer=h.evaluate('state.answer');token=h.evaluate('state.token')

@@ -34,10 +34,7 @@ with sync_playwright() as p:
     for index,page in enumerate(pages[1:],start=2):
         page.locator('#host').fill('~zod');page.locator('#host-search').click()
         expect(page.locator('#host-search')).to_be_enabled(timeout=30000)
-        # Exercise invite entry through the shared search box.
-        page.evaluate("setSearchMode(\'invite\')")
-        page.locator('#host').fill(f'http://127.0.0.1:18080/apps/ursketch/play?host=~zod&room={room}')
-        page.locator('#host-search').click()
+        page.locator('.room-name', has_text=h.locator('#room-title').inner_text()).click()
         expect(page.locator('#game')).to_be_visible(timeout=30000)
         for active in pages[:index]:expect(active.locator('#player-count')).to_have_text(f'{index}/12',timeout=30000)
         print(f'{index} distinct ships joined; all prior players remain.',flush=True)
