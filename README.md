@@ -7,7 +7,7 @@ services. All browser assets are embedded and served by the ship.
 
 ## Install from the publisher
 
-urSketch 0.26.1 is published from
+urSketch 0.26.2 is published from
 `~livbec-pitsyd-botryp-hoshec--faltec-lavtel-firrup-marzod`.
 On another ship, run:
 
@@ -513,3 +513,11 @@ removed for now. Ship search, room selection and the most-recent-room reconnect
 banner remain available. The host starts the first game from the same yellow
 canvas banner used for the artist's word prompt. Multiword hints use blank
 spaces between words, without slash separators.
+
+## Finale audio (0.26.2)
+
+The supplied fireworks clip now forms a finite 20-second audio track, rather
+than a native looping source. Its existing half-volume level is preserved.
+Afterward the audio output rests for the silent half of the 40-second finale
+and wakes for the next game cue. Completed finale IDs cannot restart audio
+when room updates repeat. Both wall and monotonic clocks enforce the cutoff.

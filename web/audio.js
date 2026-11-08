@@ -1,17 +1,32 @@
 /* Game cues use decoded buffers: overlapping voices and an audio-clock ticker. */
 function createGameAudio({urls,getPrefs,notify}) {
   let context=null,master=null,bridge=null,output=null,loading=null,disposed=false;
+  let resting=false,restPromise=null,wakePromise=null;
   let deadline=0,ticker=null,outputRevision=0,tickKey=null,tickOrigin=0,tickLimit=0,tickDone=false;
   const tickVoices=new Map(),tickFinished=new Set();
   const buffers=new Map(),voices=new Set();
-  let fireworksState=null,fireworksVoice=null;
+  let fireworksState=null,fireworksVoice=null,finaleQuiet=false;
+  const fireworksFinished=new Set();
   const audible=()=>!disposed&&!getPrefs().muted&&getPrefs().volume>0&&context?.state==='running';
-  function stopVoice(voice){voice.cancelled=true;if(tickVoices.get(voice.urSketchTickIndex)===voice)tickVoices.delete(voice.urSketchTickIndex);if(voice.urSketchTickIndex!=null&&performance.now()>=tickOrigin+voice.urSketchTickIndex*250-5)tickFinished.add(voice.urSketchTickIndex);try{voice.stop();}catch{}try{voice.disconnect();voice.urSketchGainNode?.disconnect();}catch{}voices.delete(voice);}
+  function restOutput(){
+    if(!context||disposed||voices.size||resting)return;
+    // Release the idle output during the silent half of the finale. In
+    // particular, do not leave a mobile audio destination playing stale PCM.
+    resting=true;output?.pause();
+    restPromise=context.suspend().catch(()=>{resting=false;});
+  }
+  function wakeOutput(){
+    if(wakePromise)return wakePromise;
+    if(!resting)return Promise.resolve();
+    wakePromise=(async()=>{await restPromise;if(disposed)return;resting=false;await context.resume();if(output&&!resting)await output.play();})().catch(()=>{}).finally(()=>{wakePromise=null;});
+    return wakePromise;
+  }
+  function stopVoice(voice){voice.cancelled=true;if(tickVoices.get(voice.urSketchTickIndex)===voice)tickVoices.delete(voice.urSketchTickIndex);if(voice.urSketchTickIndex!=null&&performance.now()>=tickOrigin+voice.urSketchTickIndex*250-5)tickFinished.add(voice.urSketchTickIndex);try{voice.urSketchGainNode.gain.cancelScheduledValues(context.currentTime);voice.urSketchGainNode.gain.setValueAtTime(0,context.currentTime);}catch{}try{voice.stop();}catch{}try{voice.disconnect();voice.urSketchGainNode?.disconnect();}catch{}voices.delete(voice);}
   function stopTicks(){for(const voice of tickVoices.values())stopVoice(voice);tickVoices.clear();}
   function source(cue,when=context?.currentTime,index=null,buffer=buffers.get(cue),options={}){
     if(!audible()||!buffer||cue==='TickingNoise'&&fireworksState)return;
     const voice=context.createBufferSource();voice.buffer=buffer;voice.urSketchCue=cue;
-    voice.loop=!!options.loop;voice.urSketchGain=options.gain??1;const gain=context.createGain();voice.urSketchGainNode=gain;gain.gain.value=voice.urSketchGain;voice.connect(gain);gain.connect(master);voices.add(voice);voice.urSketchTickIndex=index;const sourceKey=tickKey;voice.onended=()=>{voices.delete(voice);if(index!==null&&!voice.cancelled&&sourceKey===tickKey)tickFinished.add(index);if(index!==null&&tickVoices.get(index)===voice)tickVoices.delete(index);voice.disconnect();gain.disconnect();};voice.start(when,options.offset||0);if(options.duration)voice.stop(when+options.duration);
+    voice.loop=false;voice.urSketchGain=options.gain??1;const gain=context.createGain();voice.urSketchGainNode=gain;gain.gain.value=voice.urSketchGain;voice.connect(gain);gain.connect(master);voices.add(voice);voice.urSketchTickIndex=index;const sourceKey=tickKey;voice.onended=()=>{voices.delete(voice);if(index!==null&&!voice.cancelled&&sourceKey===tickKey)tickFinished.add(index);if(index!==null&&tickVoices.get(index)===voice)tickVoices.delete(index);voice.disconnect();gain.disconnect();if(!voice.cancelled)options.onEnded?.(voice);if(finaleQuiet)restOutput();};voice.start(when,options.offset||0);if(options.duration){gain.gain.setValueAtTime(0,when+options.duration);voice.stop(when+options.duration);}
     if(index!==null)tickVoices.set(index,voice);
     window.dispatchEvent(new CustomEvent('ursketch:sound',{detail:{cue,when,index,key:tickKey,loop:voice.loop,offset:options.offset||0}}));
     return voice;
@@ -37,6 +52,7 @@ function createGameAudio({urls,getPrefs,notify}) {
   }
   async function unlock(event){
     if(disposed||event&&!event.isTrusted)return;
+    if(context&&finaleQuiet&&loading)return;
     if(!context){
       const AudioContextClass=window.AudioContext||window.webkitAudioContext;if(!AudioContextClass)return;
       context=new AudioContextClass();master=context.createGain();
@@ -47,7 +63,7 @@ function createGameAudio({urls,getPrefs,notify}) {
       context.addEventListener('statechange',()=>{if(context.state!=='running'){stopTicks();if(fireworksVoice)stopVoice(fireworksVoice);fireworksVoice=null;}else{schedule();syncFireworks();}});
       settings();
     }
-    try{await context.resume();if(output)await output.play();}catch{return;}
+    try{await wakeOutput();await context.resume();if(output)await output.play();}catch{return;}
     if(!loading)loading=Promise.all(Object.entries(urls).map(async([cue,url])=>{
       try{const response=await fetch(url);if(!response.ok)throw new Error('Audio unavailable');const bytes=await response.arrayBuffer();let decoded=await context.decodeAudioData(bytes);
         // A tick is a short transient, not overlapping copies of a long MP3.
@@ -58,13 +74,27 @@ function createGameAudio({urls,getPrefs,notify}) {
           for(let c=0;c<decoded.numberOfChannels;c++){const out=clipped.getChannelData(c),input=decoded.getChannelData(c);for(let i=0;i<length;i++)out[i]=input[start+i]*Math.min(1,i/(decoded.sampleRate*.001),(length-1-i)/(decoded.sampleRate*.005));}
           decoded=clipped;
         }
+        if(cue==='Fireworks'){
+          // Use finite PCM so an interrupted device never needs to resume
+          // a native looping source. The audio ends independently of JS timers.
+          const finite=context.createBuffer(decoded.numberOfChannels,Math.ceil(decoded.sampleRate*20),decoded.sampleRate);
+          for(let c=0;c<decoded.numberOfChannels;c++){
+            const input=decoded.getChannelData(c),out=finite.getChannelData(c);
+            for(let i=0;i<out.length;i++)out[i]=input[i%input.length];
+            const fade=Math.round(decoded.sampleRate*.01);
+            for(let i=0;i<fade;i++)out[out.length-1-i]*=i/fade;
+          }
+          decoded=finite;
+        }
         buffers.set(cue,decoded);}
       catch{notify?.(`Could not load ${cue}. Reopen the app to retry.`);}
     })).then(()=>schedule());
     await loading;settings();
   }
   async function play(cue){
-    const received=performance.now();if(!audible())return;
+    if(cue==='NewRound')finaleQuiet=false;
+    const received=performance.now();if(disposed||getPrefs().muted||getPrefs().volume<=0)return;
+    await wakeOutput();if(!audible())return;
     await loading;if(disposed||performance.now()-received>1500)return;source(cue);
   }
   function schedule(){
@@ -91,26 +121,34 @@ function createGameAudio({urls,getPrefs,notify}) {
     if(tickDone)return;
     if(!deadline){tickOrigin=performance.now()+15;deadline=performance.now()+Math.min(20000,ms);tickLimit=Math.min(80,Math.ceil(ms/250));}
     else deadline=Math.min(deadline,performance.now()+ms);
-    schedule();
+    if(resting)void wakeOutput().then(schedule);else schedule();
   }
   function syncFireworks(){
-    if(!fireworksState||!audible()||!buffers.has('Fireworks'))return;
-    const now=performance.now(),remaining=(fireworksState.end-now)/1000;
-    if(remaining<=0){stopFireworks();return;}
+    if(!fireworksState)return;
+    const now=performance.now(),wall=Date.now();
+    const remaining=Math.min(fireworksState.end-now,fireworksState.wallEnd-wall)/1000;
+    if(remaining<=0){finishFireworks();return;}
+    if(!audible()||!buffers.has('Fireworks'))return;
     // A naturally ended voice must not restart just because the clocks disagree.
     if(fireworksVoice&&!fireworksVoice.cancelled)return;
-    const buffer=buffers.get('Fireworks'),offset=Math.max(0,(now-fireworksState.start)/1000)%buffer.duration;
-    fireworksVoice=source('Fireworks',context.currentTime,null,buffer,{loop:true,offset,duration:remaining,gain:.5});
+    const buffer=buffers.get('Fireworks'),offset=Math.max(0,(now-fireworksState.start)/1000,(wall-fireworksState.wallStart)/1000);
+    if(offset>=buffer.duration){finishFireworks();return;}
+    const key=fireworksState.key;
+    fireworksVoice=source('Fireworks',context.currentTime,null,buffer,{offset,duration:Math.min(remaining,buffer.duration-offset),gain:.5,onEnded:()=>{if(fireworksState?.key===key)finishFireworks();}});
   }
   function fireworks({key,elapsed,remaining}){
     stopTicks();tickDone=true;deadline=0;
-    const now=performance.now();
-    if(fireworksState?.key!==key){stopFireworks();fireworksState={key,start:now-elapsed*1000,end:Math.min(now+remaining,now-elapsed*1000+20000)};}
-    else fireworksState.end=Math.min(fireworksState.end,now+remaining);
-    syncFireworks();
+    if(fireworksFinished.has(key))return;
+    finaleQuiet=false;
+    const now=performance.now(),wall=Date.now();
+    if(fireworksState?.key!==key){stopFireworks();fireworksState={key,start:now-elapsed*1000,wallStart:wall-elapsed*1000,end:Math.min(now+remaining,now-elapsed*1000+20000),wallEnd:Math.min(wall+remaining,wall-elapsed*1000+20000)};}
+    else{fireworksState.end=Math.min(fireworksState.end,now+remaining);fireworksState.wallEnd=Math.min(fireworksState.wallEnd,wall+remaining,wall-elapsed*1000+20000);}
+    if(fireworksState.end<=now||fireworksState.wallEnd<=wall){finishFireworks();return;}
+    if(resting)void wakeOutput().then(syncFireworks);else syncFireworks();
   }
+  function finishFireworks(){if(fireworksState){fireworksFinished.add(fireworksState.key);if(fireworksFinished.size>64)fireworksFinished.delete(fireworksFinished.values().next().value);}stopFireworks();finaleQuiet=true;restOutput();}
   function stopFireworks(){fireworksState=null;if(fireworksVoice)stopVoice(fireworksVoice);fireworksVoice=null;}
-  function stop(){stopFireworks();deadline=0;tickKey=null;tickDone=true;stopTicks();for(const voice of [...voices])stopVoice(voice);}
+  function stop(){finaleQuiet=false;stopFireworks();deadline=0;tickKey=null;tickDone=true;stopTicks();for(const voice of [...voices])stopVoice(voice);}
   document.addEventListener('pointerdown',unlock,{passive:true});document.addEventListener('keydown',unlock);
   window.addEventListener('pagehide',()=>{stop();disposed=true;clearInterval(ticker);void context?.close();output?.pause();});
   ticker=setInterval(()=>{schedule();syncFireworks();},25);

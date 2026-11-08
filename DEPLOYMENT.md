@@ -336,3 +336,14 @@ version/image/route, host Start banner, artist prompt, space-separated hints,
 removed invitation entry/URLs, room search, create/leave, and canvas edge drawing
 across laptop sizes and themes. JavaScript/Python syntax, build and whitespace
 checks passed. The core room protocol and saved state schema are unchanged.
+
+## 0.26.2 — November 7, 2026
+
+Installed the finite-fireworks audio engine and Docket 0.26.2 through native
+Clay import. The live comet suite passed and confirms the served audio source
+exactly matches the tested file, plus the published Treaty version/image/route.
+Chromium and WebKit passed complete real-time 20-second fireworks playback,
+interruption/resume, repeat-update guards, output suspension, unrelated clicks
+during silence, and next-game audio wakeup. JavaScript/Python syntax, build and
+whitespace checks passed. Supplied media and the room-state schema are unchanged.
+The affected physical mobile device still requires confirmation after refresh.

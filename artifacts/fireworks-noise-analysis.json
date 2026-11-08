@@ -1,0 +1,23 @@
+{
+  "recording": "ScreenRecording_11-07-2026 22-15-44_1.MP4",
+  "durationSeconds": 6.034541666666667,
+  "decodedMonoSampleRate": 24000,
+  "repeatingFragmentSeconds": 0.06,
+  "repeatCorrelation": 0.999050268995528,
+  "comparisonWindow": {
+    "recordingOffsetSeconds": 2,
+    "lengthSamples": 1000
+  },
+  "matches": {
+    "Fireworks.mp3": {
+      "normalizedCorrelation": 0.997158,
+      "referenceOffsetSeconds": 4.044833
+    },
+    "TickingNoise.mp3": {
+      "normalizedCorrelation": -0.253566,
+      "referenceOffsetSeconds": 0.012958
+    }
+  },
+  "finding": "A short fragment of Fireworks.mp3 repeats during the late winner screen. It differs from the four-Hz countdown tick.",
+  "limitation": "The recording identifies the repeated sound, not the precise browser/OS failure. Physical affected-device confirmation remains necessary."
+}

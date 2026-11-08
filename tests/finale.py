@@ -69,7 +69,7 @@ with sync_playwright() as p:
  assert h.evaluate("api.poke('start').then(()=>false,()=>true)"),'Host allowed restart during celebration'
  h.evaluate("()=>{window.finaleAnalyser=gameAudio.context.createAnalyser();gameAudio.master.connect(finaleAnalyser)}")
  h.wait_for_function("heard.filter(e=>e.cue==='Fireworks').length>=1",timeout=10000)
- h.wait_for_timeout(6000);assert h.evaluate("heard.filter(e=>e.cue==='Fireworks').length===1 && heard.find(e=>e.cue==='Fireworks').loop"), 'Fireworks track restarted instead of looping'
+ h.wait_for_timeout(6000);assert h.evaluate("heard.filter(e=>e.cue==='Fireworks').length===1 && !heard.find(e=>e.cue==='Fireworks').loop"), 'Finite fireworks track restarted'
  h.wait_for_function("()=>{const a=new Float32Array(finaleAnalyser.fftSize);finaleAnalyser.getFloatTimeDomainData(a);return a.some(v=>Math.abs(v)>.001)}")
  assert h.locator('#game-finale>canvas').evaluate("c=>{const d=c.getContext('2d').getImageData(0,0,c.width,c.height).data;let dark=0,light=0;for(let i=0;i<d.length;i+=4){if(d[i]+d[i+1]+d[i+2]===0)dark++;else light++;}return dark>light*10 && light>0}")
  h.screenshot(path=str(ROOT/'artifacts/game-finale.png'))
@@ -78,7 +78,7 @@ with sync_playwright() as p:
  h.locator('#settings-open').click();h.locator('#sound-muted').uncheck();h.locator('#settings-close').click()
  g.reload();expect(g.locator('#lobby')).to_be_visible();expect(g.locator('#room-recovery')).to_be_visible(timeout=30000);g.wait_for_timeout(1000);assert g.evaluate('state===null'), 'Restored tab ghost-rejoined';g.locator('#rejoin-room').click();expect(g.locator('#game')).to_be_visible(timeout=30000);g.wait_for_function("state.celebrating && state.winner.name==='Zoe' && state.winner.score===20")
  assert g.evaluate('state.remainingMs<38000'), 'Refresh restarted 40 seconds'
- g.wait_for_function("heard.some(e=>e.cue==='Fireworks')");assert g.evaluate("heard.filter(e=>e.cue==='Fireworks').every(e=>e.loop && e.offset>0)"), 'Refreshed fireworks did not resume at their offset'
+ g.wait_for_function("heard.some(e=>e.cue==='Fireworks')");assert g.evaluate("heard.filter(e=>e.cue==='Fireworks').every(e=>!e.loop && e.offset>0)"), 'Refreshed fireworks did not resume at their offset'
  h.wait_for_function("state.phase==='drawing' && state.turn===0 && state.winner===null",timeout=42000);elapsed=time.monotonic()-began;assert 42.5<elapsed<46,elapsed
  for page in pages:expect(page.locator('#game-finale')).to_be_hidden()
  assert h.evaluate("state.started && state.lines.length===0 && state.players.every(p=>p.score===0)"),'Automatic next game did not reset scores/canvas'
@@ -89,5 +89,5 @@ with sync_playwright() as p:
  g.evaluate("async room=>{await browse('~zod');await joinRoom(room)}",arg=rid);expect(g.locator('#game')).to_be_visible(timeout=30000);h.wait_for_function("state.phase==='drawing' && state.started");expect(h.locator('#start')).to_be_hidden()
  for page in (g,h):page.locator('#leave').click();expect(page.locator('#lobby')).to_be_visible()
  assert not errors,errors
- (ROOT/'artifacts/finale-verification.json').write_text(json.dumps({'nativeRounds':10,'winner':'Zoe','points':20,'roundHoldAndFinaleSeconds':round(elapsed,3),'restartBlocked':True,'blankTimer':True,'boldRedFinalMessage':True,'rejoinPreservesWinnerAndDeadline':True,'fireworksPCM':True,'mute':True,'canvasClearedBeforeFinale':True,'automaticNewGame':True,'ownerRemoval':True,'explicitRejoinOnReload':True,'singleToolSelection':True,'suppliedFireworksLoop':True,'fireworksRejoinOffset':True,'scoreRankedRosterAndPencil':True},indent=2)+'\n')
+ (ROOT/'artifacts/finale-verification.json').write_text(json.dumps({'nativeRounds':10,'winner':'Zoe','points':20,'roundHoldAndFinaleSeconds':round(elapsed,3),'restartBlocked':True,'blankTimer':True,'boldRedFinalMessage':True,'rejoinPreservesWinnerAndDeadline':True,'fireworksPCM':True,'mute':True,'canvasClearedBeforeFinale':True,'automaticNewGame':True,'ownerRemoval':True,'explicitRejoinOnReload':True,'singleToolSelection':True,'suppliedFiniteFireworksTrack':True,'fireworksRejoinOffset':True,'scoreRankedRosterAndPencil':True},indent=2)+'\n')
  browser.close();print('PASS: ten native rounds, final scoring, 40-second finale, blank timer, fireworks PCM/mute, exact bold red result, explicit refresh rejoin, owner removal, single tool state, cleared canvas and automatic next game')

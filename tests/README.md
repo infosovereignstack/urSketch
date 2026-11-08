@@ -537,3 +537,16 @@ Multiplayer suites now set up rooms through host search and room selection.
 Preview and installed-comet checks passed for 0.26.1 on November 7, 2026,
 including the published Treaty version. `artifacts/host-start-banner.png`
 records the first-game banner on the installed comet.
+
+## 0.26.2 finite fireworks and silent output
+
+`audio-clock.py` runs in Chromium by default; set
+`URSKETCH_AUDIO_BROWSER=webkit` for WebKit. Both browsers check a complete
+20-second real-time fireworks playback with frequent room updates, finite PCM,
+50% gain, silence/output suspension after expiration, overlapping cues,
+next-game wakeup, interruption/resume and frozen performance-clock expiration.
+The normal four-Hz countdown and background turn-cue checks remain in place.
+Results are saved separately in `artifacts/audio-clock-verification.json` and
+`artifacts/audio-clock-verification-webkit.json`. Recording waveform evidence
+is in `artifacts/fireworks-noise-analysis.json`; no recording or extracted PCM
+is included in the game or repository.

@@ -53,6 +53,8 @@ with sync_playwright() as p:
         page.route('**/apps/ursketch/media/**',preview_media)
     page.set_viewport_size({'width':1280,'height':720})
     response = page.goto('http://127.0.0.1/apps/ursketch/connect')
+    if not preview:
+        assert (artifacts.parent/'web/audio.js').read_text() in response.text(), 'Installed audio engine differs from the verified source'
     expect(page.locator('#connect-page')).to_be_visible()
     expect(page.locator('#lobby')).not_to_be_visible()
     expect(page.locator('#player-name')).to_have_value(page.evaluate('SELF'))
