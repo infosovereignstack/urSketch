@@ -1,4 +1,42 @@
 /* Friend requests survive closed tabs; native urSketch/Pals own their state. */
+async function openGroupsDm(ship){
+  if(!/^~[a-z-]+$/.test(ship))throw new Error('This player does not have a valid Urbit ID.');
+  const path='/apps/groups/dm/'+encodeURIComponent(ship),tab=window.open('/apps/groups/','_blank');
+  if(!tab)throw new Error('Allow pop-ups for your ship to open a Groups DM.');
+  // Keep the same-origin handle while preparing the composer, without giving
+  // the Groups tab access to its opener. Never click a message Send control.
+  tab.opener=null;
+  const deadline=Date.now()+90000;
+  const visible=e=>e&&e.getClientRects().length&&!e.disabled;
+  const wait=async find=>{
+    while(Date.now()<deadline){
+      if(tab.closed)throw new Error('The Groups tab was closed before the DM opened.');
+      if(tab.location.href==='about:blank'){await new Promise(resolve=>setTimeout(resolve,350));continue;}
+      if(tab.location.origin!==location.origin)throw new Error('Log into Groups on your ship, then try DM again.');
+      if(tab.location.pathname.includes('/group/')||tab.location.pathname.includes('/dm/')&&tab.location.pathname!==path)throw new Error('The Groups tab moved to another conversation. Click DM to try again.');
+      const value=find(tab.document);if(value)return value;
+      await new Promise(resolve=>setTimeout(resolve,350));
+    }
+    throw new Error('Groups did not finish opening the DM. Try again after Groups has loaded.');
+  };
+  const exact=(root,text)=>[...root.querySelectorAll('button,[role=button],span')].find(e=>visible(e)&&e.textContent.trim()===text);
+  const composer=doc=>visible(doc.querySelector('[data-testid="MessageInput"]'));
+  const trigger=await wait(doc=>visible(doc.querySelector('[data-testid="CreateChatSheetTrigger"]'))&&doc.querySelector('[data-testid="CreateChatSheetTrigger"]'));
+  trigger.click();
+  (await wait(doc=>exact(doc,'New Message'))).click();
+  // A bare DM URL does not create Groups' local pending conversation. Use its
+  // own New Message flow so both existing and first-time recipients work.
+  const field=await wait(doc=>[...doc.querySelectorAll('input')].find(e=>visible(e)&&e.placeholder==='Filter by nickname or id'));
+  Object.getOwnPropertyDescriptor(tab.HTMLInputElement.prototype,'value').set.call(field,ship);
+  field.dispatchEvent(new tab.Event('input',{bubbles:true}));
+  field.dispatchEvent(new tab.Event('change',{bubbles:true}));
+  (await wait(doc=>{
+    const input=[...doc.querySelectorAll('input')].find(e=>visible(e)&&e.placeholder==='Filter by nickname or id');
+    return input&&input.value===ship&&exact(input.closest('[role=dialog]')||doc,ship);
+  })).click();
+  await wait(doc=>tab.location.pathname===path&&composer(doc));
+  return tab;
+}
 function createSocial({self,coordinator,perform,subscribe,unsubscribe,profile,inspect,notify,join}){
   const $=id=>document.getElementById(id);
   let data={peers:[]},sub=null,opening=null,inspected=null,signature='',presenceAt=0,presenceKey='',slateNonce=null,slateTimer=null,joiningSlate=false;
@@ -6,6 +44,12 @@ function createSocial({self,coordinator,perform,subscribe,unsubscribe,profile,in
   const busy=p=>['checking','installing','pals','delivering','confirming'].includes(p?.stage);
   const node=(tag,cls,text)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;return e;};
   const peer=ship=>data.peers.find(p=>p.ship===ship);
+  const openingDms=new Set();
+  function dmButton(p){
+    const b=node('button','friend-dm',openingDms.has(p.ship)?'Opening DM…':'DM');b.type='button';b.disabled=openingDms.has(p.ship);b.classList.toggle('friend-pulse',b.disabled);b.setAttribute('aria-label',`DM ${p.name||p.ship} in Groups`);
+    b.onclick=async()=>{if(openingDms.has(p.ship))return;openingDms.add(p.ship);b.disabled=true;b.textContent='Opening DM…';b.classList.add('friend-pulse');try{await openGroupsDm(p.ship);}catch(error){notify(error.message);}finally{openingDms.delete(p.ship);signature='';render();}};
+    return b;
+  }
   function profileButton(p){const b=node('button','friend-name',p.name||p.ship);b.type='button';b.title='Inspect player profile';b.onclick=()=>{$('friends-dialog').close();inspect(p);};return b;}
   function actionButton(text,action,p){const b=node('button','',text);b.type='button';b.disabled=busy(p);if(busy(p)){b.classList.add('friend-pulse');b.setAttribute('aria-busy','true');}b.onclick=()=>act(action,p);return b;}
   async function act(action,p){
@@ -31,7 +75,7 @@ function createSocial({self,coordinator,perform,subscribe,unsubscribe,profile,in
       for(const p of pending){const row=node('div','friend-request');row.append(profileButton(p));const controls=node('div','friend-request-actions');controls.append(actionButton(busy(p)?'Friendship…':'Become Friends','accept',p),actionButton('Deny Friendship','deny',p));row.append(controls);if(p.error)row.append(node('p','friend-error',p.error));requests.append(row);}
       if(!pending.length)requests.append(node('p','friends-empty','No friend requests.'));
       const list=$('friend-list');list.replaceChildren();
-      for(const p of data.peers.filter(p=>p.stage==='friend')){const row=node('div','friend-row');row.dataset.ship=p.ship;const avatar=node('div','friend-avatar');avatar.append(createCharacter(p.avatar));const name=profileButton(p);name.prepend(avatar);const status=node('span','friend-presence');status.dataset.peer=p.ship;const dm=node('a','friend-dm','DM');dm.href='/apps/groups/dm/'+encodeURIComponent(p.ship);dm.target='_blank';dm.rel='noopener';dm.setAttribute('aria-label',`DM ${p.name||p.ship} in Groups`);row.append(name,status,dm);list.append(row);}
+      for(const p of data.peers.filter(p=>p.stage==='friend')){const row=node('div','friend-row');row.dataset.ship=p.ship;const avatar=node('div','friend-avatar');avatar.append(createCharacter(p.avatar));const name=profileButton(p);name.prepend(avatar);const status=node('span','friend-presence');status.dataset.peer=p.ship;row.append(name,status,dmButton(p));list.append(row);}
       if(!list.children.length)list.append(node('p','friends-empty','Your friends will appear here.'));
       const outgoing=data.peers.filter(p=>p.outgoing&&p.stage!=='friend'&&!p.incoming&&p.stage!=='denied');$('outgoing-section').hidden=!outgoing.length;$('friend-outgoing').replaceChildren(...outgoing.map(p=>{const row=node('div','friend-request');row.append(profileButton(p),node('span',busy(p)?'friend-pulse':'',p.stage==='pending'?'Friendship requested. Pending their approval':busy(p)?'Requesting friendship…':p.error||'Request not completed.'));if(p.stage==='error')row.append(actionButton('Retry','request',p));return row;}));
     }

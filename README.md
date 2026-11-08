@@ -540,3 +540,7 @@ The bottom chat has its own input and never scores answers; close/exact answers
 are private warnings. NewRound plays when drawing ends, before the screenshot
 hold. Display names and cat selections restore on the next visit. See the
 [release notes](docs/releases/0.27.0.md) for integration and validation details.
+
+0.27.1 fixes first-time DM opening by preparing the selected conversation
+through Groups' New Message flow. The button waits for the target's composer
+and reports popup/loading errors; it never sends a message automatically.

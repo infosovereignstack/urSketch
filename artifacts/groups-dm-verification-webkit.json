@@ -1,0 +1,27 @@
+{
+  "realInstalledGroups": true,
+  "browser": "webkit",
+  "mobile": false,
+  "newAndExistingRecipients": [
+    {
+      "target": "~nec",
+      "composerReady": true,
+      "emptyDraft": true
+    },
+    {
+      "target": "~bud",
+      "composerReady": true,
+      "emptyDraft": true
+    },
+    {
+      "target": "~nec",
+      "composerReady": true,
+      "emptyDraft": true
+    }
+  ],
+  "messagePokes": 0,
+  "noOpenerAccess": true,
+  "blockedPopupRecovery": true,
+  "installedUrSketch": false,
+  "clientSha256": "78a935de9a4f7cea6121a6370d710cc9ea84d5a474c2286c254504e14d45531e"
+}

@@ -368,3 +368,17 @@ and phone sizes. The served client matches the release. Treaty advertises
 0.27.0. Pals remained absent on the comet after these checks; installation
 requires the player's Request friendship or Become Friends action. The Lounge
 button is a placeholder; no public group has been created.
+
+## 0.27.1 — November 8, 2026
+
+Imported the generated DM-opening client and Docket 0.27.1 atomically. No
+native game/social state schema or Groups desk files changed. The DM action
+now uses Groups' New Message flow to prepare the target's local composer,
+including conversations that have no previous messages.
+
+Real installed Groups checks passed in Chromium desktop, Chromium phone layout
+and WebKit. The installed urSketch client then passed the same target switching,
+repeat-open, empty-composer, detached-opener and popup-recovery checks. Message
+actions were blocked and none were attempted. The installed source matches
+the tested social client, and Treaty advertises 0.27.1. Test friendships were
+page-local fixtures; the comet's Pals records were not changed.

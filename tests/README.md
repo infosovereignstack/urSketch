@@ -576,3 +576,15 @@ the served client and Treaty release.
 `live-social.py` checks native social readiness, the installed menu/explainer,
 manual shared-room entry, phone/laptop dialog bounds and the fact that opening
 the menu does not install Pals. It sends no real friendship requests or DMs.
+
+## 0.27.1 targeted Groups composers
+
+`groups-dm.py` exercises the actual DM button and installed Groups frontend,
+with page-local friend fixtures. It checks the selected ship's DM route and
+visible empty MessageInput for two new targets and a repeated target. It
+blocks message-sending commands, checks that none occur, verifies detached
+opener access and tests popup-block recovery. Disposable browser contexts keep
+pending local conversations out of the user's normal browser storage.
+
+Set `URSKETCH_DM_BROWSER=webkit` to use WebKit and `URSKETCH_DM_MOBILE=1` for
+phone layout. Results are recorded by engine/layout under `artifacts/`.
