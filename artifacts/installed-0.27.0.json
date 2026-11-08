@@ -1,0 +1,11 @@
+{
+  "version": "0.27.0",
+  "nativeSources": {
+    "app/ursketch.hoon": "d4df2e4d1e0dffb0fd78e4280023dce72bf6e202fc754ad57c0ea31d892c9df2",
+    "app/ursketch-social.hoon": "b88939f32b2eb7c57a571246d00605046f193be6b79fbb38dc4a2ae8cb9a682a",
+    "lib/ursketch-social-config.hoon": "67e35b19f14008a87b903c211c22fb5d0e140510749e2e4adfbcfaf37555ae6c",
+    "lib/ursketch-game.hoon": "5e68047e8c0d408a51cd7460b31de960df151e212af7c884423e73f3d8ff35b7",
+    "lib/ursketch-types.hoon": "8722fe8ac5b3216d36da2d74d260e7fb50809b7ca7be9388306d47483a0ee64a"
+  },
+  "published": true
+}

@@ -347,3 +347,24 @@ interruption/resume, repeat-update guards, output suspension, unrelated clicks
 during silence, and next-game audio wakeup. JavaScript/Python syntax, build and
 whitespace checks passed. Supplied media and the room-state schema are unchanged.
 The affected physical mobile device still requires confirmation after refresh.
+
+## 0.27.0 — November 8, 2026
+
+Imported room-state 13, the native social agent/configuration, bill, generated
+interface, rules generator and Docket 0.27.0 together. Published a final native
+social update for presence retry backoff after isolated validation. Existing
+room and profile migrations preserve their values.
+
+Two isolated ships passed shared-room first-joiner/concurrent claims, saved
+profiles, chat privacy/no chat scoring, correct-answer and end-of-drawing cue
+timing, native Pals install/revival, persisted requests without Pals, denial,
+acceptance, mutual records, friend names/presence and Groups DM link checks.
+Native capacity/peak-round/migration, mobile/performance and finite audio
+regressions passed. No friendship tests contacted real identities.
+
+The installed comet passed the full interface/publication suite, native room
+rules and 25-player rules, and a read-only Friends-menu smoke test at laptop
+and phone sizes. The served client matches the release. Treaty advertises
+0.27.0. Pals remained absent on the comet after these checks; installation
+requires the player's Request friendship or Become Friends action. The Lounge
+button is a placeholder; no public group has been created.

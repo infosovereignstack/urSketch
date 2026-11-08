@@ -521,3 +521,22 @@ than a native looping source. Its existing half-volume level is preserved.
 Afterward the audio output rests for the silent half of the 40-second finale
 and wakes for the next game cue. Completed finale IDs cannot restart audio
 when room updates repeat. Both wall and monotonic clocks enforce the cutoff.
+
+## Friends, shared room and larger games (0.27.0)
+
+Click a player's cat or name to request friendship. Friends and DMs shows
+persisted incoming requests, approval status, friends' display names and rooms,
+and links to preselected conversations in your own Groups app. Requesting or
+accepting installs Pals from `~paldev` if needed; stopped installations resume.
+The recipient can receive and deny a request in urSketch without Pals. The
+urSketch Lounge button is a placeholder for a future public Groups lounge.
+
+A Clean Slate is one shared room hosted by its first joiner. Its directory is
+on the publisher comet. Rooms support 25 players, with a minimum of ten rounds
+that increases to the game's peak player count. Normal room search, saved
+score/drawing-seat rejoining, and manual joining remain available.
+
+The bottom chat has its own input and never scores answers; close/exact answers
+are private warnings. NewRound plays when drawing ends, before the screenshot
+hold. Display names and cat selections restore on the next visit. See the
+[release notes](docs/releases/0.27.0.md) for integration and validation details.

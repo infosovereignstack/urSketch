@@ -33,7 +33,7 @@ for path in sorted((ROOT/'web/theme-art').glob('*.svg')):
 for name in ('swing','peter','goblin'):
     theme_css=theme_css.replace('SPIDER_MAN_'+name.upper()+'_IMAGE',assets['themes/spider-man/'+name+'.png']['url'])
 html = html.replace('/* URSKETCH_CSS */', (ROOT / 'web/style.css').read_text().replace('/* URSKETCH_CLASSIC */', classic).replace('/* URSKETCH_CONNECT */', (ROOT/'web/connect.css').read_text()).replace('/* URSKETCH_BROWSER */', (ROOT/'web/browser.css').read_text()).replace('/* URSKETCH_BLINGEE */', (ROOT/'web/blingee.css').read_text()).replace('/* URSKETCH_THEMES */',theme_css))
-html=html.replace('</style>',(ROOT/'web/settings-layout.css').read_text()+'</style>',1)
+html=html.replace('</style>',(ROOT/'web/settings-layout.css').read_text()+(ROOT/'web/social.css').read_text()+'</style>',1)
 for name in ('skip', 'done'):
     uri = 'data:image/svg+xml;base64,' + base64.b64encode((ROOT / f'web/hint-{name}.svg').read_bytes()).decode()
     html = html.replace(f'DEFAULT_HINT_{name.upper()}_IMAGE', uri)
@@ -46,6 +46,7 @@ html=html.replace('/* URSKETCH_CHARACTERS */',(ROOT/'web/characters.js').read_te
 html = html.replace('/* URSKETCH_DRAWING */', (ROOT / 'web/drawing.js').read_text())
 html = html.replace('/* URSKETCH_SETTINGS */', (ROOT / 'web/settings.js').read_text())
 cue_urls = {Path(name).stem:asset['url'] for name,asset in assets.items() if name.startswith('audio/cues/')}
+html = html.replace('/* URSKETCH_SOCIAL */', (ROOT/'web/social.js').read_text())
 html = html.replace('/* URSKETCH_ADMIN */', (ROOT/'web/admin.js').read_text())
 html = html.replace('/* URSKETCH_FINALE */', (ROOT/'web/finale.js').read_text())
 html = html.replace('/* URSKETCH_AUDIO */', (ROOT/'web/audio.js').read_text())

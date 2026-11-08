@@ -6,14 +6,14 @@ const GLOBAL_CHAT_HOST=URSKETCH_GLOBAL_CHAT_HOST;
 const connectPage = document.documentElement.classList.contains('connect-route');
 $('connect-page').hidden=!connectPage;
 if(connectPage)document.title='urSketch · Connect';else document.body.classList.add('browsing');
-let activeName = SELF, profiles = [];
+let activeName = SELF, profiles = [], hasLocalProfile=false, hasLocalCharacter=false;
 const profileKey = `ursketch.players.${SELF}`;
 const characterKey=`ursketch.character.${SELF}`;
 let activeCharacter=normalizeCharacter(null),characterReady=Promise.resolve(),characterBuilder=null,characterDraft=false;
-try{const saved=JSON.parse(localStorage.getItem(characterKey)||'null');if(saved){activeCharacter=normalizeCharacter(saved.value||saved);characterDraft=saved.pending===true;}}catch{}
+try{const saved=JSON.parse(localStorage.getItem(characterKey)||'null');if(saved){hasLocalCharacter=true;activeCharacter=normalizeCharacter(saved.value||saved);characterDraft=saved.pending===true;}}catch{}
 function rememberCharacter(value,pending=false){activeCharacter=normalizeCharacter(value);characterDraft=pending;try{localStorage.setItem(characterKey,JSON.stringify({value:activeCharacter,pending}));}catch{}}
 let host = SELF, roomId = '', state = null, lobbySub = null, roomSub = null;
-let drawing,roomAdmin;let rosterSignature='';const messageSignatures=new Map();
+let drawing,roomAdmin,social;let nameDraft=false;let rosterSignature='';const messageSignatures=new Map();
 let rosterOrder=[];
 const PENCIL_URL='URSKETCH_PENCIL_URL';
 let finale=null,gameAudio=null,roomTimeline=[],serverMessages=[],feedbackSeen=new Set(),selectedChat='game',lastTheme='',bannerDismissed=null;
@@ -55,7 +55,7 @@ class Eyre {
         recoveryTarget='';recoverySub=null;if(savedRoom)void watchRecovery();
         if(state)restartRoomUpdates();
         if(globalChatSub!==null){const old=globalChatSub;globalChatSub=null;globalChatReady=false;chatControls();void this.unsubscribe(old).catch(()=>{});}
-        void connectGlobalChat();
+        void connectGlobalChat();void social?.reconnect();
         for(const [ship,entry] of knownHosts){if(entry.id===null)continue;const old=entry.id;entry.id=null;void this.unsubscribe(old).catch(()=>{});void watchHost(ship).catch(()=>{});}
       }
     };
@@ -82,7 +82,7 @@ class Eyre {
     this.relaySub=await this.subscribe('/relay',data=>{const waiter=this.requests.get(data.request);if(waiter)this.finish(waiter,data.ok?null:rejectedAction(waiter.action));},false,SELF);
   }
   finish(waiter,error){clearTimeout(waiter.timer);this.waiters.delete(waiter.id);this.requests.delete(waiter.request);error?waiter.reject(error):waiter.resolve();}
-  async poke(action,data={},target={host,room:roomId}){
+  async poke(action,data={},target={host,room:roomId},app='ursketch'){
     const turnToken=state?.token||0;
     await characterReady;
     const id=this.next,request=`${this.uid}-${id}`;
@@ -90,18 +90,18 @@ class Eyre {
       const waiter={id,request,action,resolve,reject,remote:target.host!==SELF};
       waiter.timer=setTimeout(()=>this.finish(waiter,new Error('The host has not acknowledged this action yet. It may still arrive; check the room before repeating it.')),60000);
       this.waiters.set(id,waiter);if(waiter.remote)this.requests.set(request,waiter);
-      this.send({action:'poke',ship:SELF.slice(1),app:'ursketch',mark:'json',json:{action,room:target.room,host:target.host,request,name:activeName,avatar:activeCharacter,token:turnToken,...data}}).catch(e=>this.finish(waiter,e));
+      this.send({action:'poke',ship:SELF.slice(1),app,mark:'json',json:{action,room:target.room,host:target.host,request,name:activeName,avatar:activeCharacter,token:turnToken,...data}}).catch(e=>this.finish(waiter,e));
     });
     return result;
   }
-  subscribe(path,handler,initial=false,targetHost=host){
+  subscribe(path,handler,initial=false,targetHost=host,app='ursketch'){
     const id=this.next,localPath=targetHost===SELF?path:`/proxy/${targetHost}${path}`;
     let resolve,reject;
     const first=initial?new Promise((yes,no)=>{resolve=yes;reject=no;}):null;
     const meta={settled:!initial,ready:()=>{if(meta.settled)return;meta.settled=true;clearTimeout(meta.timer);resolve(id);},fail:e=>{if(meta.settled)return;meta.settled=true;clearTimeout(meta.timer);this.handlers.delete(id);this.subscriptions.delete(id);this.send({action:'unsubscribe',subscription:id}).catch(()=>{});reject(e);}};
     if(initial)meta.timer=setTimeout(()=>meta.fail(new Error('No room data arrived from the host. Please try again.')),60000);
     this.handlers.set(id,handler);this.subscriptions.set(id,meta);
-    const sent=this.send({action:'subscribe',ship:SELF.slice(1),app:'ursketch',path:localPath});
+    const sent=this.send({action:'subscribe',ship:SELF.slice(1),app,path:localPath});
     if(initial){sent.catch(meta.fail);return first;}
     return sent.then(()=>id).catch(e=>{this.handlers.delete(id);this.subscriptions.delete(id);throw e;});
   }
@@ -118,15 +118,15 @@ function operation(id,text,busy=false){const el=$(id);el.textContent=text;el.cla
 function busyControls(){const busy=browsing||joining;$('host-search').disabled=busy;$('host').disabled=joining;$('create-open').disabled=busy;for(const b of $('room-list').querySelectorAll('button'))b.disabled=busy||b.dataset.full==='true';$('rejoin-room').disabled=busy;$('leave-saved-room').disabled=busy;}
 function saveRecovery(record){savedRoom=record;try{record?localStorage.setItem(recoveryKey,JSON.stringify(record)):localStorage.removeItem(recoveryKey);}catch{}renderRecovery();}
 let recoverySub=null,recoveryTarget='';
-function rememberRoom(title){if(!roomId)return;saveRecovery({host,id:roomId,title:title||state?.title||savedRoom?.title||roomId,round:state?Math.min(10,state.turn+1):savedRoom?.host===host&&savedRoom?.id===roomId?savedRoom.round||1:1});}
-function renderRecovery(){const visible=!!savedRoom&&!state;$('room-recovery').hidden=!visible;if(!visible)return;$('recovery-title').textContent='Reconnect to your previous game';$('recovery-detail').textContent=`${savedRoom.title} · Round ${savedRoom.round||1}/10 · ${savedRoom.host}`;}
+function rememberRoom(title){if(!roomId)return;saveRecovery({host,id:roomId,title:title||state?.title||savedRoom?.title||roomId,rounds:state?.rounds||savedRoom?.rounds||10,round:state?Math.min(state.rounds||10,state.turn+1):savedRoom?.host===host&&savedRoom?.id===roomId?savedRoom.round||1:1});}
+function renderRecovery(){const visible=!!savedRoom&&!state;$('room-recovery').hidden=!visible;if(!visible)return;$('recovery-title').textContent='Reconnect to your previous game';$('recovery-detail').textContent=`${savedRoom.title} · Round ${savedRoom.round||1}/${savedRoom.rounds||10} · ${savedRoom.host}`;}
 function restoreRecovery(){savedRoom=null;try{const r=JSON.parse(localStorage.getItem(recoveryKey)||'null');if(r&&/^~[a-z-]+$/.test(r.host)&&/^[a-z0-9-]{1,40}$/.test(r.id))savedRoom=r;}catch{}renderRecovery();if(savedRoom&&!connectPage)void watchRecovery();}
 async function watchRecovery(){
   const record=savedRoom;if(!record||connectPage)return;const target=`${record.host}/${record.id}`;if(target===recoveryTarget)return;recoveryTarget=target;
   const old=recoverySub;recoverySub=null;if(old!==null)void api.unsubscribe(old).catch(()=>{});
-  try{const id=await api.subscribe('/lobby',data=>{if(target!==recoveryTarget||!savedRoom||savedRoom.host!==record.host||savedRoom.id!==record.id)return;const room=data.rooms?.find(r=>r.id===record.id);if(!room){if(!state)saveRecovery(null);return;}savedRoom={...savedRoom,title:room.title,round:room.round||savedRoom.round||1};try{localStorage.setItem(recoveryKey,JSON.stringify(savedRoom));}catch{}renderRecovery();},true,record.host);if(target===recoveryTarget)recoverySub=id;else void api.unsubscribe(id);}catch{if(target===recoveryTarget)recoveryTarget='';}
+  try{const id=await api.subscribe('/lobby',data=>{if(target!==recoveryTarget||!savedRoom||savedRoom.host!==record.host||savedRoom.id!==record.id)return;const room=data.rooms?.find(r=>r.id===record.id);if(!room){if(!state)saveRecovery(null);return;}savedRoom={...savedRoom,title:room.title,round:room.round||savedRoom.round||1,rounds:room.rounds||savedRoom.rounds||10};try{localStorage.setItem(recoveryKey,JSON.stringify(savedRoom));}catch{}renderRecovery();},true,record.host);if(target===recoveryTarget)recoverySub=id;else void api.unsubscribe(id);}catch{if(target===recoveryTarget)recoveryTarget='';}
 }
-function showLobby({keepRoom=true}={}){const old=roomSub;roomEpoch++;clearTimeout(roomRecoveryTimer);roomRecoveryTimer=null;roomReceiver=null;roomRecovering=false;roomRecoveryAttempt=0;roomRecoveryInFlight=null;if(snapshotRequest){clearTimeout(snapshotRequest.timer);snapshotRequest=null;}roomId='';state=null;roomSub=null;rosterOrder=[];finale?.stop();gameAudio?.stop();roomAdmin?.render(null);roomTimeline=[];serverMessages=[];feedbackSeen.clear();if(old!=null)api.unsubscribe(old).catch(()=>{});drawing?.cancel();$('game').hidden=true;$('lobby').hidden=false;document.body.classList.remove('playing','is-artist','is-guesser');history.replaceState(null,'',location.pathname);if(!keepRoom)saveRecovery(null);renderRecovery();if(savedRoom)void watchRecovery();}
+function showLobby({keepRoom=true}={}){void social?.presence(null);const old=roomSub;roomEpoch++;clearTimeout(roomRecoveryTimer);roomRecoveryTimer=null;roomReceiver=null;roomRecovering=false;roomRecoveryAttempt=0;roomRecoveryInFlight=null;if(snapshotRequest){clearTimeout(snapshotRequest.timer);snapshotRequest=null;}roomId='';state=null;roomSub=null;rosterOrder=[];finale?.stop();gameAudio?.stop();roomAdmin?.render(null);roomTimeline=[];serverMessages=[];feedbackSeen.clear();if(old!=null)api.unsubscribe(old).catch(()=>{});drawing?.cancel();$('game').hidden=true;$('lobby').hidden=false;document.body.classList.remove('playing','is-artist','is-guesser');history.replaceState(null,'',location.pathname);if(!keepRoom)saveRecovery(null);renderRecovery();if(savedRoom)void watchRecovery();}
 const knownHostsKey=`ursketch.hosts.${SELF}`,knownHosts=new Map();
 let hideFull=false,hideEmpty=false;
 try{const saved=JSON.parse(localStorage.getItem('ursketch.roomFilters')||'{}');hideFull=saved.full===true;hideEmpty=saved.empty===true;}catch{}
@@ -206,13 +206,13 @@ function renderLobby(data){
   $('browse-status').title=$('browse-status').textContent;listedRooms=data.rooms;renderRoomList();
 }
 function renderRoomCards(rooms){
-  const list=$('room-list'),shown=rooms.filter(r=>!(hideFull&&r.count>=10)&&!(hideEmpty&&r.count===0));list.hidden=false;
+  const list=$('room-list'),shown=rooms.filter(r=>!(hideFull&&r.count>=(r.capacity||25))&&!(hideEmpty&&r.count===0));list.hidden=false;
   if(!shown.length){list.replaceChildren(element('p','browser-empty',browsing?'Searching…':rooms.length?'No rooms match your filters.':'None found'));return;}
   list.replaceChildren(...shown.map(r=>{
-    const row=element('article',`room-row${r.count?' occupied':''}`),rejoin=savedRoom?.host===host&&savedRoom?.id===r.id,full=r.count>=10&&!rejoin;
-    const button=element('button','room-name',r.title);button.dataset.full=String(full);button.disabled=full||browsing||joining;button.onclick=()=>run(()=>joinRoom(r.id,r.title));button.title=`${r.title}\n${r.phase} · ${r.count}/10 players\nHosted by ${host}`;
-    const count=element('span','room-occupancy',`${r.count}/10`);count.tabIndex=0;count.title=Array.isArray(r.players)?r.players.map(p=>`${p.name||p.ship} (${p.ship})`).join('\n')||'No players yet':`${r.count} players`;
-    const details=element('div','room-details');details.append(element('b','',r.title),element('p','',`Phase: ${r.phase}`),element('p','',`Players: ${r.count}/10`));
+    const row=element('article',`room-row${r.count?' occupied':''}`),rejoin=savedRoom?.host===host&&savedRoom?.id===r.id,full=r.count>=(r.capacity||25)&&!rejoin;
+    const button=element('button','room-name',r.title);button.dataset.full=String(full);button.disabled=full||browsing||joining;button.onclick=()=>run(()=>joinRoom(r.id,r.title));button.title=`${r.title}\n${r.phase} · ${r.count}/${r.capacity||25} players\nHosted by ${host}`;
+    const count=element('span','room-occupancy',`${r.count}/${r.capacity||25}`);count.tabIndex=0;count.title=Array.isArray(r.players)?r.players.map(p=>`${p.name||p.ship} (${p.ship})`).join('\n')||'No players yet':`${r.count} players`;
+    const details=element('div','room-details');details.append(element('b','',r.title),element('p','',`Phase: ${r.phase}`),element('p','',`Players: ${r.count}/${r.capacity||25}`));
     row.append(button,count,details);return row;
   }));
 }
@@ -255,7 +255,7 @@ function roomEvent(data){
   if(data.kind==='feedback'){
     if(data.feedback==='close'&&state?.phase==='drawing'&&data.room===roomId&&data.token===state.token&&!feedbackSeen.has(data.id)){
       feedbackSeen.add(data.id);if(feedbackSeen.size>100)feedbackSeen.delete(feedbackSeen.values().next().value);
-      roomTimeline.push({who:'',text:data.text,kind:'close'});roomTimeline=roomTimeline.slice(-160);renderRoomMessages();void gameAudio?.play('CloseGuess');
+      roomTimeline.push({who:'',text:data.text,kind:data.channel==='chat'?'chat-close':'close'});roomTimeline=roomTimeline.slice(-160);renderRoomMessages();void gameAudio?.play('CloseGuess');
     }
     return null;
   }
@@ -328,7 +328,7 @@ async function maintainPresence(){
   try{
     await api.poke('heartbeat',{},current);
     if(epoch!==roomEpoch)return;
-    hostPresenceUntil=Date.now()+GRACE_MS;rememberRoom(state.title);
+    hostPresenceUntil=Date.now()+GRACE_MS;rememberRoom(state.title);void social?.presence({host,room:roomId,title:state.title});
     if(heartbeatWarning)toast('Room connection restored.');
     heartbeatWarning=false;
   }catch(e){
@@ -340,7 +340,7 @@ async function maintainPresence(){
 setInterval(()=>{void maintainPresence();},10000);
 window.addEventListener('online',()=>{void api.ensure().then(()=>maintainPresence()).catch(()=>{});if(roomRecovering)scheduleRoomRecovery();});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)void maintainPresence();});
-window.addEventListener('pagehide',()=>{api.closed=true;clearTimeout(api.reconnectTimer);clearTimeout(roomRecoveryTimer);if(!api.events&&!api.opening)return;const actions=[];if(state&&roomId){rememberRoom(state.title);actions.push({id:api.next++,action:'poke',ship:SELF.slice(1),app:'ursketch',mark:'json',json:{action:'leave',host,room:roomId,request:`leave-${api.uid}`,name:activeName}});}actions.push({id:api.next++,action:'delete'});api.events?.close();fetch(api.url,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(actions),keepalive:true}).catch(()=>{});});
+window.addEventListener('pagehide',()=>{api.closed=true;clearTimeout(api.reconnectTimer);clearTimeout(roomRecoveryTimer);if(!api.events&&!api.opening)return;const actions=[];if(state&&roomId)actions.push({id:api.next++,action:'poke',ship:SELF.slice(1),app:'ursketch-social',mark:'json',json:{action:'presence',name:activeName,avatar:activeCharacter,title:'',room:'',host:SELF}});if(state&&roomId){rememberRoom(state.title);actions.push({id:api.next++,action:'poke',ship:SELF.slice(1),app:'ursketch',mark:'json',json:{action:'leave',host,room:roomId,request:`leave-${api.uid}`,name:activeName}});}actions.push({id:api.next++,action:'delete'});api.events?.close();fetch(api.url,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(actions),keepalive:true}).catch(()=>{});});
 
 function isArtist() { return state?.players[0]?.ship === SELF; }
 function canDraw() { return connectionReady && !roomRecovering && state?.phase === 'drawing' && isArtist(); }
@@ -352,8 +352,8 @@ function appendRoomMessages(messages){
   return fresh;
 }
 function renderRoomMessages(){
-  renderMessages('messages',roomTimeline.filter(m=>!['chat','warning','kick'].includes(m.kind)));
-  renderMessages('chat-messages',roomTimeline.filter(m=>['chat','warning','kick'].includes(m.kind)||(m.kind==='system'&&m.text==='joined the room')));
+  renderMessages('messages',roomTimeline.filter(m=>!['chat','chat-close','warning','kick'].includes(m.kind)));
+  renderMessages('chat-messages',roomTimeline.filter(m=>['chat','chat-close','warning','kick'].includes(m.kind)||(m.kind==='system'&&m.text==='joined the room')));
 }
 function selectChat(which,focus=false){
   selectedChat=which;document.body.dataset.activeChat=which;
@@ -375,9 +375,8 @@ function roomSounds(before,after,fresh){
     if(after.players.some(p=>!before.players.some(old=>old.ship===p.ship)))void gameAudio?.play('JoinRoom');
     if(fresh.some(m=>m.kind==='found-word'))void gameAudio?.play('YouGotTheWord');
     if(fresh.some(m=>m.kind==='correct'&&m.ship!==SELF))void gameAudio?.play('SomeoneElseGotTheWord');
-    if(after.phase==='drawing'&&(before.phase!=='drawing'||before.token!==after.token)){
-      void gameAudio?.play('NewRound');if(after.players[0]?.ship===SELF)void gameAudio?.play('YourTurnToDraw');
-    }
+    if(after.phase==='reveal'&&before.phase==='drawing'||after.phase==='drawing'&&['waiting','finished'].includes(before.phase))void gameAudio?.play('NewRound');
+    if(after.phase==='drawing'&&(before.phase!=='drawing'||before.token!==after.token)&&after.players[0]?.ship===SELF)void gameAudio?.play('YourTurnToDraw');
     if(after.phase==='drawing'&&before.phase==='drawing'&&before.token===after.token&&after.hintCount>before.hintCount)void gameAudio?.play('HintNoise');
     if(fresh.some(m=>m.kind==='warning'))void gameAudio?.play('RemindsRules');
   }
@@ -398,17 +397,17 @@ function renderRoom(data) {
   $('room-title').textContent=data.title;
   document.body.classList.toggle('is-artist',isArtist()&&data.phase==='drawing');
   document.body.classList.toggle('is-guesser',!isArtist()&&data.phase==='drawing');
-  $('round').textContent=`Round ${Math.min(10,data.turn+1)} / 10`;
+  $('round').textContent=`Round ${Math.min(data.rounds||10,data.turn+1)} / ${data.rounds||10}`;
   const artist=data.players.find(p=>p.ship===(data.artist||data.players[0]?.ship)), name=data.artistName||artist?.name||artist?.ship||'The artist';
   const labels={waiting:'Waiting for players',choosing:`${name} is choosing a word`,drawing:`${name} is drawing`,reveal:'Artwork pause — next round in 3 seconds',finished:'Game over'};
-  const round=Math.min(10,data.turn+1);
-  $('classic-round').replaceChildren(document.createTextNode(`Round ${round} of 10 in ${data.title} by `),element('b','',name));
+  const round=Math.min(data.rounds||10,data.turn+1);
+  $('classic-round').replaceChildren(document.createTextNode(`Round ${round} of ${data.rounds||10} in ${data.title} by `),element('b','',name));
   $('classic-round').title=$('classic-round').textContent;
   $('classic-player-count').textContent=data.players.length;
   $('phase-label').textContent=labels[data.phase];$('game-status').textContent=data.phase;
   $('artist-secret').hidden=!(isArtist()&&data.phase==='drawing');
   $('word').textContent=isArtist()?data.answer:'';$('word-value').textContent=data.artistValue??10;
-  $('player-count').textContent=`${data.players.length}/10`;
+  $('player-count').textContent=`${data.players.length}/${data.capacity||25}`;
   rosterOrder=rosterOrder.filter(ship=>data.players.some(p=>p.ship===ship));
   for(const p of data.players)if(!rosterOrder.includes(p.ship))rosterOrder.push(p.ship);
   const roster=rosterOrder.map(ship=>data.players.find(p=>p.ship===ship)).sort((a,b)=>b.score-a.score);
@@ -416,14 +415,14 @@ function renderRoom(data) {
   if(rosterSignature!==nextRoster){rosterSignature=nextRoster;$('players').replaceChildren(...roster.map(p=>{
     const li=element('li',[(p.ship===SELF?'me':''),(data.phase==='drawing'&&p.solved?'solved':'')].filter(Boolean).join(' '));li.dataset.ship=p.ship;
     const portrait=element('div','player-avatar');portrait.setAttribute('aria-hidden','true');portrait.append(createCharacter(p.avatar));
-    const label=element('div','player-name',p.name||p.ship);label.title=p.ship;label.tabIndex=0;label.setAttribute('role','button');label.setAttribute('aria-label',`Inspect ${p.name||p.ship}`);label.onclick=()=>inspectPlayer(p);label.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();inspectPlayer(p);}};
+    const label=element('div','player-name',p.name||p.ship);label.title=p.ship;li.tabIndex=0;li.setAttribute('role','button');li.setAttribute('aria-label',`Inspect ${p.name||p.ship}`);li.onclick=()=>inspectPlayer(p);li.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();inspectPlayer(p);}};
     const score=element('span','player-score',`${p.score} Points`);
     const marker=element('span','player-drawing-marker');
     if(data.phase==='drawing'&&p.ship===data.players[0]?.ship){const pencil=element('img','artist-pencil');pencil.src=PENCIL_URL;pencil.alt='Drawing';pencil.title='Currently drawing';marker.append(pencil);}
     li.append(portrait,label,score,marker);return li;
   }));
   }
-  drawing.render(data.lines,data.token);rememberRoom(data.title);roomAdmin?.render(data);
+  drawing.render(data.lines,data.token);rememberRoom(data.title);void social?.presence({host,room:roomId,title:data.title});roomAdmin?.render(data);
   const waiting=['waiting','finished'].includes(data.phase)&&!data.celebrating;
   $('room-notice').hidden=!waiting;
   $('room-notice-text').textContent=data.started?'Waiting for another player. The next round starts automatically.':'Waiting for players. At least two players are needed.';
@@ -490,7 +489,8 @@ $('start').onclick=()=>run(()=>api.poke('start'));
 $('give-hint').onclick=()=>run(async()=>{const button=$('give-hint');button.disabled=true;try{await api.poke('hint');}catch(e){if(state)renderRoom(state);throw e;}});
 $('skip').onclick=()=>run(async()=>{await drawing.flushAll();await api.poke('skip');});
 $('guess-form').onsubmit=event=>{event.preventDefault();const text=$('guess').value.trim();if(!text||state?.phase!=='drawing')return;const token=state.token;run(async()=>{await api.poke('guess',{text});if(state?.token===token&&$('guess').value.trim()===text)$('guess').value='';});};
-$('chat-form').onsubmit=event=>{event.preventDefault();const text=$('chat-input').value.trim();if(!text)return;run(async()=>{await api.poke('chat',{text});$('chat-input').value='';});};
+$('chat-form').onsubmit=event=>{event.preventDefault();const text=$('chat-input').value.trim();if(!text)return;run(async()=>{await api.poke('chat',{text});if($('chat-input').value.trim()===text)$('chat-input').value='';selectChat('chat',true);});};
+$('chat-messages').onclick=event=>{if(!event.target.closest('button,a')&&!getSelection()?.toString())selectChat('chat',true);};
 $('host-form').onsubmit=event=>{event.preventDefault();run(()=>browse($('host').value.trim().toLowerCase()));};
 $('create-open').onclick=()=>{$('create-error').hidden=true;$('create-dialog').showModal();};$('cancel-create').onclick=()=>$('create-dialog').close();
 $('create-form').onsubmit=event=>{event.preventDefault();run(async()=>{
@@ -507,7 +507,7 @@ function renderProfiles(){$('profile-current').textContent=`Playing as ${activeN
 function validPlayerName(name){return !!name&&!/[\u0000-\u001f\u007f]/.test(name)&&new TextEncoder().encode(name).length<=96;}
 function rememberProfile(name){activeName=name;if(!profiles.includes(name))profiles.push(name);profiles=profiles.slice(-20);try{localStorage.setItem(profileKey,JSON.stringify({names:profiles,active:name}));}catch{}renderProfiles();}
 $('player-name').value=SELF||'';
-$('player-name').oninput=()=>{$('player-name').setCustomValidity('');$('connect-error').textContent='';};
+$('player-name').oninput=()=>{nameDraft=true;$('player-name').setCustomValidity('');$('connect-error').textContent='';};
 $('profile-form').onsubmit=async event=>{
   event.preventDefault();const name=$('player-name').value.trim(),button=$('connect-submit');
   if(!validPlayerName(name)){$('player-name').setCustomValidity('Enter a display name using at most 96 bytes, without control characters.');$('player-name').reportValidity();return;}
@@ -520,6 +520,7 @@ $('profile-form').onsubmit=async event=>{
   }catch(error){$('connect-error').textContent=error.message||'Could not connect. Please try again.';button.disabled=false;button.textContent='Connect';}
 };
 function inspectPlayer(player){
+  social?.inspect(player);
   $('player-profile-name').textContent=player.name||player.ship;$('player-profile-ship').textContent=player.ship;
   const button=$('warn-player');button.hidden=!state||player.ship===SELF||!state.players.some(p=>p.ship===player.ship);button.disabled=false;
   button.onclick=()=>run(async()=>{button.disabled=true;try{await api.poke('warn',{player:player.ship});$('player-profile-dialog').close();}finally{button.disabled=false;}});
@@ -564,15 +565,22 @@ function syncThemeLayout(){
 }
 function fitCanvas(){const wrap=$('canvas').parentElement;if(!wrap.clientWidth||!wrap.clientHeight)return;const width=wrap.clientWidth,height=wrap.clientHeight;$('canvas').style.width=`${width}px`;$('canvas').style.height=`${height}px`;wrap.style.setProperty('--board-left','0px');wrap.style.setProperty('--board-top','0px');wrap.style.setProperty('--board-width',`${width}px`);drawing?.fit();}
 new ResizeObserver(fitCanvas).observe($('canvas').parentElement);
-try{const saved=JSON.parse(localStorage.getItem(profileKey)||'null');if(saved){profiles=(saved.names||[]).filter(n=>typeof n==='string'&&validPlayerName(n));if(profiles.includes(saved.active))activeName=saved.active;}}catch{}
+try{const saved=JSON.parse(localStorage.getItem(profileKey)||'null');if(saved){profiles=(saved.names||[]).filter(n=>typeof n==='string'&&validPlayerName(n));if(profiles.includes(saved.active)){activeName=saved.active;hasLocalProfile=true;}}}catch{}
+$('player-name').value=activeName;
 characterBuilder=createCharacterBuilder({initial:activeCharacter,onChange:value=>rememberCharacter(value,true)});
 characterReady=(async()=>{
-  try{const response=await fetch('/apps/ursketch/character',{signal:AbortSignal.timeout(10000)});if(!response.ok)return;const saved=await response.json();if(saved&&!characterDraft&&!characterBuilder.dirty){characterBuilder.restore(saved);rememberCharacter(saved,false);}}catch{}
+  try{
+    const response=await fetch('/apps/ursketch/profile',{signal:AbortSignal.timeout(10000)});if(!response.ok)return;
+    const saved=await response.json();
+    if(saved?.name&&!hasLocalProfile&&!nameDraft&&validPlayerName(saved.name)){rememberProfile(saved.name);$('player-name').value=saved.name;}
+    if(saved?.avatar&&!hasLocalCharacter&&!characterDraft&&!characterBuilder.dirty){characterBuilder.restore(saved.avatar);rememberCharacter(saved.avatar,false);}
+  }catch{}
 })();
 installClassicScrollbars();
 const preferences=createSettings({notify:toast,onChange:prefs=>{if(lastTheme!==prefs.theme){drawing?.resetView();lastTheme=prefs.theme;}gameAudio?.settings();syncThemeLayout();requestAnimationFrame(fitCanvas);}});
 if(!connectPage)gameAudio=createGameAudio({urls:URSKETCH_CUE_URLS,getPrefs:()=>preferences.values,notify:toast});
 if(!connectPage)finale=createFinale({surface:$('canvas').parentElement,layer:$('game-finale'),getAudio:()=>gameAudio,getPrefs:()=>preferences.values,onEnd:()=>{if(state?.phase==='finished'){state={...state,celebrating:false,remainingMs:0,seconds:0};renderRoom(state);}}});
 roomAdmin=createRoomAdmin({getState:()=>state,perform:(action,data)=>api.poke(action,data),notify:toast});
+social=createSocial({self:SELF,coordinator:GLOBAL_CHAT_HOST,perform:(action,data)=>api.poke(action,data,{host:SELF,room:''},'ursketch-social'),subscribe:handler=>api.subscribe('/friends',handler,true,SELF,'ursketch-social'),unsubscribe:id=>api.unsubscribe(id),profile:()=>({name:activeName,avatar:activeCharacter}),inspect:inspectPlayer,notify:toast,join:async target=>{await browse(target.host);await joinRoom(target.room,'A Clean Slate');}});
 renderProfiles();drawing=createDrawing({canvas:$('canvas'),colors,canDraw,send:(action,data)=>api.poke(action,action==='draw'&&roomStream?{encoding:1,lines:data.lines.map(l=>UrSketchWire.pack(l))}:data),error:e=>toast(e.message||String(e)),onDraw:dismissBanner,storageKey:`ursketch.palettes.${SELF}`});restoreRecovery();
-if(!connectPage)run(async()=>{if(!SELF)throw new Error('Open urSketch through your Urbit ship at /apps/ursketch.');restoreKnownHosts();void connectGlobalChat();await api.ensure();host=SELF;$('host').value='';history.replaceState(null,'',location.pathname);operation('browse-status','Search a ship to view its rooms.');$('room-list').replaceChildren(element('p','browser-empty','Search a ship to view rooms.'));busyControls();});
+if(!connectPage)run(async()=>{if(!SELF)throw new Error('Open urSketch through your Urbit ship at /apps/ursketch.');restoreKnownHosts();void connectGlobalChat();await api.ensure();void social.start();host=SELF;$('host').value='';history.replaceState(null,'',location.pathname);operation('browse-status','Search a ship to view its rooms.');$('room-list').replaceChildren(element('p','browser-empty','Search a ship to view rooms.'));busyControls();});

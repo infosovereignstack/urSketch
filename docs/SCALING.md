@@ -7,8 +7,8 @@ use two native ships, and the recorded vector-stream measurements cover 1,600
 commands in one room. They do not measure 500 peers, sustained production load,
 slow hardware, relayed Ames paths, or mixed network conditions.
 
-Rooms hold 10 players and a host can hold 64 rooms. Thus 500 players require
-at least 50 full rooms and fit below the room-count limit on one host. That
+Rooms hold 25 players as of 0.27.0 and a host can hold 64 rooms. Thus 500 players
+require at least 20 full rooms and fit below the room-count limit on one host. That
 limit is a validation boundary, not a performance guarantee. Each room has a
 12,000-command drawing limit. Exhausting it still rejects further drawing.
 
@@ -23,8 +23,8 @@ actually host different rooms; there is no automatic load balancer.
 The recorded two-ship vector sample (`artifacts/vector-stream-metrics.json`)
 used 85,583 JSON bytes for 40 batches (about 2.1 KB/batch), versus 4,463,815
 bytes for the former repeated full snapshots. This is a real payload
-measurement, not a throughput benchmark. As an illustrative estimate, 50
-rooms × 10 viewers × 2.1 KB × 1–10 batches/second implies roughly 1–11 MB/s of
+measurement, not a throughput benchmark. As an illustrative estimate, 20
+rooms × 25 viewers × 2.1 KB × 1–10 batches/second implies roughly 1–11 MB/s of
 outbound drawing JSON. Real traffic varies with command count, stroke rate,
 legacy clients, Ames encryption/fragmentation/acknowledgements and retries.
 CPU or disk can become the bottleneck before the network does.
@@ -35,6 +35,11 @@ per-sender one-second rate limit. Five hundred active chat subscribers can
 therefore burden that comet even if game rooms are spread over other hosts.
 A player count is across known hosts, not a universal directory or exact count
 of every person who has installed the app.
+
+The shared A Clean Slate directory is also on the publisher comet. It picks
+one first joiner as game host; it does not add capacity or split a full room.
+Native Pals records and friendship notifications live on each player's ship.
+Friend room-presence subscriptions add traffic between mutual friends.
 
 Before a 500-person event, distribute rooms across multiple reliable hosts and
 run staged native load tests at 50, 100, 250 and 500 concurrent clients/ships.

@@ -1,0 +1,11 @@
+{
+  "offlineNotFalselyConfirmed": true,
+  "notificationWithoutPals": true,
+  "notificationSurvivesReload": true,
+  "denyAndRequestAgain": true,
+  "nativeMutualFriendship": true,
+  "displayNamesAndRoomPresence": true,
+  "groupsDmDeepLink": true,
+  "nativePalsReadyAfterRequest": true,
+  "nativePalsReadyAfterAccept": true
+}

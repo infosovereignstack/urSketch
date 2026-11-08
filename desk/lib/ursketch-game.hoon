@@ -4,10 +4,14 @@
 ++  defaults
   ^-  room-settings
   [120 'default' ~ ~['default'] ~]
+++  upgrade-v12
+  |=  r=room-v12
+  ^-  room
+  [title.r owner.r players.r phase.r turn.r token.r deadline.r answer.r choices.r lines.r chat.r hints.r revealed.r solves.r solvers.r outcome.r started.r recent.r settings.r absent.r order.r finish-clock.r artist.r (max 10 (lent players.r))]
 ++  upgrade-v11
   |=  r=room-v11
   ^-  room
-  [title.r owner.r players.r phase.r turn.r token.r deadline.r answer.r choices.r lines.r chat.r hints.r revealed.r solves.r solvers.r outcome.r started.r recent.r defaults ~ (turn players.r |=(p=player who.p)) (lien players.r |=(p=player solved.p)) ?~(players.r owner.r who.i.players.r)]
+  [title.r owner.r players.r phase.r turn.r token.r deadline.r answer.r choices.r lines.r chat.r hints.r revealed.r solves.r solvers.r outcome.r started.r recent.r defaults ~ (turn players.r |=(p=player who.p)) (lien players.r |=(p=player solved.p)) ?~(players.r owner.r who.i.players.r) 10]
 ++  bank
   |=  [r=room id=@t]
   ^-  (list @t)
@@ -52,7 +56,7 @@
   =/  restored=player  ?~(saved [who 0 %.n] u.saved)
   =/  people=(list player)  (snoc players.r restored)
   =/  order=(list @p)  ?:((lien order.r |=(ship=@p =(ship who))) order.r (snoc order.r who))
-  r(players (murn order |=(ship=@p (seat people ship))), order order, absent (~(del by absent.r) who))
+  r(players (murn order |=(ship=@p (seat people ship))), order order, absent (~(del by absent.r) who), rounds ?:(?=(%finished phase.r) rounds.r (max rounds.r (lent people))))
 ++  action-key
   |=  id=@t
   ^-  @t
@@ -77,7 +81,7 @@
 ++  migrate-v10
   |=  r=room-v10
   ^-  room
-  [title.r owner.r players.r phase.r turn.r token.r deadline.r answer.r choices.r lines.r chat.r hints.r revealed.r solves.r solvers.r outcome.r started.r (history-seed answer.r) defaults ~ (turn players.r |=(p=player who.p)) (lien players.r |=(p=player solved.p)) ?~(players.r owner.r who.i.players.r)]
+  [title.r owner.r players.r phase.r turn.r token.r deadline.r answer.r choices.r lines.r chat.r hints.r revealed.r solves.r solvers.r outcome.r started.r (history-seed answer.r) defaults ~ (turn players.r |=(p=player who.p)) (lien players.r |=(p=player solved.p)) ?~(players.r owner.r who.i.players.r) 10]
 ++  migrate-room
   |=  r=old-room
   ^-  room
@@ -104,18 +108,19 @@
       (turn players.r |=(p=player who.p))
       %.n
       ?~(players.r owner.r who.i.players.r)
+      10
   ==
 ++  migrate-v3
   |=  r=room-v3
   ^-  room
-  [title.r owner.r players.r phase.r turn.r token.r deadline.r answer.r choices.r lines.r (upgrade-chat chat.r) 0 ~ 0 ~ ~ !=(%waiting phase.r) (history-seed answer.r) defaults ~ (turn players.r |=(p=player who.p)) (lien players.r |=(p=player solved.p)) ?~(players.r owner.r who.i.players.r)]
+  [title.r owner.r players.r phase.r turn.r token.r deadline.r answer.r choices.r lines.r (upgrade-chat chat.r) 0 ~ 0 ~ ~ !=(%waiting phase.r) (history-seed answer.r) defaults ~ (turn players.r |=(p=player who.p)) (lien players.r |=(p=player solved.p)) ?~(players.r owner.r who.i.players.r) 10]
 ++  migrate-v5
   |=  [r=room-v5 now=@da]
   ^-  room
   =/  solves=@ud  (lent (skim players.r |=(p=player solved.p)))
   =/  finishing=?  ?&(?=(%drawing phase.r) (gth solves 0))
   =/  deadline=@da  ?:(finishing (min deadline.r (add now ~s20)) deadline.r)
-  [title.r owner.r players.r phase.r turn.r token.r deadline answer.r choices.r lines.r (upgrade-chat chat.r) hints.r revealed.r solves ~ ~ !=(%waiting phase.r) (history-seed answer.r) defaults ~ (turn players.r |=(p=player who.p)) (lien players.r |=(p=player solved.p)) ?~(players.r owner.r who.i.players.r)]
+  [title.r owner.r players.r phase.r turn.r token.r deadline answer.r choices.r lines.r (upgrade-chat chat.r) hints.r revealed.r solves ~ ~ !=(%waiting phase.r) (history-seed answer.r) defaults ~ (turn players.r |=(p=player who.p)) (lien players.r |=(p=player solved.p)) ?~(players.r owner.r who.i.players.r) 10]
 ++  upgrade-chat
   |=  old=(list message-v6)
   ^-  (list message)
@@ -125,18 +130,19 @@
   ^-  room
   =/  records=(list solve)
     (turn (skim players.r |=(p=player solved.p)) |=(p=player [who.p (scot %p who.p) 0]))
-  [title.r owner.r players.r phase.r turn.r token.r deadline.r answer.r choices.r lines.r (upgrade-chat chat.r) hints.r revealed.r solves.r records ~ !=(%waiting phase.r) (history-seed answer.r) defaults ~ (turn players.r |=(p=player who.p)) (lien players.r |=(p=player solved.p)) ?~(players.r owner.r who.i.players.r)]
+  [title.r owner.r players.r phase.r turn.r token.r deadline.r answer.r choices.r lines.r (upgrade-chat chat.r) hints.r revealed.r solves.r records ~ !=(%waiting phase.r) (history-seed answer.r) defaults ~ (turn players.r |=(p=player who.p)) (lien players.r |=(p=player solved.p)) ?~(players.r owner.r who.i.players.r) 10]
 ++  migrate-v7
   |=  r=room-v7
   ^-  room
-  [title.r owner.r players.r phase.r turn.r token.r deadline.r answer.r choices.r lines.r chat.r hints.r revealed.r solves.r solvers.r ~ ?|(!=(%waiting phase.r) (gth turn.r 0) (lien chat.r |=(m=message =(kind.m 'round')))) (history-seed answer.r) defaults ~ (turn players.r |=(p=player who.p)) (lien players.r |=(p=player solved.p)) ?~(players.r owner.r who.i.players.r)]
+  [title.r owner.r players.r phase.r turn.r token.r deadline.r answer.r choices.r lines.r chat.r hints.r revealed.r solves.r solvers.r ~ ?|(!=(%waiting phase.r) (gth turn.r 0) (lien chat.r |=(m=message =(kind.m 'round')))) (history-seed answer.r) defaults ~ (turn players.r |=(p=player who.p)) (lien players.r |=(p=player solved.p)) ?~(players.r owner.r who.i.players.r) 10]
 ++  migrate-v8
   |=  r=room-v8
   ^-  room
-  [title.r owner.r players.r phase.r turn.r token.r deadline.r answer.r choices.r lines.r chat.r hints.r revealed.r solves.r solvers.r outcome.r ?|(!=(%waiting phase.r) (gth turn.r 0) ?=(^ outcome.r) (lien chat.r |=(m=message =(kind.m 'round')))) (history-seed answer.r) defaults ~ (turn players.r |=(p=player who.p)) (lien players.r |=(p=player solved.p)) ?~(players.r owner.r who.i.players.r)]
+  [title.r owner.r players.r phase.r turn.r token.r deadline.r answer.r choices.r lines.r chat.r hints.r revealed.r solves.r solvers.r outcome.r ?|(!=(%waiting phase.r) (gth turn.r 0) ?=(^ outcome.r) (lien chat.r |=(m=message =(kind.m 'round')))) (history-seed answer.r) defaults ~ (turn players.r |=(p=player who.p)) (lien players.r |=(p=player solved.p)) ?~(players.r owner.r who.i.players.r) 10]
 ++  new-game
   |=  [r=room now=@da]
   ^-  room
+  =.  r  r(rounds (max 10 (lent players.r)))
   ?:  (lth (lent players.r) 2)
     r(phase %waiting, deadline ~2000.1.1, token +(token.r), lines ~, started %.y)
   (choose r(turn 0, players (turn players.r |=(p=player p(score 0, solved %.n))), absent (~(run by absent.r) |=(p=player p(score 0, solved %.n)))) now)
@@ -194,14 +200,14 @@
   ?:  (lth (lent remaining) 2)
     r(phase %waiting, deadline ~2000.1.1)
   ?:  ?&(artist ?|(?=(%choosing phase.r) ?=(%drawing phase.r)))
-    ?:  (gte +(turn.r) 10)
+    ?:  (gte +(turn.r) rounds.r)
       r(phase %finished, deadline (add now ~s40), token +(token.r), lines ~)
     (choose r(turn +(turn.r)) now)
   r
 ++  fresh
   |=  [title=@t owner=@p]
   ^-  room
-  [title owner ~[[owner 0 %.n]] %waiting 0 0 ~2000.1.1 '' ~ ~ ~ 0 ~ 0 ~ ~ %.n ~ defaults ~ ~[owner] %.n owner]
+  [title owner ~[[owner 0 %.n]] %waiting 0 0 ~2000.1.1 '' ~ ~ ~ 0 ~ 0 ~ ~ %.n ~ defaults ~ ~[owner] %.n owner 10]
 ++  log
   |=  [r=room who=@t text=@t kind=@t audience=(unit @p) actor=(unit @p)]
   ^-  room
@@ -222,7 +228,7 @@
 ++  full
   |=  r=room
   ^-  ?
-  (gte (lent players.r) 10)
+  (gte (lent players.r) 25)
 ++  member
   |=  [r=room who=@p]
   ^-  ?
@@ -347,7 +353,7 @@
   |=  [r=room now=@da]
   ^-  room
   ?:  ?=(%choosing phase.r)  (choose r now)
-  ?:  (gte +(turn.r) 10)
+  ?:  (gte +(turn.r) rounds.r)
     r(phase %finished, deadline (add now ~s40), token +(token.r), lines ~)
   =.  r  r(turn +(turn.r))
   ?:  (lth (lent players.r) 2)

@@ -1,0 +1,26 @@
+/* Shared social surfaces follow the selected game theme. */
+.friend-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:#000;vertical-align:middle;margin-left:3px}
+.friend-pulse{animation:friend-pulse 1.4s ease-in-out infinite}
+@keyframes friend-pulse{0%,100%{opacity:1}50%{opacity:.35}}
+@media(prefers-reduced-motion:reduce){.friend-pulse{animation:none;text-decoration:underline dotted}}
+#request-friendship{display:block;width:100%;min-height:48px;margin:12px 0;white-space:normal;overflow-wrap:anywhere}
+#friends-dialog{width:min(900px,92vw);max-height:88dvh;overflow:auto;padding:18px}
+#friends-dialog h3{font-size:14px;margin:20px 0 10px}.friends-empty{font-size:12px}
+.friend-row{display:grid;grid-template-columns:minmax(110px,1fr) minmax(90px,1fr) auto;gap:14px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
+.friend-name{display:flex;align-items:center;gap:10px;min-width:0;text-align:left;overflow-wrap:anywhere}.friend-avatar{width:48px;height:48px;flex:none}.friend-avatar svg{width:100%;height:100%;display:block}
+.friend-presence{font-size:12px;overflow-wrap:anywhere}.friend-dm{color:inherit;padding:6px 12px;background:var(--white);border:1px solid var(--line);text-decoration:none;font-size:12px}
+.friend-request{padding:10px 0;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:10px;align-items:center}.friend-request-actions{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto}.friend-error{width:100%;color:#a00;font-size:12px}
+.pals-explainer{margin-top:16px;font-size:12px;line-height:1.6}.pals-explainer summary{cursor:pointer}.pals-explainer a{color:inherit;text-decoration:underline}#ursketch-lounge{margin-top:20px}
+#clean-slate{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:5px;border-bottom:2px groove #eee;font:11px Verdana,Arial,sans-serif;background:#ffffdc}#clean-slate-join{font-weight:bold;padding:4px 8px}#clean-slate-status{font-size:10px}
+.players li[role=button]{cursor:pointer}.players li[role=button]:focus-visible{outline:2px solid currentColor;outline-offset:-2px}
+body.playing .header-actions{display:flex;align-items:center;gap:5px}.header-actions #settings-open{font-size:12px;width:auto}
+body.playing[data-layout=classic] .header-actions{right:9px;top:14px;height:42px;align-items:center}
+body.playing[data-layout=classic] .header-actions :is(#help,#settings-open,#friends-open){font:10px/14px Verdana,Arial,sans-serif;height:22px;width:auto;padding:1px 6px;white-space:nowrap}
+body.playing[data-layout=classic] .header-actions #timer-dial{position:static;flex:none;margin-left:5px}
+body.playing[data-layout=classic] .room-heading,body.playing[data-layout=classic].is-artist .room-heading{right:370px}
+body.playing[data-layout=classic] #classic-round{max-width:100%}
+body[data-layout=classic] .friend-dm{background:#ccc;border:2px outset #eee}body[data-layout=classic] #clean-slate{background:#ffffdc;color:#000}
+body.browsing .browser-actions{gap:5px}body.browsing .browser-actions button{width:auto;min-width:95px}
+@media(max-width:700px){body.playing[data-layout=classic] header{height:90px;flex:none}body.playing[data-layout=classic] .header-actions{left:6px;right:6px;top:43px;justify-content:flex-end;height:36px}body.playing[data-layout=classic] .header-actions #timer-dial{width:32px;height:32px}body.playing[data-layout=classic] .room-heading,body.playing[data-layout=classic].is-artist .room-heading{left:165px;right:6px;top:1px}body.browsing .browser-actions{flex-wrap:wrap;justify-content:flex-end}.friend-row{grid-template-columns:minmax(85px,1fr) minmax(80px,1fr) auto;gap:6px}.friend-avatar{width:34px;height:34px}.friend-request-actions{margin-left:0}#friends-dialog{padding:12px}.friend-dm{padding:5px 8px}}
+
+body.playing[data-layout=classic] .message.chat-close{color:#f00}

@@ -550,3 +550,29 @@ Results are saved separately in `artifacts/audio-clock-verification.json` and
 `artifacts/audio-clock-verification-webkit.json`. Recording waveform evidence
 is in `artifacts/fireworks-noise-analysis.json`; no recording or extracted PCM
 is included in the game or repository.
+
+## 0.27.0 social and larger games
+
+`social-and-rooms.py` uses two isolated native ships. It verifies persisted
+names/characters (including ship fallback), no automatic browser search,
+first-joiner hosting and concurrent shared-room claims, whole-row inspection,
+header order, independent bottom chat, hidden/private chat answers, no chat
+points, correct-answer audio, and the NewRound cue before the artwork hold.
+
+`friendships.py` verifies native Pals installation/revival, an offline request
+remaining unconfirmed, notifications and reload without running Pals, denial,
+later acceptance, native mutual records, display names, presence and Groups
+DM link targets. It resets only the `~zod`/`~nec` test friendship. Its fake
+distributor uses the official Pals source, a public self-contained desk, and
+test-only source/coordinator overrides; it never contacts real ships. Fresh
+installation and revival of a previously stopped Pals desk are both checked.
+
+`+ursketch!ursketch-social-rules` checks 25-player capacity, peak round counts
+through departures/rejoins, final-round detection, next-game minimum reset,
+and preserving v12 room state. Mobile/performance and finite audio regressions
+also pass. `comet.py` preserves the installed user's chosen name while checking
+the served client and Treaty release.
+
+`live-social.py` checks native social readiness, the installed menu/explainer,
+manual shared-room entry, phone/laptop dialog bounds and the fact that opening
+the menu does not install Pals. It sends no real friendship requests or DMs.

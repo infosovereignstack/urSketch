@@ -1,0 +1,13 @@
+{
+  "savedNameAndCharacterLocalAndShip": true,
+  "noAutomaticSearch": true,
+  "firstJoinerHostsSharedRoom": true,
+  "concurrentClaimsUseOneRoom": true,
+  "capacity": 25,
+  "wholePlayerRowInspection": true,
+  "headerOrder": true,
+  "chatInputWorks": true,
+  "chatExactAnswerPrivateAndNoPoints": true,
+  "normalChatSeparate": true,
+  "newRoundCueAtDrawingEnd": true
+}

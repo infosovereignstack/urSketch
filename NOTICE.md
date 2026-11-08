@@ -44,3 +44,9 @@ Fireworks audio and pencil SVG: user-supplied files, copied unchanged as
 The additional theme badges and patterns under web/theme-art are original
 SVG illustrations created for urSketch. Named fan themes are unofficial;
 this project is not affiliated with the referenced games, characters or brands.
+
+Pals integration uses the public commands and records of Fang's Pals app,
+published from `~paldev`: https://github.com/Fang-/suite. Pals is installed as a
+separate desk only when a player requests or accepts friendship; its code is
+not bundled into urSketch. Groups DM links follow Tlon's public `/dm/:channelId`
+route: https://github.com/tloncorp/tlon-apps. urSketch does not bundle Groups.

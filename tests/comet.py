@@ -54,10 +54,13 @@ with sync_playwright() as p:
     page.set_viewport_size({'width':1280,'height':720})
     response = page.goto('http://127.0.0.1/apps/ursketch/connect')
     if not preview:
+        assert (artifacts.parent/'web/social.js').read_text() in response.text(), 'Installed social client differs from verified source'
         assert (artifacts.parent/'web/audio.js').read_text() in response.text(), 'Installed audio engine differs from the verified source'
     expect(page.locator('#connect-page')).to_be_visible()
     expect(page.locator('#lobby')).not_to_be_visible()
-    expect(page.locator('#player-name')).to_have_value(page.evaluate('SELF'))
+    page.evaluate('characterReady')
+    initial_name=page.locator('#player-name').input_value()
+    expect(page.locator('#player-name')).to_have_value(initial_name)
     assert not page.evaluate('connectionReady'), 'Connect page opened a channel before Connect'
     assert page.locator('#connect-page input').count()==1
     assert page.locator('input[type=password]').count()==0
@@ -90,12 +93,12 @@ with sync_playwright() as p:
     page.evaluate('()=>{api.ensure=window.originalEnsure}')
     # The full ship ID is valid, including a comet longer than the old 24-char limit.
     page.locator('#connect-submit').click();page.wait_for_url('**/apps/ursketch/play')
-    expect(page.locator('#profile-current')).to_have_text('Playing as '+page.evaluate('SELF'))
+    expect(page.locator('#profile-current')).to_have_text('Playing as '+initial_name)
     page.locator('.player-summary a').click();page.wait_for_url('**/apps/ursketch/connect')
-    expect(page.locator('#player-name')).to_have_value(page.evaluate('SELF'))
-    page.locator('#player-name').fill('Sketch Player')
+    expect(page.locator('#player-name')).to_have_value(initial_name)
+    page.locator('#player-name').fill(initial_name)
     page.locator('#connect-submit').click();page.wait_for_url('**/apps/ursketch/play')
-    expect(page.locator('#profile-current')).to_have_text('Playing as Sketch Player')
+    expect(page.locator('#profile-current')).to_have_text('Playing as '+initial_name)
     assert page.locator('#profile-form').is_hidden()
     page.set_viewport_size({'width':1440,'height':1000})
     assert response.status == 200
@@ -169,7 +172,7 @@ with sync_playwright() as p:
     assert result['total']=='Rooms (3 players)' and result['subscriptions']==900002,result
     page.evaluate("remoteFeeds['~nec']({kind:'lobby',rooms:[{id:'other',title:'Other',phase:'waiting',count:1,players:[{ship:'~bud',name:'Bud'}]}]})")
     expect(page.locator('#browser-player-total')).to_have_text('Rooms (2 players)')
-    page.evaluate('''()=>{const players=Array.from({length:10},(_,i)=>({ship:'~fixture-'+i,name:'Player '+i}));remoteFeeds['~zod']({kind:'lobby',rooms:[{id:'full',title:'Full room',phase:'drawing',count:10,players},{id:'empty',title:'Empty room',phase:'waiting',count:0,players:[]},{id:'open',title:'Open room',phase:'choosing',count:1,players:[{ship:'~bud',name:'Bud'}]}]});}''')
+    page.evaluate('''()=>{const players=Array.from({length:25},(_,i)=>({ship:'~fixture-'+i,name:'Player '+i}));remoteFeeds['~zod']({kind:'lobby',rooms:[{id:'full',title:'Full room',phase:'drawing',count:25,capacity:25,players},{id:'empty',title:'Empty room',phase:'waiting',count:0,players:[]},{id:'open',title:'Open room',phase:'choosing',count:1,players:[{ship:'~bud',name:'Bud'}]}]});}''')
     before=page.locator('#browser-player-total').inner_text()
     assert page.locator('#room-list article').count()==3
     page.locator('#hide-full-rooms').check();assert page.locator('#room-list article').count()==2
@@ -209,7 +212,7 @@ with sync_playwright() as p:
     assert page.evaluate('document.documentElement.scrollHeight <= innerHeight')
     assert page.locator('#timer-dial').is_visible()
     assert page.locator('#chat-form').bounding_box()['y'] < 720
-    expect(page.locator('#player-count')).to_have_text('1/10')
+    expect(page.locator('#player-count')).to_have_text('1/25')
     expect(page.locator('#artist-banner')).to_be_visible()
     expect(page.locator('#host-start')).to_be_visible()
     expect(page.locator('#artist-instructions')).to_be_hidden()
@@ -234,7 +237,7 @@ with sync_playwright() as p:
         roster=page.evaluate('knownHosts.get(SELF).data.rooms.find(r=>r.id===roomId).players')
         assert any(player['ship']==page.evaluate('SELF') for player in roster),roster
     page.locator('#players .player-name').first.click()
-    expect(page.locator('#player-profile-name')).to_have_text('Sketch Player')
+    expect(page.locator('#player-profile-name')).to_have_text(initial_name)
     expect(page.locator('#player-profile-ship')).to_have_text(page.evaluate('SELF'))
     page.locator('#player-profile-dialog form button').click()
     page.screenshot(path=str(artifacts / 'comet-room.png'), full_page=True)

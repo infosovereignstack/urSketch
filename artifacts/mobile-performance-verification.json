@@ -7,30 +7,30 @@
   "phoneAndLandscapeFit": true,
   "fullCanvas": true,
   "adminIconOutsideCanvas": true,
-  "installed": true,
+  "installed": false,
   "metadataUpdates": 60,
   "themeDOMReuse": {
     "classic": {
-      "optimizedMs": 4.900000035762787,
-      "previousMs": 13.699999988079071,
+      "optimizedMs": 5.100000023841858,
+      "previousMs": 32.39999997615814,
       "rosterReused": true,
       "previousRebuilt": true
     },
     "blingee": {
-      "optimizedMs": 2.599999964237213,
-      "previousMs": 14.200000047683716,
+      "optimizedMs": 5,
+      "previousMs": 39.5,
       "rosterReused": true,
       "previousRebuilt": true
     },
     "aero": {
-      "optimizedMs": 2.699999988079071,
-      "previousMs": 14,
+      "optimizedMs": 3.700000047683716,
+      "previousMs": 29.200000047683716,
       "rosterReused": true,
       "previousRebuilt": true
     },
     "spider-man": {
-      "optimizedMs": 3.899999976158142,
-      "previousMs": 14.400000035762787,
+      "optimizedMs": 3.399999976158142,
+      "previousMs": 30.200000047683716,
       "rosterReused": true,
       "previousRebuilt": true
     }

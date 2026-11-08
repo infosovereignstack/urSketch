@@ -1,0 +1,9 @@
+{
+  "installedNativeSocialReady": true,
+  "noAutomaticSearchOrJoin": true,
+  "friendsBeforeInstructions": true,
+  "loungePlaceholder": true,
+  "palsExplainerAndLocalLink": true,
+  "laptopAndPhoneDialogFit": true,
+  "menuDoesNotInstallPals": true
+}
