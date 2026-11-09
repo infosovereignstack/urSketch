@@ -1,11 +1,11 @@
-# Groups icon
+# urSketch Lounge vector artwork
 
-`groups-tile.svg` matches the installed Landscape tile: a #dedede background
-and the original black symbol at its published scale. `groups.svg` is the
-same symbol with a tight, transparent viewBox, for small interface controls.
-Both are pure vector SVGs with no fonts, raster images, scripts or network
-references.
+`ursketch-lounge.svg` uses the current urSketch wordmark, centered at 80%
+width on the Landscape tile background, #9fc1e0. `ursketch-wordmark.svg`
+is the same lettering with a transparent background.
 
-Source: the Groups/Tlon Landscape tile supplied by the installed app metadata,
-https://bootstrap.urbit.org/tlon.svg?v=1. These assets identify Groups; they do
-not imply urSketch affiliation with Tlon.
+The wordmark was traced from the selected canonical
+`desk/media/images/ursketch-logo.png` into smooth black and white vector
+paths. Both files contain no embedded bitmaps, fonts or external references.
+The tile placement follows `scripts/export_tile.py`; the current app tile
+and installed interface are unchanged.
