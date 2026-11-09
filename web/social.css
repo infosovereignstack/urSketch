@@ -21,6 +21,9 @@ body.playing[data-layout=classic] .room-heading,body.playing[data-layout=classic
 body.playing[data-layout=classic] #classic-round{max-width:100%}
 body[data-layout=classic] .friend-dm{background:#ccc;border:2px outset #eee}body[data-layout=classic] #clean-slate{background:#ffffdc;color:#000}
 body.browsing .browser-actions{gap:5px}body.browsing .browser-actions button{width:auto;min-width:95px}
+@media(min-width:681px){body.browsing #lobby .browser-actions{inset:85px 11.8% auto 14%;display:flex;flex-wrap:nowrap;justify-content:space-between;gap:4px}body.browsing .browser-actions button{position:static;flex:none}}
+@media(min-width:681px) and (max-width:1100px){body.browsing #lobby .browser-actions{left:0}}
+@media(min-width:681px) and (max-width:800px){body.browsing #lobby .browser-actions button{font-size:10px!important;min-width:0}}
 @media(max-width:700px){body.playing[data-layout=classic] header{height:90px;flex:none}body.playing[data-layout=classic] .header-actions{left:6px;right:6px;top:43px;justify-content:flex-end;height:36px}body.playing[data-layout=classic] .header-actions #timer-dial{width:32px;height:32px}body.playing[data-layout=classic] .room-heading,body.playing[data-layout=classic].is-artist .room-heading{left:165px;right:6px;top:1px}body.browsing .browser-actions{flex-wrap:wrap;justify-content:flex-end}.friend-row{grid-template-columns:minmax(85px,1fr) minmax(80px,1fr) auto;gap:6px}.friend-avatar{width:34px;height:34px}.friend-request-actions{margin-left:0}#friends-dialog{padding:12px}.friend-dm{padding:5px 8px}}
 
 body.playing[data-layout=classic] .message.chat-close{color:#f00}

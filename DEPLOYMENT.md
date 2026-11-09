@@ -382,3 +382,11 @@ repeat-open, empty-composer, detached-opener and popup-recovery checks. Message
 actions were blocked and none were attempted. The installed source matches
 the tested social client, and Treaty advertises 0.27.1. Test friendships were
 page-local fixtures; the comet's Pals records were not changed.
+
+## 0.27.2 — November 8, 2026
+
+Imported the browser button spacing update and Docket 0.27.2 together. The
+installed interface matches the CSS source. Geometry checks at widths from
+681 to 1920 pixels confirm equal gaps and one-row alignment; the phone page
+still fits without scrolling. Treaty advertises 0.27.2. Native game and social
+logic are unchanged.
