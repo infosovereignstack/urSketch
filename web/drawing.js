@@ -141,7 +141,9 @@ function createDrawing({canvas, colors, canDraw, send, error, storageKey,onDraw}
   const isClassic=()=>document.body.dataset.layout==='classic';
   function placeClassic(panel,x,y){
     const box=panel.getBoundingClientRect(),board=canvas.parentElement.getBoundingClientRect();
-    x=Math.max(2,Math.min(innerWidth-box.width-2,x));y=Math.max(2,Math.min(innerHeight-box.height-2,y));
+    const navigation=document.querySelector('.header-actions'),timer=document.getElementById('timer-dial');
+    const reservedTop=Math.max(2,navigation?.getBoundingClientRect().bottom+8||0,timer?.getBoundingClientRect().bottom+8||0);
+    x=Math.max(2,Math.min(innerWidth-box.width-2,x));y=Math.max(reservedTop,Math.min(innerHeight-box.height-2,y));
     if(x+box.width>board.left&&x<board.right&&y+box.height>board.top&&y<board.bottom)x=Math.max(2,board.left-box.width-4);
     panel.classList.add('classic-positioned');panel.style.setProperty('--classic-x',x+'px');panel.style.setProperty('--classic-y',y+'px');
     return {x:x/innerWidth,y:y/innerHeight,rotated:panel.classList.contains('classic-rotated')};

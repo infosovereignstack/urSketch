@@ -303,8 +303,12 @@ NewRound plays when the automatically assigned drawing turn begins. Close guesse
 sender receives the close feedback. Select Game or Chat by clicking its title,
 log or input; the selected log is yellow and the other is white.
 
-A signal timeout is the browser request deadline (15 seconds), distinct from
-the host-action acknowledgement deadline (20 seconds). A timed-out action may
+A signal timeout is a browser request deadline (normally 30 seconds), distinct
+from the host-action acknowledgement deadline (normally 60 seconds). Local room
+creation allows 180 seconds for HTTP and 240 seconds for acknowledgement, shows
+progress after 30 seconds, and retains the room ID for safe explicit retries.
+Creating a room only contacts your own ship; browsing or shared-chat availability
+does not gate it. A timed-out action may
 still have reached the ship; mutations are not retried automatically. Host
 rejections mean a native rule/permission check failed; action-specific messages
 now describe likely causes. The old acknowledgement contains no detailed error,
@@ -544,3 +548,14 @@ hold. Display names and cat selections restore on the next visit. See the
 0.27.1 fixes first-time DM opening by preparing the selected conversation
 through Groups' New Message flow. The button waits for the target's composer
 and reports popup/loading errors; it never sends a message automatically.
+
+## Local room creation and header (0.27.3)
+
+Friends and DMs uses Pals' native `/pals` route. Until Pals is installed, its
+explainer shows installation guidance instead of a dead link. Opening the menu
+does not install Pals. Game-room navigation occupies a separate centered band
+above the drawing palettes; restored and dragged palettes stay below it.
+
+Current and recovered historical wordlists are documented in
+[wordlists/history/README.md](wordlists/history/README.md). Historical lists
+are archives and do not change the active word banks.

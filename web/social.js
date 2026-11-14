@@ -67,6 +67,8 @@ function createSocial({self,coordinator,perform,subscribe,unsubscribe,profile,in
   }
   function render(){
     renderProfile();const pending=data.peers.filter(p=>p.incoming&&p.stage!=='friend'&&p.stage!=='denied');
+    for(const link of document.querySelectorAll('.pals-open'))link.parentElement.hidden=data.palsReady!==true;
+    for(const note of document.querySelectorAll('.pals-install-note'))note.hidden=data.palsReady===true;
     for(const dot of document.querySelectorAll('.friend-dot'))dot.hidden=!pending.length;
     for(const id of ['friends-open','browser-friends'])$(id).setAttribute('aria-label',pending.length?`Friends and DMs — ${pending.length} friend requests`:'Friends and DMs');
     if(!$('friends-dialog').open)return;

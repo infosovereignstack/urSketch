@@ -26,7 +26,7 @@ const colors = [
   ['#8cbaee','Light blue'],['#02f102','Lime'],['#fffa85','Light yellow'],['#fe9c3b','Orange'],['#e67287','Pink'],['#f3ccbd','Light peach'],['#ba7b58','Tan'],['#ffffff','White']
 ];
 function toast(message) { $('toast').textContent = message; $('toast').hidden = false; clearTimeout(toast.timer); toast.timer = setTimeout(() => $('toast').hidden = true, 4500); }
-function connection(text, good) { $('status').textContent = text; $('status-dot').classList.toggle('connected', good); connectionReady = good; renderPlayerTotal(); chatControls(); }
+function connection(text, good) { $('status').textContent = text; $('status-dot').classList.toggle('connected', good); connectionReady = good; renderPlayerTotal(); chatControls(); busyControls(); }
 function element(tag, className, text) { const el = document.createElement(tag); if (className) el.className = className; if (text != null) el.textContent = text; return el; }
 function rejectedAction(action){
   const detail={undo:'Only the current artist can undo an action in the active drawing turn.',admin:'Only the room owner can change settings. Choose 10–600 seconds and available word lists.', 'reset-timer':'Only the room owner can reset an active drawing round.', 'custom-words':'The owner can upload up to five lists with 101–5,000 unique plain-text entries each.',join:'The room may be full or no longer available.',guess:'The drawing turn may have changed, or you have already guessed correctly.',hint:'Only the artist can give hints, before the first correct guess and up to three times.',draw:'The drawing turn may have changed or its command limit was reached.',start:'The room owner can start the first game when at least two players are present. Later games start automatically.',skip:'Only the current artist can end this drawing turn.',chat:'The message may contain the secret word.',heartbeat:'Your membership may have expired. Use Rejoin to return.',warn:'Both players must still be in the room.',kick:'Only the room owner can remove another player who is still in the room.', 'global-chat':'Messages must be at most 240 bytes and at least one second apart.'};
@@ -34,10 +34,10 @@ function rejectedAction(action){
 }
 class Eyre {
   constructor(){this.uid=`${Date.now()}-${crypto.randomUUID()}`;this.next=1;this.handlers=new Map();this.subscriptions=new Map();this.waiters=new Map();this.requests=new Map();this.url=`/~/channel/ursketch-${this.uid}`;this.opening=null;this.reconnectTimer=null;this.reconnectAttempt=0;this.closed=false;}
-  async send(action){
+  async send(action,{timeoutMs=30000}={}){
     const id=this.next++;let response;
-    try{response=await fetch(this.url,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify([{id,...action}]),signal:AbortSignal.timeout(30000)});}
-    catch(error){if(error.name==='TimeoutError'||error.name==='AbortError')throw new Error('Your ship did not respond within 30 seconds. Check the connection and room before retrying; the action may still have arrived.');throw error;}
+    try{response=await fetch(this.url,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify([{id,...action}]),signal:AbortSignal.timeout(timeoutMs)});}
+    catch(error){if(error.name==='TimeoutError'||error.name==='AbortError')throw new Error(action.json?.action==='create'?'Your ship is still not responding to this local room request. Retry to check the same room.':'Your ship did not respond within 30 seconds. Check the connection and room before retrying; the action may still have arrived.');throw error;}
     if(!response.ok)throw new Error(response.status===403?'Log into your ship, then reload this page.':`Your ship returned HTTP ${response.status}.`);return id;
   }
   ensure(){if(this.events&&this.events.readyState!==EventSource.CLOSED)return Promise.resolve();if(this.opening)return this.opening;if(this.events?.readyState===EventSource.CLOSED)this.url=`/~/channel/ursketch-${this.uid}-${crypto.randomUUID()}`;this.opening=this.open().finally(()=>this.opening=null);return this.opening;}
@@ -83,14 +83,15 @@ class Eyre {
   }
   finish(waiter,error){clearTimeout(waiter.timer);this.waiters.delete(waiter.id);this.requests.delete(waiter.request);error?waiter.reject(error):waiter.resolve();}
   async poke(action,data={},target={host,room:roomId},app='ursketch'){
+    if(action==='create'&&(target.host!==SELF||data.host&&data.host!==SELF))throw new Error('Create Room must be hosted on your own ship.');
     const turnToken=state?.token||0;
     await characterReady;
     const id=this.next,request=`${this.uid}-${id}`;
     const result=new Promise((resolve,reject)=>{
       const waiter={id,request,action,resolve,reject,remote:target.host!==SELF};
-      waiter.timer=setTimeout(()=>this.finish(waiter,new Error('The host has not acknowledged this action yet. It may still arrive; check the room before repeating it.')),60000);
+      waiter.timer=setTimeout(()=>this.finish(waiter,new Error(action==='create'?'Your ship has not confirmed the local room yet. Retry to check the same room.':'The host has not acknowledged this action yet. It may still arrive; check the room before repeating it.')),action==='create'?240000:60000);
       this.waiters.set(id,waiter);if(waiter.remote)this.requests.set(request,waiter);
-      this.send({action:'poke',ship:SELF.slice(1),app,mark:'json',json:{action,room:target.room,host:target.host,request,name:activeName,avatar:activeCharacter,token:turnToken,...data}}).catch(e=>this.finish(waiter,e));
+      this.send({action:'poke',ship:SELF.slice(1),app,mark:'json',json:{action,room:target.room,host:target.host,request,name:activeName,avatar:activeCharacter,token:turnToken,...data}},{timeoutMs:action==='create'?180000:30000}).catch(e=>this.finish(waiter,e));
     });
     return result;
   }
@@ -115,7 +116,7 @@ let savedRoom=null,browsing=false,joining=false,searchEpoch=0,roomEpoch=0;
 let heartbeatInFlight=null,hostPresenceUntil=0,heartbeatWarning=false;
 let roomStream=false,snapshotRequest=null,roomReceiver=null,roomRecovering=false,roomRecoveryTimer=null,roomRecoveryAttempt=0,roomRecoveryInFlight=null;
 function operation(id,text,busy=false){const el=$(id);el.textContent=text;el.classList.toggle('is-busy',busy);el.setAttribute('aria-label',text+(busy?'…':''));}
-function busyControls(){const busy=browsing||joining;$('host-search').disabled=busy;$('host').disabled=joining;$('create-open').disabled=busy;for(const b of $('room-list').querySelectorAll('button'))b.disabled=busy||b.dataset.full==='true';$('rejoin-room').disabled=busy;$('leave-saved-room').disabled=busy;}
+function busyControls(){const busy=browsing||joining;$('host-search').disabled=busy;$('host').disabled=joining;$('create-open').disabled=busy||!connectionReady;for(const b of $('room-list').querySelectorAll('button'))b.disabled=busy||b.dataset.full==='true';$('rejoin-room').disabled=busy;$('leave-saved-room').disabled=busy;}
 function saveRecovery(record){savedRoom=record;try{record?localStorage.setItem(recoveryKey,JSON.stringify(record)):localStorage.removeItem(recoveryKey);}catch{}renderRecovery();}
 let recoverySub=null,recoveryTarget='';
 function rememberRoom(title){if(!roomId)return;saveRecovery({host,id:roomId,title:title||state?.title||savedRoom?.title||roomId,rounds:state?.rounds||savedRoom?.rounds||10,round:state?Math.min(state.rounds||10,state.turn+1):savedRoom?.host===host&&savedRoom?.id===roomId?savedRoom.round||1:1});}
@@ -283,7 +284,7 @@ function roomEvent(data){
   }
   return data;
 }
-async function joinRoom(id,title=''){
+async function joinRoom(id,title='',{alreadyMember=false}={}){
   if(joining)throw new Error('A room is already opening.');
   const recovering=savedRoom?.id===id&&savedRoom?.host===host;
   const epoch=++roomEpoch;let firstView=true;
@@ -291,7 +292,7 @@ async function joinRoom(id,title=''){
   joining=true;roomId=id;state=null;rosterOrder=[];rosterSignature='';messageSignatures.clear();operation('join-status',`Joining ${title||id}`,true);busyControls();
   let accepted=false;
   try{
-    await api.ensure();await api.poke('join');accepted=true;hostPresenceUntil=Date.now()+GRACE_MS;heartbeatWarning=false;rememberRoom(title);
+    await api.ensure();if(!alreadyMember)await api.poke('join');accepted=true;hostPresenceUntil=Date.now()+GRACE_MS;heartbeatWarning=false;rememberRoom(title);
     await api.unsubscribe(roomSub);roomSub=null;
     const receive=data=>{
       if(epoch!==roomEpoch)return false;
@@ -492,12 +493,20 @@ $('guess-form').onsubmit=event=>{event.preventDefault();const text=$('guess').va
 $('chat-form').onsubmit=event=>{event.preventDefault();const text=$('chat-input').value.trim();if(!text)return;run(async()=>{await api.poke('chat',{text});if($('chat-input').value.trim()===text)$('chat-input').value='';selectChat('chat',true);});};
 $('chat-messages').onclick=event=>{if(!event.target.closest('button,a')&&!getSelection()?.toString())selectChat('chat',true);};
 $('host-form').onsubmit=event=>{event.preventDefault();run(()=>browse($('host').value.trim().toLowerCase()));};
-$('create-open').onclick=()=>{$('create-error').hidden=true;$('create-dialog').showModal();};$('cancel-create').onclick=()=>$('create-dialog').close();
+const creationKey=`ursketch.pending-create.${SELF}`;
+let pendingCreation=null,creating=false;
+try{const saved=JSON.parse(sessionStorage.getItem(creationKey)||'null');if(saved&&/^room-[a-f0-9]{8}$/.test(saved.id)&&typeof saved.title==='string')pendingCreation=saved;}catch{}
+function saveCreation(value){pendingCreation=value;try{value?sessionStorage.setItem(creationKey,JSON.stringify(value)):sessionStorage.removeItem(creationKey);}catch{}}
+$('create-open').onclick=()=>{$('create-error').hidden=true;$('create-status').hidden=!pendingCreation;if(pendingCreation){$('title').value=pendingCreation.title;$('create-status').textContent='Retry will check your previous room request on your own ship.';}$('create-dialog').showModal();};$('cancel-create').onclick=()=>$('create-dialog').close();
 $('create-form').onsubmit=event=>{event.preventDefault();run(async()=>{
-  const previous=host,id=`room-${crypto.randomUUID().slice(0,8)}`,button=$('create-form').querySelector('button.primary');button.disabled=true;$('create-error').hidden=true;
-  try{await api.ensure();await api.poke('create',{title:$('title').value.trim()},{host:SELF,room:id});host=SELF;await joinRoom(id);$('create-dialog').close();}
+  if(creating)return;creating=true;
+  const title=$('title').value.trim(),previous=host,button=$('create-form').querySelector('button.primary');
+  if(!pendingCreation||pendingCreation.title!==title)saveCreation({id:`room-${crypto.randomUUID().slice(0,8)}`,title});
+  const id=pendingCreation.id;button.disabled=true;button.textContent='Creating room…';$('create-error').hidden=true;$('create-status').hidden=false;$('create-status').textContent='Creating this room on your own ship…';
+  const slow=setTimeout(()=>{$('create-status').textContent='Your ship is taking longer than usual. Still waiting for this local room; no other host is needed.';},30000);
+  try{await api.ensure();await api.poke('create',{title},{host:SELF,room:id});if(!$('create-dialog').open)return;host=SELF;await joinRoom(id,title,{alreadyMember:true});saveCreation(null);$('create-dialog').close();}
   catch(e){$('create-error').textContent=e.message;$('create-error').hidden=false;if(!state){roomId='';host=previous;renderLobby(knownHosts.get(previous)?.data||{kind:'lobby',rooms:[]});}throw e;}
-  finally{button.disabled=false;busyControls();}
+  finally{clearTimeout(slow);creating=false;button.disabled=false;button.textContent=pendingCreation?'Retry / open room →':'Create room →';busyControls();}
 });};
 function localLeave(){showLobby({keepRoom:true});}
 $('leave').onclick=()=>run(async()=>{await api.poke('leave');await api.unsubscribe(roomSub);localLeave();});

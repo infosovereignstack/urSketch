@@ -152,11 +152,12 @@
       =/  j=json  !<(json vase)
       ?>  ?=(%o -.j)
       =/  target=@p  (slav %p (text j 'host'))
+      =/  act=@t  (text j 'action')
+      ?>  ?|(!=(act 'create') ?&(=(src.bowl our.bowl) =(target our.bowl)))
       ?:  !=(target our.bowl)
         ?>  =(src.bowl our.bowl)
         =/  request=@t  (text j 'request')
         [~[[%pass /relay/[request] %agent [target %ursketch] %poke %json !>(j)]] state]
-      =/  act=@t  (text j 'action')
       =/  provided=(unit json)  (~(get by p.j) 'name')
       =.  names
         ?:  ?&(=(src.bowl our.bowl) !=(act 'profile') (~(has by names) our.bowl))  names
@@ -191,9 +192,13 @@
       ?>  (levy (trip rid) |=(c=@tD ?|(?&((gte c 'a') (lte c 'z')) ?&((gte c '0') (lte c '9')) =(c '-'))))
       ?:  =(act 'create')
         ?>  =(src.bowl our.bowl)
-        ?>  (lth ~(wyt by rooms) 64)
-        ?>  !(~(has by rooms) rid)
         =/  title=@t  (crip (scag 48 (trip (text j 'title'))))
+        =/  existing=(unit room)  (~(get by rooms) rid)
+        ?^  existing
+          ?>  ?&(=(owner.u.existing src.bowl) =(title.u.existing title))
+          =^  presence  state  (touch rid src.bowl)
+          [(welp presence (snoc (publish rid) lobby-card)) state]
+        ?>  (lth ~(wyt by rooms) 64)
         =.  rooms  (~(put by rooms) rid (fresh:ursketch-game title src.bowl))
         =^  presence  state  (touch rid src.bowl)
         [(welp presence (snoc (publish rid) lobby-card)) state]

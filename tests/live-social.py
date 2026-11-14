@@ -17,7 +17,11 @@ with sync_playwright() as p:
     expect(page.locator('#ursketch-lounge')).to_be_disabled()
     page.locator('#friends-dialog summary').click()
     expect(page.locator('#friends-dialog .pals-explainer')).to_contain_text('Other Urbit applications use')
-    expect(page.locator('#friends-dialog a[href="/apps/pals"]')).to_be_visible()
+    link=page.locator('#friends-dialog a[href="/pals"]')
+    if before:expect(link).to_be_visible()
+    else:
+        expect(link).to_be_hidden()
+        expect(page.locator('#friends-dialog .pals-install-note')).to_be_visible()
     for width,height in [(1280,720),(390,844),(320,568)]:
         page.set_viewport_size({'width':width,'height':height})
         assert page.evaluate('document.documentElement.scrollWidth<=innerWidth && document.documentElement.scrollHeight<=innerHeight')

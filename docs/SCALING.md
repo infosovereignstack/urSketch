@@ -53,7 +53,7 @@ peers work well. No such production-scale test has been run in this release.
 
 ## Changes in this release
 
-- Browser HTTP requests allow 30 seconds, and host acknowledgements/initial
+- Ordinary browser HTTP requests allow 30 seconds, and host acknowledgements/initial
   room snapshots allow 60 seconds. Timed-out actions are not automatically
   replayed; the UI says they may still arrive. This avoids duplicate guesses,
   scores, chat messages or drawing operations.
@@ -84,3 +84,17 @@ explains channel acknowledgements and deleted-channel recovery. The
 [Ames documentation](https://docs.urbit.org/urbit-os/kernel/ames) describes
 congestion control, ordering within a flow, and the absence of ordering
 across flows. These guarantees do not constitute an application capacity SLA.
+
+## Local creation (0.27.3)
+
+Create Room is restricted to the browser's own ship in both client and native
+agent. It needs neither the publisher nor the currently browsed host. Creation
+gets a 180-second HTTP / 240-second acknowledgement budget and a visible progress
+message after 30 seconds. Explicit retries reuse a session-persisted ID; the
+native agent returns an existing same-owner, same-title room without resetting
+it. Other mutations retain their existing deadlines and are not replayed.
+
+The reported 30-second error alone cannot establish why that user's ship failed
+to reply. Native load, stream health and logs from the affected ship would be
+needed to diagnose its specific stall. The extended deadline is not a promise
+that an unresponsive ship will complete the request.
