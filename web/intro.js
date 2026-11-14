@@ -29,9 +29,13 @@
     }
     context.putImageData(image,0,0);
     const css=c=>`rgb(${c.join(',')})`;
-    // Replace the COMPLETE original-logo rectangle, including black outlines,
-    // white interiors and codec ringing; no letter-shaped mask is involved.
-    context.save();context.beginPath();context.rect(940,0,680,280);context.clip();
+    // Cover the original logo and codec ringing, following its lower S tail.
+    // A full rectangle down to y=280 erases the orange-haired woman's crown.
+    // These source-space bounds leave her original hair and outline untouched.
+    context.save();context.beginPath();
+    context.rect(940,0,680,240);
+    context.rect(1024,240,160,8);context.rect(1040,248,144,8);
+    context.rect(1056,256,128,8);context.rect(1072,264,112,8);context.clip();
     context.fillStyle=css(sky);context.fillRect(940,0,680,280);
     context.fillStyle=css(circle);context.beginPath();context.arc(738,532,511,0,Math.PI*2);context.fill();context.restore();
     document.documentElement.style.setProperty('--intro-sky',css(sky));

@@ -33,13 +33,13 @@ def fit(page,width,height):
  old=min(width-(8 if width<=600 else 16),1620,(height-(110 if width<=600 else 78))*1.5)
  assert abs(page.locator('#intro-stage').bounding_box()['width']-old*.72)<1
 def clean_background(page):
- # Inspect the rendered surface beneath the new logo. Away from the circle's
- # antialiased edge, every repaired pixel must be one of the two solid blues.
+ # Inspect the logo's main band. The original hair beneath it is intentionally
+ # preserved; intro-hair.py checks that lower edge across every source frame.
  assert page.evaluate("""()=>{
   const c=document.querySelector('#intro-scene'),x=c.getContext('2d'),d=x.getImageData(0,0,c.width,c.height).data;
   const pixel=(a,b)=>Array.from(d.slice((b*c.width+a)*4,(b*c.width+a)*4+3));
   const sky=pixel(1590,10),circle=pixel(1000,200);
-  for(let y=0;y<280;y++)for(let a=940;a<1620;a++){
+  for(let y=0;y<225;y++)for(let a=940;a<1620;a++){
    const radius=Math.hypot(a+.5-738,y+.5-532);if(Math.abs(radius-511)<2)continue;
    const expected=radius<511?circle:sky,actual=pixel(a,y);
    if(actual.some((v,i)=>v!==expected[i]))return false;
@@ -108,7 +108,7 @@ with sync_playwright() as p:
  page.locator('#settings-close').click()
  for width,height in [(1024,600),(390,844),(320,568)]:fit(page,width,height)
  page.screenshot(path=str(ROOT/'artifacts/intro-mobile.png'))
- page.locator('#intro-play').click();page.wait_for_url('**/apps/ursketch/connect');expect(page.locator('#player-name')).to_have_value(page.evaluate('SELF'));page.locator('#connect-submit').click();page.wait_for_url('**/apps/ursketch/play');expect(page.locator('#host-search')).to_be_enabled(timeout=30000)
+ page.locator('#intro-play').click();page.wait_for_url('**/apps/ursketch/connect');page.evaluate('characterReady');expect(page.locator('#player-name')).to_have_value(page.evaluate('activeName'));page.locator('#connect-submit').click();page.wait_for_url('**/apps/ursketch/play');expect(page.locator('#host-search')).to_be_enabled(timeout=30000)
  page.locator('#browser-settings').click();expect(page.locator('#theme-song-quarter')).to_be_checked();expect(page.locator('#theme-song-disabled')).to_be_checked()
  page.locator('#theme-song-disabled').uncheck();page.locator('#settings-close').click()
  page.goto(ORIGIN+'/apps/ursketch');page.wait_for_function('!testAudios[0].paused && testAudios[0].currentTime>0')

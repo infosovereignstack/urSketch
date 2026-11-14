@@ -559,3 +559,10 @@ above the drawing palettes; restored and dragged palettes stay below it.
 Current and recovered historical wordlists are documented in
 [wordlists/history/README.md](wordlists/history/README.md). Historical lists
 are archives and do not change the active word banks.
+
+## Intro hair repair (0.27.4)
+
+The intro's logo cleanup follows the lower logo contour so it preserves the
+orange-haired woman's original crown and outline. `tests/intro-hair.py` compares
+all 442 source frames with the rendered animation; video and audio assets are
+unchanged.
