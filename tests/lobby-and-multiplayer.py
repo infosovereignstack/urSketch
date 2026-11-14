@@ -71,7 +71,7 @@ with sync_playwright() as p:
     h.screenshot(path=str(art/'four-players.png'))
     # Every ship can act without displacing another subscriber.
     for ship,page in zip(ships,pages):
-        page.locator('#chat-input').fill(f'Hello from {ship}');page.locator('#chat-form button').click()
+        page.locator('#select-chat-chat').click();page.locator('#guess').fill(f'Hello from {ship}');page.locator('#guess').press('Enter')
         for recipient in pages:expect(recipient.locator('#chat-messages')).to_contain_text(f'Hello from {ship}',timeout=30000)
     for page in reversed(pages):
         page.locator('#leave').click();expect(page.locator('#lobby')).to_be_visible(timeout=30000)

@@ -62,7 +62,7 @@ with sync_playwright() as p:
     for width,height in [(1280,720),(1024,600),(1366,768)]:
         h.set_viewport_size({'width':width,'height':height});h.wait_for_timeout(150)
         assert h.evaluate('document.documentElement.scrollHeight<=innerHeight && document.documentElement.scrollWidth<=innerWidth')
-        for selector in ['#give-hint','#zoom','#chat-input','#settings-open']:
+        for selector in ['#give-hint','#zoom','#guess','#settings-open']:
             box=h.locator(selector).bounding_box();assert box and box['y']+box['height']<=height,(selector,box)
     h.screenshot(path=str(ART/'classic-hints.png'))
     h.reload();expect(h.locator('#game')).to_be_visible(timeout=30000)

@@ -1,0 +1,16 @@
+{
+  "version": "0.28.0",
+  "ships": [
+    "~zod",
+    "~nec"
+  ],
+  "nativePalsBackend": "official, web UI omitted in test desk",
+  "requestAndAccept": true,
+  "exactUrSketchTagBothShips": true,
+  "existingTagsPreserved": true,
+  "populatedV0StateUpgraded": true,
+  "priorUrSketchFriendshipBackfilled": true,
+  "defaultFilterContainsFriend": true,
+  "realShipsContacted": false,
+  "manualTagRemovalRespected": true
+}

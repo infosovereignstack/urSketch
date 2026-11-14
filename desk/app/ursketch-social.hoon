@@ -6,9 +6,10 @@
 +$  shared-room
   [host=@p room=@t ready=? count=@ud round=@ud rounds=@ud until=@da]
 +$  state-0  [%0 peers=(map @p contact) label=@t portrait=json title=@t room-host=@p room-id=@t presence-until=@da install-at=(unit @da) next=@ud tick-at=@da shared=(unit shared-room) waiters=(map @p @t) destination=json claim-at=(unit @da) hosting=(unit @t) hosting-ready=? lobby=json sent-at=@da]
++$  state-1  [%1 tags=(map @p (set @ta)) peers=(map @p contact) label=@t portrait=json title=@t room-host=@p room-id=@t presence-until=@da install-at=(unit @da) next=@ud tick-at=@da shared=(unit shared-room) waiters=(map @p @t) destination=json claim-at=(unit @da) hosting=(unit @t) hosting-ready=? lobby=json sent-at=@da]
 +$  pals-records  [outgoing=(map @p (set @ta)) incoming=(set @p) receipts=(map @p ?)]
 --
-=|  state-0
+=|  state-1
 =*  state  -
 ^-  agent:gall
 =<
@@ -21,7 +22,11 @@
   ++  on-save  !>(state)
   ++  on-load
     |=  old=vase
-    =.  state  !<(state-0 old)
+    =/  current=(unit state-1)  (mole |.(!<(state-1 old)))
+    =.  state
+      ?^  current  u.current
+      =/  previous=state-0  !<(state-0 old)
+      [%1 ~ +.previous]
     on-init
   ++  on-poke
     |=  [=mark =vase]
@@ -148,22 +153,27 @@
   =/  rows=(list json)
     %+  turn  ~(tap by peers)
     |=  [who=@p p=contact]
-    (obj ~[['ship' s+(scot %p who)] ['name' s+name.p] ['avatar' avatar.p] ['incoming' b+incoming.p] ['outgoing' b+outgoing.p] ['stage' s+stage.p] ['mode' s+mode.p] ['error' s+error.p] ['presence' presence.p]])
+    (obj ~[['ship' s+(scot %p who)] ['name' s+name.p] ['avatar' avatar.p] ['incoming' b+incoming.p] ['outgoing' b+outgoing.p] ['stage' s+stage.p] ['mode' s+mode.p] ['error' s+error.p] ['presence' presence.p] ['tags' a+(turn ~(tap in (~(gut by tags) who ~)) |=(tag=@ta [%s tag]))]])
   [%give %fact ~[/friends] %json !>((obj ~[['kind' s+'friends'] ['palsReady' b+pals-up] ['peers' a+rows] ['slate' shared-json] ['destination' destination]]))]
 ++  arm
-  ^-  (quip card state-0)
+  ^-  (quip card state-1)
   =.  tick-at  (add now.bowl ~s5)
   [~[[%pass /tick/[(scot %da tick-at)] %arvo %b %wait tick-at]] state]
 ++  init
-  ^-  (quip card state-0)
+  ^-  (quip card state-1)
   =^  cards  state  arm
   =.  cards  ?:((~(has by wex.bowl) [/lobby our.bowl %ursketch]) cards (snoc cards [%pass /lobby %agent [our.bowl %ursketch] %watch /lobby]))
   =.  cards  ?:((~(has by wex.bowl) [/slate coordinator %ursketch-social]) cards (snoc cards [%pass /slate %agent [coordinator %ursketch-social] %watch /slate]))
   [cards state]
 ++  work
-  ^-  (quip card state-0)
+  ^-  (quip card state-1)
   =|  cards=(list card)
   =/  before=(map @p contact)  peers
+  =/  before-tags=(map @p (set @ta))  tags
+  =/  records=(unit pals-records)
+    ?:  pals-up  `.^(pals-records %gx /[(scot %p our.bowl)]/pals/[(scot %da now.bowl)]/noun)
+    ~
+  =.  tags  ?~(records tags outgoing.u.records)
   =.  install-at  ?:(pals-up ~ install-at)
   =/  pending-claim=(unit @da)  claim-at
   =/  claim-expired=?  ?~(pending-claim %.n (gth now.bowl (add u.pending-claim ~m2)))
@@ -171,8 +181,8 @@
   =.  claim-at  ?:(claim-expired ~ claim-at)
   =.  cards  ?:(claim-expired (snoc cards friends-card) cards)
   =.  peers
-    ?.  pals-up  peers
-    =/  r=pals-records  .^(pals-records %gx /[(scot %p our.bowl)]/pals/[(scot %da now.bowl)]/noun)
+    ?~  records  peers
+    =/  r=pals-records  u.records
     =/  ships=(set @p)  (~(uni in ~(key by peers)) (~(uni in incoming.r) ~(key by outgoing.r)))
     %+  roll  ~(tap in ships)
     |=  [who=@p acc=(map @p contact)]
@@ -188,14 +198,21 @@
     ?:  =(stage.p 'denied')  (~(put by acc) who p)
     (~(put by acc) who p(incoming ?|(in incoming.p), outgoing ?|(out outgoing.p), stage ?:(!=('' stage.p) stage.p ?:(out 'pending' ''))))
   =/  all=(list [who=@p value=contact])  ~(tap by peers)
-  |-  ^-  (quip card state-0)
+  |-  ^-  (quip card state-1)
   ?~  all
     =^  more  state  maintain-slate
     =.  cards  (welp cards more)
-    =.  cards  ?:(!=(before peers) (welp cards (snoc presence-cards friends-card)) cards)
+    =.  cards  ?:(!=([before before-tags] [peers tags]) (welp cards (snoc presence-cards friends-card)) cards)
     [cards state]
   =/  who=@p  who.i.all
   =/  p=contact  value.i.all
+  ::  Backfill previously unindexed urSketch friendships once. Respect later
+  ::  manual tag removal in Pals; unrelated imported Pals stay untagged.
+  =/  tag-friend=?
+    ?&(pals-up =(stage.p 'friend') (gth op.p 0) !(~(has by before-tags) who) !(~(has in (~(gut by tags) who ~)) 'urSketch'))
+  =.  cards
+    ?:  !tag-friend  cards
+    (snoc cards [%pass /tag/[(scot %p who)] %agent [our.bowl %pals] %poke %pals-command !>([%meet who (silt ~['urSketch'])])])
   =/  watch-peer=?  ?&(=(stage.p 'friend') (lte probe.p now.bowl) !(~(has by wex.bowl) [/friend/[(scot %p who)] who %ursketch-social]))
   =.  peers  ?:(watch-peer (~(put by peers) who p(probe (add now.bowl ~m1))) peers)
   =.  cards  ?:(watch-peer (snoc cards [%pass /friend/[(scot %p who)] %agent [who %ursketch-social] %watch /presence/[(scot %p our.bowl)]]) cards)
@@ -206,7 +223,7 @@
     $(all t.all)
   ?:  pals-up
     =.  peers  (~(put by peers) who p(stage 'pals'))
-    =.  cards  (snoc cards [%pass /pals/[(scot %p who)]/[(scot %ud op.p)] %agent [our.bowl %pals] %poke %pals-command !>([%meet who ~])])
+    =.  cards  (snoc cards [%pass /pals/[(scot %p who)]/[(scot %ud op.p)] %agent [our.bowl %pals] %poke %pals-command !>([%meet who (silt ~['urSketch'])])])
     $(all t.all)
   ?:  (gth now.bowl (add at.p ~m20))
     =.  peers  (~(put by peers) who p(stage 'error', error 'Pals could not finish installing. Check Landscape and retry.'))
@@ -224,7 +241,7 @@
   $(all t.all)
 ++  poke
   |=  j=json
-  ^-  (quip card state-0)
+  ^-  (quip card state-1)
   ?>  ?=(%o -.j)
   =/  action=@t  (text j 'action')
   ?:  ?|(=(action 'profile') =(action 'presence'))
@@ -310,7 +327,7 @@
   [~[[%pass /replay/[(scot %p who)] %agent [who %pals] %poke %pals-gesture !>([%hey ~])] friends-card] state]
 ++  watch
   |=  =path
-  ^-  (quip card state-0)
+  ^-  (quip card state-1)
   ?:  =(path /friends)
     ?>  =(src.bowl our.bowl)
     =^  cards  state  work
@@ -326,7 +343,7 @@
   [~ state]
 ++  agent
   |=  [=wire =sign:agent:gall]
-  ^-  (quip card state-0)
+  ^-  (quip card state-1)
   ?:  =(wire /lobby)
     ?.  ?=(%fact -.sign)  [~ state]
     =.  lobby  !<(json q.cage.sign)
@@ -387,7 +404,7 @@
   [~[(send who /delivered/[(scot %p who)]/[(scot %ud op.p)] payload) friends-card] state]
 ++  claim
   |=  nonce=@t
-  ^-  (quip card state-0)
+  ^-  (quip card state-1)
   ?>  =(our.bowl coordinator)
   ?>  (lte (met 3 nonce) 80)
   ?>  ?|((~(has by waiters) src.bowl) (lth ~(wyt by waiters) 128))
@@ -402,7 +419,7 @@
   =.  shared  `[src.bowl rid %.n 0 1 10 (add now.bowl ~m2)]
   [~[(send src.bowl /assign (obj ~[['action' s+'slate-assigned'] ['room' s+rid]])) shared-card friends-card] state]
 ++  deliver-slate
-  ^-  (quip card state-0)
+  ^-  (quip card state-1)
   ?~  shared  [~ state]
   ?.  ready.u.shared  [~[shared-card friends-card] state]
   =/  cards=(list card)
@@ -413,7 +430,7 @@
   [(welp cards ~[shared-card friends-card]) state]
 ++  close-slate
   |=  issue=@t
-  ^-  (quip card state-0)
+  ^-  (quip card state-1)
   =.  shared  ~
   =/  cards=(list card)
     %+  turn  ~(tap by waiters)
@@ -422,7 +439,7 @@
   =.  waiters  ~
   [(welp cards ~[shared-card friends-card]) state]
 ++  maintain-slate
-  ^-  (quip card state-0)
+  ^-  (quip card state-1)
   =|  cards=(list card)
   =/  expired=?  ?&(!=('' title) (lte presence-until now.bowl))
   =.  title  ?:(expired '' title)

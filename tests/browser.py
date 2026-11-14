@@ -88,15 +88,15 @@ with sync_playwright() as p:
             page.set_viewport_size({'width':width,'height':height})
             page.wait_for_timeout(150)
             assert page.evaluate('document.documentElement.scrollHeight <= innerHeight'), (width,height)
-            for selector in ('#guess-form','#chat-form','#timer-dial','#canvas'):
+            for selector in ('#guess-form','#timer-dial','#canvas'):
                 box=page.locator(selector).bounding_box()
                 assert box['y']+box['height'] <= height, (selector,width,height,box)
         box=host.locator('#palette').bounding_box()
         assert box['y']+box['height'] <= height
     host.set_viewport_size({'width':1366,'height':768})
     guest.set_viewport_size({'width':1366,'height':768})
-    host.locator('#chat-input').fill('Have fun everyone')
-    host.locator('#chat-form button').click()
+    host.locator('#select-chat-chat').click();host.locator('#guess').fill('Have fun everyone')
+    host.locator('#guess').press('Enter')
     expect(guest.locator('#chat-messages')).to_contain_text('Have fun everyone')
     expect(guest.locator('#messages')).not_to_contain_text('Have fun everyone')
     canvas = host.locator('#canvas').bounding_box()

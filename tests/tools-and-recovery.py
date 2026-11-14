@@ -112,7 +112,7 @@ with sync_playwright() as p:
     h.keyboard.down('Space');h.keyboard.down('Alt');click_point(h,(500,350));h.keyboard.up('Alt');h.keyboard.up('Space');assert h.evaluate('drawing.zoom')==2
     h.keyboard.down('Space');h.keyboard.down('Meta');click_point(h,(500,350));h.keyboard.up('Meta');h.keyboard.up('Space');assert h.evaluate('drawing.zoom')==1
     assert h.evaluate('state.lines.length')==before
-    g.locator('#guess').focus();g.keyboard.press('Tab');expect(g.locator('#chat-input')).to_be_focused();g.keyboard.press('Tab');expect(g.locator('#guess')).to_be_focused()
+    g.locator('#guess').focus();g.keyboard.press('Tab');expect(g.locator('#guess')).to_be_focused();assert g.evaluate('selectedChat')=='chat';g.keyboard.press('Tab');expect(g.locator('#guess')).to_be_focused()
     h.locator('#color-preview').click();expect(h.locator('#advanced-palette')).to_be_visible();h.locator('#color-preview').click()
     grip=h.locator('.drawing-panel .palette-grip');grip.dblclick();assert 'rotated' in h.locator('.drawing-panel').get_attribute('class');grip.dblclick()
     selected=h.evaluate('drawing.selected');h.locator('#clear').click();h.evaluate('drawing.flushAll()');assert h.evaluate('drawing.selected')==selected

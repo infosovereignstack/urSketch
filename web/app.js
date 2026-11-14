@@ -26,7 +26,7 @@ const colors = [
   ['#8cbaee','Light blue'],['#02f102','Lime'],['#fffa85','Light yellow'],['#fe9c3b','Orange'],['#e67287','Pink'],['#f3ccbd','Light peach'],['#ba7b58','Tan'],['#ffffff','White']
 ];
 function toast(message) { $('toast').textContent = message; $('toast').hidden = false; clearTimeout(toast.timer); toast.timer = setTimeout(() => $('toast').hidden = true, 4500); }
-function connection(text, good) { $('status').textContent = text; $('status-dot').classList.toggle('connected', good); connectionReady = good; renderPlayerTotal(); chatControls(); busyControls(); }
+function connection(text, good) { $('status').textContent = text; $('status-dot').classList.toggle('connected', good); connectionReady = good; renderPlayerTotal(); chatControls(); busyControls(); roomInputControls(); }
 function element(tag, className, text) { const el = document.createElement(tag); if (className) el.className = className; if (text != null) el.textContent = text; return el; }
 function rejectedAction(action){
   const detail={undo:'Only the current artist can undo an action in the active drawing turn.',admin:'Only the room owner can change settings. Choose 10–600 seconds and available word lists.', 'reset-timer':'Only the room owner can reset an active drawing round.', 'custom-words':'The owner can upload up to five lists with 101–5,000 unique plain-text entries each.',join:'The room may be full or no longer available.',guess:'The drawing turn may have changed, or you have already guessed correctly.',hint:'Only the artist can give hints, before the first correct guess and up to three times.',draw:'The drawing turn may have changed or its command limit was reached.',start:'The room owner can start the first game when at least two players are present. Later games start automatically.',skip:'Only the current artist can end this drawing turn.',chat:'The message may contain the secret word.',heartbeat:'Your membership may have expired. Use Rejoin to return.',warn:'Both players must still be in the room.',kick:'Only the room owner can remove another player who is still in the room.', 'global-chat':'Messages must be at most 240 bytes and at least one second apart.'};
@@ -356,20 +356,34 @@ function renderRoomMessages(){
   renderMessages('messages',roomTimeline.filter(m=>!['chat','chat-close','warning','kick'].includes(m.kind)));
   renderMessages('chat-messages',roomTimeline.filter(m=>['chat','chat-close','warning','kick'].includes(m.kind)||(m.kind==='system'&&m.text==='joined the room')));
 }
+const roomDrafts={game:'',chat:''};
+function roomInputControls(){
+  const input=$('guess'),game=selectedChat==='game',me=state?.players.find(p=>p.ship===SELF);
+  const locked=game&&(state?.phase!=='drawing'||isArtist()||me?.solved);
+  input.disabled=!connectionReady||roomRecovering||!state||locked;
+  input.maxLength=game?160:240;
+  input.placeholder=!game?'Type a chat message…':state?.phase!=='drawing'?'Guesses open when a round starts':isArtist()?'You’re drawing this turn':me?.solved?'You guessed it!':'Type your guess…';
+  $('guess-form').querySelector('label').textContent=game?'Your guess':'Chat message';
+  const button=$('guess-form').querySelector('button');button.disabled=input.disabled;button.setAttribute('aria-label',game?'Send guess':'Send chat');
+}
 function selectChat(which,focus=false){
+  if(document.body.dataset.mobile==='true')which='game';
+  if(which!==selectedChat){roomDrafts[selectedChat]=$('guess').value;$('guess').value=roomDrafts[which];}
   selectedChat=which;document.body.dataset.activeChat=which;
   for(const name of ['game','chat']){
     document.querySelector(`[data-chat="${name}"]`).classList.toggle('chat-selected',which===name);
     $('select-'+name+'-chat').setAttribute('aria-pressed',String(which===name));
   }
-  if(focus){const input=$(which==='game'?'guess':'chat-input');(input.disabled?$(which==='game'?'messages':'chat-messages'):input).focus({preventScroll:true});}
+  roomInputControls();
+  if(focus)($('guess').disabled?$(which==='game'?'messages':'chat-messages'):$('guess')).focus({preventScroll:true});
 }
 for(const name of ['game','chat']){
   $('select-'+name+'-chat').onclick=()=>selectChat(name,true);
   const pane=document.querySelector(`[data-chat="${name}"]`);
-  pane.addEventListener('pointerdown',()=>selectChat(name));pane.addEventListener('focusin',()=>selectChat(name));
+  pane.addEventListener('pointerdown',event=>{if(!event.target.closest('#guess-form'))selectChat(name);});
+  pane.addEventListener('focusin',event=>{if(!event.target.closest('#guess-form'))selectChat(name);});
+  pane.addEventListener('click',event=>{if(!event.target.closest('button,a,#guess-form')&&!getSelection()?.toString())selectChat(name,true);});
 }
-for(const [id,name] of [['guess','game'],['chat-input','chat']])$(id).addEventListener('focus',()=>selectChat(name));
 selectChat('game');
 function roomSounds(before,after,fresh){
   if(before){
@@ -446,14 +460,12 @@ function renderRoom(data) {
   for(const control of $('tools').querySelectorAll('button,input'))control.disabled=!canDraw();
   $('skip').disabled=!canDraw();
   $('drawing-status').textContent=canDraw()?'Draw the word. No letters or numbers.':data.phase==='drawing'?'Watch the drawing. Enter guesses in Game.':'Everyone has an artist in them.';
-  const me=data.players.find(p=>p.ship===SELF),locked=data.phase!=='drawing'||isArtist()||me?.solved;
-  $('guess').disabled=locked;$('guess-form').querySelector('button').disabled=locked||data.phase!=='drawing';
-  $('guess').placeholder=data.phase!=='drawing'?'Guesses open when a round starts':isArtist()?'You’re drawing this turn':me?.solved?'You guessed it!':'Type your guess…';
+  roomInputControls();
   finale?.update(data,`${host}/${roomId}/${data.token}`);
   renderRoomMessages();
   $('skip').textContent=solved?'Done':'Skip';
   $('round-controls').dataset.done=String(solved);
-  if(changedTurn)$('guess').value='';
+  if(changedTurn){roomDrafts.game='';if(selectedChat==='game')$('guess').value='';}
   const doneDrawing=before?.players[0]?.ship===SELF&&before.phase==='drawing'&&(data.players[0]?.ship!==SELF||data.phase!=='drawing');
   updateDial();requestAnimationFrame(()=>{fitCanvas();if(doneDrawing||changedTurn&&data.phase==='drawing'&&!isArtist())focusGuess();});
 }
@@ -489,9 +501,14 @@ async function run(fn) {try {await fn();} catch(e) {toast(e.message || 'Somethin
 $('start').onclick=()=>run(()=>api.poke('start'));
 $('give-hint').onclick=()=>run(async()=>{const button=$('give-hint');button.disabled=true;try{await api.poke('hint');}catch(e){if(state)renderRoom(state);throw e;}});
 $('skip').onclick=()=>run(async()=>{await drawing.flushAll();await api.poke('skip');});
-$('guess-form').onsubmit=event=>{event.preventDefault();const text=$('guess').value.trim();if(!text||state?.phase!=='drawing')return;const token=state.token;run(async()=>{await api.poke('guess',{text});if(state?.token===token&&$('guess').value.trim()===text)$('guess').value='';});};
-$('chat-form').onsubmit=event=>{event.preventDefault();const text=$('chat-input').value.trim();if(!text)return;run(async()=>{await api.poke('chat',{text});if($('chat-input').value.trim()===text)$('chat-input').value='';selectChat('chat',true);});};
-$('chat-messages').onclick=event=>{if(!event.target.closest('button,a')&&!getSelection()?.toString())selectChat('chat',true);};
+$('guess-form').onsubmit=event=>{
+  event.preventDefault();const input=$('guess'),text=input.value.trim(),channel=selectedChat,token=state?.token;
+  if(!text||input.disabled)return;
+  run(async()=>{await api.poke(channel==='game'?'guess':'chat',{text});
+    if((channel!=='game'||state?.token===token)&&roomDrafts[channel].trim()===text)roomDrafts[channel]='';
+    if(selectedChat===channel&&(channel!=='game'||state?.token===token)&&input.value.trim()===text)input.value='';
+  });
+};
 $('host-form').onsubmit=event=>{event.preventDefault();run(()=>browse($('host').value.trim().toLowerCase()));};
 const creationKey=`ursketch.pending-create.${SELF}`;
 let pendingCreation=null,creating=false;
@@ -530,6 +547,7 @@ $('profile-form').onsubmit=async event=>{
 };
 function inspectPlayer(player){
   social?.inspect(player);
+  $('player-profile-avatar').replaceChildren(createCharacter(player.avatar));
   $('player-profile-name').textContent=player.name||player.ship;$('player-profile-ship').textContent=player.ship;
   const button=$('warn-player');button.hidden=!state||player.ship===SELF||!state.players.some(p=>p.ship===player.ship);button.disabled=false;
   button.onclick=()=>run(async()=>{button.disabled=true;try{await api.poke('warn',{player:player.ship});$('player-profile-dialog').close();}finally{button.disabled=false;}});
@@ -565,6 +583,7 @@ function installClassicScrollbars(){
   }
 }
 function syncThemeLayout(){
+  if(document.body.dataset.mobile==='true'&&selectedChat==='chat')selectChat('game');
   $('guess-form').querySelector('button').textContent=document.body.dataset.mobile==='true'?'Send':'↑';
   const classic=document.body.dataset.layout==='classic';
   for(const [id,anchor] of [['guess-form','guess-form-home'],['round-controls','round-controls-home']]){
@@ -590,6 +609,6 @@ const preferences=createSettings({notify:toast,onChange:prefs=>{if(lastTheme!==p
 if(!connectPage)gameAudio=createGameAudio({urls:URSKETCH_CUE_URLS,getPrefs:()=>preferences.values,notify:toast});
 if(!connectPage)finale=createFinale({surface:$('canvas').parentElement,layer:$('game-finale'),getAudio:()=>gameAudio,getPrefs:()=>preferences.values,onEnd:()=>{if(state?.phase==='finished'){state={...state,celebrating:false,remainingMs:0,seconds:0};renderRoom(state);}}});
 roomAdmin=createRoomAdmin({getState:()=>state,perform:(action,data)=>api.poke(action,data),notify:toast});
-social=createSocial({self:SELF,coordinator:GLOBAL_CHAT_HOST,perform:(action,data)=>api.poke(action,data,{host:SELF,room:''},'ursketch-social'),subscribe:handler=>api.subscribe('/friends',handler,true,SELF,'ursketch-social'),unsubscribe:id=>api.unsubscribe(id),profile:()=>({name:activeName,avatar:activeCharacter}),inspect:inspectPlayer,notify:toast,join:async target=>{await browse(target.host);await joinRoom(target.room,'A Clean Slate');}});
-renderProfiles();drawing=createDrawing({canvas:$('canvas'),colors,canDraw,send:(action,data)=>api.poke(action,action==='draw'&&roomStream?{encoding:1,lines:data.lines.map(l=>UrSketchWire.pack(l))}:data),error:e=>toast(e.message||String(e)),onDraw:dismissBanner,storageKey:`ursketch.palettes.${SELF}`});restoreRecovery();
+social=createSocial({self:SELF,coordinator:GLOBAL_CHAT_HOST,perform:(action,data)=>api.poke(action,data,{host:SELF,room:''},'ursketch-social'),subscribe:handler=>api.subscribe('/friends',handler,true,SELF,'ursketch-social'),unsubscribe:id=>api.unsubscribe(id),profile:()=>({name:activeName,avatar:activeCharacter}),inspect:inspectPlayer,notify:toast,join:async target=>{if(roomId&&host===target.host&&roomId===target.room)return;if(roomId){await api.poke('leave');await api.unsubscribe(roomSub);localLeave();}await browse(target.host);await joinRoom(target.room,target.title||'A Clean Slate');}});
+renderProfiles();drawing=createDrawing({canvas:$('canvas'),colors,canDraw,send:(action,data)=>api.poke(action,action==='draw'&&roomStream?{encoding:1,lines:data.lines.map(l=>UrSketchWire.pack(l))}:data),error:e=>toast(e.message||String(e)),onDraw:dismissBanner,onSwitchChat:()=>selectChat(selectedChat==='game'?'chat':'game',true),storageKey:`ursketch.palettes.${SELF}`});restoreRecovery();
 if(!connectPage)run(async()=>{if(!SELF)throw new Error('Open urSketch through your Urbit ship at /apps/ursketch.');restoreKnownHosts();void connectGlobalChat();await api.ensure();void social.start();host=SELF;$('host').value='';history.replaceState(null,'',location.pathname);operation('browse-status','Search a ship to view its rooms.');$('room-list').replaceChildren(element('p','browser-empty','Search a ship to view rooms.'));busyControls();});

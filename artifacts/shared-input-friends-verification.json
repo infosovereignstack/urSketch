@@ -1,0 +1,13 @@
+{
+  "version": "0.28.0",
+  "installed": true,
+  "oneComposer": true,
+  "separateDrafts": true,
+  "selectedChannelRoutesSubmission": true,
+  "artistCanChat": true,
+  "tagsFilterDefaultsToUrSketch": true,
+  "profileAvatarOnlyInProfile": true,
+  "presenceJoinAndExpiry": true,
+  "loungeInviteAndExternalArrows": true,
+  "thirtyCharacterThemeViewportChecks": 52
+}

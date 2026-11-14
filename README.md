@@ -566,3 +566,16 @@ The intro's logo cleanup follows the lower logo contour so it preserves the
 orange-haired woman's original crown and outline. `tests/intro-hair.py` compares
 all 442 source frames with the rendered animation; video and audio assets are
 unchanged.
+
+## Shared typing field and tagged friends (0.28.0)
+
+Click Game or Chat to choose the destination of the single game-room typing
+field. The selected log turns yellow. Desktop Tab changes channels; each keeps
+its draft. Chat messages never award guessing points, and secret-word matches
+there retain private close-guess warnings.
+
+Friendships made through urSketch carry the Pals tag `urSketch`, preserving
+other tags. Friends and DMs defaults to that category; All Friends removes the
+filter. Existing mutual urSketch friendships are tagged during the state upgrade.
+The compact list keeps portraits in View Profile and offers Join for current
+friend room presence. The Lounge link opens the supplied public ~sarhut invite.

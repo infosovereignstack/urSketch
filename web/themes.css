@@ -50,7 +50,7 @@ body.extra-theme[data-theme] .studio{box-shadow:0 0 0 1px var(--theme-border);ba
 body.extra-theme[data-theme] #artist-secret :is(#word,#word-value){color:var(--theme-notice)}
 body.extra-theme[data-theme] .swatch{border-radius:0;box-shadow:0 0 0 1px #777;filter:none}
 body.extra-theme[data-theme] :is(#guess,#chat-input){background:#fff;color:#000}
-body.extra-theme[data-theme][data-active-chat=game] #guess,body.extra-theme[data-theme][data-active-chat=chat] #chat-input{background:#ffffdc}
+body.extra-theme[data-theme][data-active-chat=game] #guess,body.extra-theme[data-theme][data-active-chat=chat] #guess{background:#ffffdc}
 .connect-route body.extra-theme #connect-page{color:var(--theme-text)}
 .connect-route body.extra-theme .connect-copy{background:var(--theme-surface);border:1px solid var(--theme-border);box-shadow:var(--theme-shadow);color:var(--theme-text)}
 .connect-route body.extra-theme #connect-submit{background:var(--theme-button);color:var(--theme-text);border:1px solid var(--theme-border);box-shadow:var(--theme-shadow)}
@@ -73,7 +73,7 @@ body.extra-theme[data-theme=terminal] :is(.game-log,.game-grid>.chat).chat-selec
 body.extra-theme[data-theme=terminal] .message:is(.guess,.chat){color:#b9f2c8}
 body.extra-theme[data-theme=terminal] .message:is(.system,.announcement,.round,.artist-word,.found-word,.reward,.round-result,.game-result,.correct,.close,.warning){color:#ffa17e}
 body.extra-theme[data-theme=terminal] :is(#guess,#chat-input){background:#07120c;color:#b9f2c8}
-body.extra-theme[data-theme=terminal][data-active-chat=game] #guess,body.extra-theme[data-theme=terminal][data-active-chat=chat] #chat-input{background:#14291a;color:#d2ffdd}
+body.extra-theme[data-theme=terminal][data-active-chat=game] #guess,body.extra-theme[data-theme=terminal][data-active-chat=chat] #guess{background:#14291a;color:#d2ffdd}
 @media(max-width:680px){body.extra-theme.playing[data-theme] header::after{left:168px;width:30px;height:30px;top:5px}body.extra-theme[data-theme] .browser-masthead::after{left:150px;top:4px;width:36px;height:36px}}
 body.extra-theme[data-theme] #lobby .global-chat-name,body.extra-theme[data-theme] .browser-guide .player-summary a{color:var(--theme-accent)}
 body.extra-theme[data-theme] :is(.browser-empty,.global-message,.browser-guide .operation-status){color:var(--theme-text)}
@@ -105,7 +105,7 @@ body.extra-theme[data-theme=m1a1-abrams] :is(.game-log,.game-grid>.chat).chat-se
 body.extra-theme[data-theme=m1a1-abrams] .message:is(.guess,.chat){color:#e0e8ce}
 body.extra-theme[data-theme=m1a1-abrams] .message:is(.system,.announcement,.round,.artist-word,.found-word,.reward,.round-result,.game-result,.correct,.close,.warning){color:#ff9990}
 body.extra-theme[data-theme=m1a1-abrams] :is(#guess,#chat-input){background:#141e15;color:#e0e8ce}
-body.extra-theme[data-theme=m1a1-abrams][data-active-chat=game] #guess,body.extra-theme[data-theme=m1a1-abrams][data-active-chat=chat] #chat-input{background:#273621;color:#f3edcc}
+body.extra-theme[data-theme=m1a1-abrams][data-active-chat=game] #guess,body.extra-theme[data-theme=m1a1-abrams][data-active-chat=chat] #guess{background:#273621;color:#f3edcc}
 body.extra-theme[data-theme=mountain-dew] :is(button,button.primary){color:#173319}
 body.extra-theme[data-theme=mountain-dew] #lobby :is(.browser-actions button,#host-search,#global-chat-send,.recovery-actions button){color:#173319}
 

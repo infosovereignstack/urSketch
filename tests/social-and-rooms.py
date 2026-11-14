@@ -1,5 +1,5 @@
 """Native two-ship social, room, privacy and saved-profile integration checks."""
-import json, re, runpy, sys, time, urllib.request
+import json, os, re, runpy, sys, time, urllib.request
 from pathlib import Path
 from playwright.sync_api import sync_playwright, expect
 ROOT=Path(__file__).resolve().parents[1]
@@ -36,9 +36,14 @@ with sync_playwright() as p:
   page.locator('#connect-submit').click();page.wait_for_url('**/apps/ursketch/play');page.wait_for_function("social.state.kind==='friends'")
   pages.append(page)
  z,n=pages
- # The first joiner hosts the one shared room on their own ship.
- n.locator('#clean-slate-join').click();expect(n.locator('#game')).to_be_visible(timeout=30000)
- z.locator('#clean-slate-join').click();expect(z.locator('#game')).to_be_visible(timeout=30000)
+ friend_join=os.environ.get('URSKETCH_FRIEND_JOIN')=='1'
+ if friend_join:
+  # An existing Pals friend can join the owner's live room from the compact menu.
+  n.locator('#create-open').click();n.locator('#title').fill('Friends Join QA');n.locator('#create-form button.primary').click();expect(n.locator('#game')).to_be_visible(timeout=30000)
+  z.locator('#browser-friends').click();expect(z.locator('[data-join-peer="~nec"]')).to_be_visible(timeout=20000);z.locator('[data-join-peer="~nec"]').click();expect(z.locator('#game')).to_be_visible(timeout=30000)
+ else:
+  n.locator('#clean-slate-join').click();expect(n.locator('#game')).to_be_visible(timeout=30000)
+  z.locator('#clean-slate-join').click();expect(z.locator('#game')).to_be_visible(timeout=30000)
  assert z.evaluate('host')==n.evaluate('host')=='~nec'
  assert z.evaluate('roomId')==n.evaluate('roomId')
  n.wait_for_function('state.players.length===2')
@@ -53,17 +58,17 @@ with sync_playwright() as p:
  n.locator('#start').click();n.wait_for_function("state.phase==='drawing'");z.wait_for_function("state.phase==='drawing'")
  answer=n.evaluate('state.answer');assert answer
  # Bottom chat is usable, independent of scoring, and protects close/exact answers.
- z.locator('#chat-messages').click();expect(z.locator('#chat-input')).to_be_focused()
- z.locator('#chat-input').fill(answer);z.locator('#chat-input').press('Enter')
+ z.locator('#chat-messages').click();expect(z.locator('#guess')).to_be_focused()
+ z.locator('#guess').fill(answer);z.locator('#guess').press('Enter')
  expect(z.locator('#chat-messages')).to_contain_text('Enter guesses in the Game box')
  assert z.evaluate("state.phase==='drawing' && state.players.every(p=>p.score===0 && !p.solved)")
  assert n.evaluate("!roomTimeline.some(m=>m.kind==='chat-close')")
  assert not n.locator('#chat-messages').inner_text().find('Enter guesses in the Game box')>=0
- z.locator('#chat-input').fill('hello everyone');z.locator('#chat-input').press('Enter')
+ z.locator('#guess').fill('hello everyone');z.locator('#guess').press('Enter')
  expect(n.locator('#chat-messages')).to_contain_text('hello everyone')
  n_before=n.evaluate("heard.filter(e=>e.cue==='NewRound').length")
  close_before=z.evaluate("heard.filter(e=>e.cue==='CloseGuess').length")
- z.locator('#guess').fill(answer);z.locator('#guess').press('Enter')
+ z.locator('#select-game-chat').click();z.locator('#guess').fill(answer);z.locator('#guess').press('Enter')
  n.wait_for_function("state.phase==='reveal'")
  assert z.evaluate("heard.filter(e=>e.cue==='CloseGuess').length")==close_before,'Correct Game guesses must not play the close-guess warning'
  n.wait_for_function('(n)=>heard.filter(e=>e.cue===\'NewRound\').length===n+1',arg=n_before)
@@ -73,12 +78,13 @@ with sync_playwright() as p:
  # Selected name/character remain after the normal game navigation as well.
  for page in pages:
   page.locator('#leave').click();expect(page.locator('#lobby')).to_be_visible()
- z.wait_for_function('social.state.slate===null')
- # Two claims arriving together must resolve to the same host and room.
- z.evaluate("$('clean-slate-join').click()");n.evaluate("$('clean-slate-join').click()")
- for page in pages:expect(page.locator('#game')).to_be_visible(timeout=30000)
- assert z.evaluate('[host,roomId]')==n.evaluate('[host,roomId]')
- for page in pages:page.locator('#leave').click();expect(page.locator('#lobby')).to_be_visible()
+ if not friend_join:
+  z.wait_for_function('social.state.slate===null')
+  # Two claims arriving together must resolve to the same host and room.
+  z.evaluate("$('clean-slate-join').click()");n.evaluate("$('clean-slate-join').click()")
+  for page in pages:expect(page.locator('#game')).to_be_visible(timeout=30000)
+  assert z.evaluate('[host,roomId]')==n.evaluate('[host,roomId]')
+  for page in pages:page.locator('#leave').click();expect(page.locator('#lobby')).to_be_visible()
  assert not errors,errors
- (ROOT/'artifacts/social-room-verification.json').write_text(json.dumps({'savedNameAndCharacterLocalAndShip':True,'noAutomaticSearch':True,'firstJoinerHostsSharedRoom':True,'concurrentClaimsUseOneRoom':True,'capacity':25,'wholePlayerRowInspection':True,'headerOrder':True,'chatInputWorks':True,'chatExactAnswerPrivateAndNoPoints':True,'normalChatSeparate':True,'newRoundCueAtDrawingEnd':True},indent=2)+'\n')
- browser.close();print('PASS: saved profiles, one first-joiner-hosted room, 25-player UI, private conversation answers and end-of-drawing audio')
+ (ROOT/'artifacts'/('friend-room-join-verification.json' if friend_join else 'social-room-verification.json')).write_text(json.dumps({'savedNameAndCharacterLocalAndShip':True,'noAutomaticSearch':True,'firstJoinerHostsSharedRoom':not friend_join,'concurrentClaimsUseOneRoom':not friend_join,'joinFriendsLiveRoom':friend_join,'capacity':25,'wholePlayerRowInspection':True,'headerOrder':True,'chatInputWorks':True,'chatExactAnswerPrivateAndNoPoints':True,'normalChatSeparate':True,'newRoundCueAtDrawingEnd':True},indent=2)+'\n')
+ browser.close();print('PASS: saved profiles, friend Join or shared room path, 25-player UI, private conversation answers and end-of-drawing audio')

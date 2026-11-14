@@ -52,7 +52,7 @@ with sync_playwright() as p:
     assert metrics['lastDeltaJsonBytes']<1.2*metrics['firstDeltaJsonBytes'],metrics
     print(json.dumps(metrics,indent=2),flush=True)
     # Metadata never carries the drawing history; draw patches carry no secret answer.
-    h.locator('#chat-input').fill('Vector stream check');h.locator('#chat-form button').click()
+    h.locator('#select-chat-chat').click();h.locator('#guess').fill('Vector stream check');h.locator('#guess').press('Enter')
     expect(g.locator('#chat-messages')).to_contain_text('Vector stream check')
     assert g.evaluate("wireEvents.filter(e=>e.kind==='state').every(e=>e.lines.length===0)")
     assert g.evaluate("wireEvents.filter(e=>e.kind==='draw').every(e=>!('answer' in e)&&!('choices' in e))")

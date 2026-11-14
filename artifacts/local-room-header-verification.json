@@ -1,11 +1,6 @@
 {
-  "version": "0.27.3",
-  "installed": true,
-  "lostReplyRetrySameRoom": true,
-  "pendingRoomSurvivesReloadWithoutJoining": true,
-  "remoteServicesNotRequired": true,
-  "slowCreateBeyond30Seconds": true,
-  "foreignCreateBlocked": true,
+  "version": "0.28.0",
+  "installed": false,
   "palsLocalRoute": "/pals",
   "absentPalsShowsInstallGuidance": true,
   "headerRoleThemeViewportChecks": 208,

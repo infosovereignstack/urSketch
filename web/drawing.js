@@ -9,7 +9,7 @@ const UrSketchWire={
   }
 };
 /* Replayable drawing tools. The host stores commands; every viewer renders them. */
-function createDrawing({canvas, colors, canDraw, send, error, storageKey,onDraw}) {
+function createDrawing({canvas, colors, canDraw, send, error, storageKey,onDraw,onSwitchChat=()=>{}}) {
   const ctx=canvas.getContext('2d'), board=document.createElement('canvas');
   board.width=1000;board.height=700;
   const base=board.getContext('2d',{willReadFrequently:true});
@@ -119,7 +119,7 @@ function createDrawing({canvas, colors, canDraw, send, error, storageKey,onDraw}
   async function undo(){if(!canDraw()||undoing)return;undoing=true;gesture=null;try{await flushAll();await send('undo',{});}finally{undoing=false;}}
   setInterval(()=>{void flush();},100);
   function keydown(event){
-    if(event.key==='Tab'&&!event.ctrlKey&&!event.metaKey&&document.body.classList.contains('playing')&&['guess','chat-input'].includes(document.activeElement?.id)&&!$('guess').disabled){event.preventDefault();(document.body.dataset.mobile==='true'?$('guess'):document.activeElement.id==='guess'?$('chat-input'):$('guess')).focus();return;}
+    if(event.key==='Tab'&&!event.ctrlKey&&!event.metaKey&&document.body.classList.contains('playing')&&document.activeElement?.id==='guess'){event.preventDefault();if(document.body.dataset.mobile!=='true')onSwitchChat();return;}
     if(event.target.closest('input,textarea,select,[contenteditable=true]')||document.querySelector('dialog[open]')||!canDraw())return;
     if(event.code==='Space'){space=true;event.preventDefault();return;}
     if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==='z'&&!event.shiftKey){event.preventDefault();void undo().catch(error);return;}

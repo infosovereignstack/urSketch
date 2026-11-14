@@ -3,6 +3,7 @@
   "noAutomaticSearch": true,
   "firstJoinerHostsSharedRoom": true,
   "concurrentClaimsUseOneRoom": true,
+  "joinFriendsLiveRoom": false,
   "capacity": 25,
   "wholePlayerRowInspection": true,
   "headerOrder": true,

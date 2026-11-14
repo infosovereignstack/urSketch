@@ -211,7 +211,7 @@ with sync_playwright() as p:
     page.wait_for_timeout(150)
     assert page.evaluate('document.documentElement.scrollHeight <= innerHeight')
     assert page.locator('#timer-dial').is_visible()
-    assert page.locator('#chat-form').bounding_box()['y'] < 720
+    assert page.locator('#guess-form').bounding_box()['y'] < 720
     expect(page.locator('#player-count')).to_have_text('1/25')
     expect(page.locator('#artist-banner')).to_be_visible()
     expect(page.locator('#host-start')).to_be_visible()

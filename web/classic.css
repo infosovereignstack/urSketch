@@ -206,7 +206,7 @@ body.playing[data-layout=classic] .panel-label button{display:inline;border:0;ba
 body.playing[data-layout=classic] .panel-label button:focus-visible{outline:1px dotted #000}
 
 body.playing[data-layout=classic] :is(#guess,#chat-input){background:#fff}
-body.playing[data-layout=classic][data-active-chat=game] #guess,body.playing[data-layout=classic][data-active-chat=chat] #chat-input{background:#ffffdc}
+body.playing[data-layout=classic][data-active-chat=game] #guess,body.playing[data-layout=classic][data-active-chat=chat] #guess{background:#ffffdc}
 /* The canvas fills the drawing panel; every visible edge accepts strokes. */
 body.playing[data-layout=classic] .canvas-wrap{background:#fff}
 body.playing[data-layout=classic] #canvas{background:#fff;outline:1px solid #999}

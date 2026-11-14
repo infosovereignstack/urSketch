@@ -34,7 +34,7 @@ with sync_playwright() as p:
     page.evaluate("""async()=>{
       await social.start();
       for(const [id,handler] of api.handlers)api.handlers.set(id,data=>data.kind==='friends'?undefined:handler(data));
-      window.dmFixture=createSocial({self:SELF,perform:async()=>{},unsubscribe:async()=>{},profile:()=>({name:SELF,avatar:null}),inspect:()=>{},notify:toast,join:async()=>{},subscribe:async receive=>{receive({kind:'friends',peers:['~nec','~bud'].map(ship=>({ship,name:ship,stage:'friend',avatar:null}))});return 999999;}});
+      window.dmFixture=createSocial({self:SELF,perform:async()=>{},unsubscribe:async()=>{},profile:()=>({name:SELF,avatar:null}),inspect:()=>{},notify:toast,join:async()=>{},subscribe:async receive=>{receive({kind:'friends',peers:['~nec','~bud'].map(ship=>({ship,name:ship,stage:'friend',tags:['urSketch'],avatar:null}))});return 999999;}});
       await dmFixture.start();
     }""")
     page.locator('#browser-friends').click();results=[]

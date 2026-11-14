@@ -44,13 +44,15 @@ function createSocial({self,coordinator,perform,subscribe,unsubscribe,profile,in
   const busy=p=>['checking','installing','pals','delivering','confirming'].includes(p?.stage);
   const node=(tag,cls,text)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;return e;};
   const peer=ship=>data.peers.find(p=>p.ship===ship);
-  const openingDms=new Set();
+  let friendsFilter='ursketch';
+  const openingDms=new Set(),joiningFriends=new Set();
+  const arrow=()=>node('span','external-arrow','↗');
   function dmButton(p){
-    const b=node('button','friend-dm',openingDms.has(p.ship)?'Opening DM…':'DM');b.type='button';b.disabled=openingDms.has(p.ship);b.classList.toggle('friend-pulse',b.disabled);b.setAttribute('aria-label',`DM ${p.name||p.ship} in Groups`);
+    const b=node('button','friend-dm',openingDms.has(p.ship)?'Opening DM…':'DM');b.type='button';if(!openingDms.has(p.ship))b.append(' ',arrow());b.disabled=openingDms.has(p.ship);b.classList.toggle('friend-pulse',b.disabled);b.setAttribute('aria-label',`DM ${p.name||p.ship} in Groups`);
     b.onclick=async()=>{if(openingDms.has(p.ship))return;openingDms.add(p.ship);b.disabled=true;b.textContent='Opening DM…';b.classList.add('friend-pulse');try{await openGroupsDm(p.ship);}catch(error){notify(error.message);}finally{openingDms.delete(p.ship);signature='';render();}};
     return b;
   }
-  function profileButton(p){const b=node('button','friend-name',p.name||p.ship);b.type='button';b.title='Inspect player profile';b.onclick=()=>{$('friends-dialog').close();inspect(p);};return b;}
+  function profileButton(p){const b=node('button','friend-name',p.name||p.ship);b.type='button';b.title='View profile: '+(p.name||p.ship);b.setAttribute('aria-label','View profile: '+(p.name||p.ship));b.onclick=()=>{$('friends-dialog').close();inspect(p);};return b;}
   function actionButton(text,action,p){const b=node('button','',text);b.type='button';b.disabled=busy(p);if(busy(p)){b.classList.add('friend-pulse');b.setAttribute('aria-busy','true');}b.onclick=()=>act(action,p);return b;}
   async function act(action,p){
     if(busy(peer(p.ship)))return;
@@ -72,17 +74,31 @@ function createSocial({self,coordinator,perform,subscribe,unsubscribe,profile,in
     for(const dot of document.querySelectorAll('.friend-dot'))dot.hidden=!pending.length;
     for(const id of ['friends-open','browser-friends'])$(id).setAttribute('aria-label',pending.length?`Friends and DMs — ${pending.length} friend requests`:'Friends and DMs');
     if(!$('friends-dialog').open)return;
-    const next=JSON.stringify(data.peers.map(p=>({...p,presence:undefined})));if(signature!==next){
-      signature=next;const requests=$('friend-requests');requests.replaceChildren();
+    const next=JSON.stringify([friendsFilter,data.peers.map(p=>({...p,presence:undefined}))]);if(signature!==next){
+      signature=next;$('incoming-section').hidden=!pending.length;const requests=$('friend-requests');requests.replaceChildren();
       for(const p of pending){const row=node('div','friend-request');row.append(profileButton(p));const controls=node('div','friend-request-actions');controls.append(actionButton(busy(p)?'Friendship…':'Become Friends','accept',p),actionButton('Deny Friendship','deny',p));row.append(controls);if(p.error)row.append(node('p','friend-error',p.error));requests.append(row);}
       if(!pending.length)requests.append(node('p','friends-empty','No friend requests.'));
       const list=$('friend-list');list.replaceChildren();
-      for(const p of data.peers.filter(p=>p.stage==='friend')){const row=node('div','friend-row');row.dataset.ship=p.ship;const avatar=node('div','friend-avatar');avatar.append(createCharacter(p.avatar));const name=profileButton(p);name.prepend(avatar);const status=node('span','friend-presence');status.dataset.peer=p.ship;row.append(name,status,dmButton(p));list.append(row);}
-      if(!list.children.length)list.append(node('p','friends-empty','Your friends will appear here.'));
+      for(const p of data.peers.filter(p=>p.stage==='friend'&&(friendsFilter==='all'||p.tags?.includes('urSketch')))){
+        const row=node('div','friend-row');row.dataset.ship=p.ship;const status=node('span','friend-presence');status.dataset.peer=p.ship;
+        const enter=node('button','friend-join','Join');enter.type='button';enter.dataset.joinPeer=p.ship;
+        enter.onclick=async()=>{
+          const current=peer(p.ship)?.presence;if(!livePresence(current)||joiningFriends.has(p.ship))return;
+          joiningFriends.add(p.ship);enter.disabled=true;enter.textContent='Joining…';enter.classList.add('friend-pulse');
+          try{await join({host:current.host,room:current.room,title:current.title});$('friends-dialog').close();}catch(error){notify(error.message);}finally{joiningFriends.delete(p.ship);enter.textContent='Join';enter.disabled=false;enter.classList.remove('friend-pulse');render();}
+        };
+        row.append(profileButton(p),status,enter,dmButton(p));list.append(row);
+      }
+      if(!list.children.length)list.append(node('p','friends-empty',friendsFilter==='ursketch'?'No urSketch friends yet. Select All Friends to see your other pals.':'Your friends will appear here.'));
       const outgoing=data.peers.filter(p=>p.outgoing&&p.stage!=='friend'&&!p.incoming&&p.stage!=='denied');$('outgoing-section').hidden=!outgoing.length;$('friend-outgoing').replaceChildren(...outgoing.map(p=>{const row=node('div','friend-request');row.append(profileButton(p),node('span',busy(p)?'friend-pulse':'',p.stage==='pending'?'Friendship requested. Pending their approval':busy(p)?'Requesting friendship…':p.error||'Request not completed.'));if(p.stage==='error')row.append(actionButton('Retry','request',p));return row;}));
     }
-    for(const e of document.querySelectorAll('[data-peer]')){const p=peer(e.dataset.peer),present=p?.presence; e.textContent=present?.title&&(!present.expires||present.expires>Date.now())?present.title:'Not in-game';}
+    for(const e of $('friend-list').querySelectorAll('[data-peer]')){const present=peer(e.dataset.peer)?.presence;e.textContent=livePresence(present)?present.title:'';e.title=e.textContent;}
+    for(const e of $('friend-list').querySelectorAll('[data-join-peer]'))e.hidden=!livePresence(peer(e.dataset.joinPeer)?.presence);
   }
+  function livePresence(p){return p?.title&&p?.host&&p?.room&&p.expires>Date.now();}
+  for(const [id,filter] of [['friends-ursketch','ursketch'],['friends-all','all']])$(id).onclick=()=>{
+    friendsFilter=filter;for(const [id,value] of [['friends-ursketch','ursketch'],['friends-all','all']])$(id).setAttribute('aria-pressed',String(filter===value));render();
+  };
   async function receive(next){
     if(next.kind!=='friends')return;data={...next,peers:next.peers||[]};render();
     const room=next.slate;$('clean-slate-status').textContent=room?.ready?`${room.count||0}/25 players · Round ${room.round||1}/${room.rounds||10}`:'Join the shared drawing room';

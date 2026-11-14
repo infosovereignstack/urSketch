@@ -14,7 +14,7 @@ with sync_playwright() as p:
     before=page.evaluate('social.state.palsReady')
     assert page.locator('.browser-actions').evaluate("e=>[...e.children].map(c=>c.id)").index('browser-friends')<page.locator('.browser-actions').evaluate("e=>[...e.children].map(c=>c.id)").index('browser-help')
     page.locator('#browser-friends').click();expect(page.locator('#friends-dialog')).to_be_visible()
-    expect(page.locator('#ursketch-lounge')).to_be_disabled()
+    expect(page.locator('#ursketch-lounge')).to_have_attribute('href','https://invite.tlon.io/0vt7ss0.t4r7h.feu82.7jjj2.8g565')
     page.locator('#friends-dialog summary').click()
     expect(page.locator('#friends-dialog .pals-explainer')).to_contain_text('Other Urbit applications use')
     link=page.locator('#friends-dialog a[href="/pals"]')
@@ -28,5 +28,5 @@ with sync_playwright() as p:
         box=page.locator('#friends-dialog').bounding_box();assert box['x']>=0 and box['y']>=0 and box['x']+box['width']<=width and box['y']+box['height']<=height
     assert page.evaluate('social.state.palsReady')==before
     assert not errors,errors
-    (ROOT/'artifacts/live-social-verification.json').write_text(json.dumps({'installedNativeSocialReady':True,'noAutomaticSearchOrJoin':True,'friendsBeforeInstructions':True,'loungePlaceholder':True,'palsExplainerAndLocalLink':True,'laptopAndPhoneDialogFit':True,'menuDoesNotInstallPals':True},indent=2)+'\n')
+    (ROOT/'artifacts/live-social-verification.json').write_text(json.dumps({'installedNativeSocialReady':True,'noAutomaticSearchOrJoin':True,'friendsBeforeInstructions':True,'loungeInvite':True,'palsExplainerAndLocalLink':True,'laptopAndPhoneDialogFit':True,'menuDoesNotInstallPals':True},indent=2)+'\n')
     browser.close();print('PASS: installed native Friends menu, manual shared-room entry, Pals explainer, phone/laptop fit and no unsolicited Pals installation')
